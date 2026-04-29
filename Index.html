@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>GSC Wind Calc</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07130a;color:#fff;min-height:100vh;font-size:15px;padding-bottom:40px}
+
+/* ── TABS ── */
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:#0a1a0c;border-bottom:2px solid #1a3020;position:sticky;top:0;z-index:100}
+.tab{padding:14px 4px;text-align:center;font-size:12px;font-weight:800;letter-spacing:1.5px;color:#3d5c42;cursor:pointer;border-bottom:3px solid transparent;-webkit-tap-highlight-color:transparent}
+.tab.active{color:#5dfc8a;border-bottom:3px solid #5dfc8a;background:#0d1f0f}
+.sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:5px;background:#3d5c42;vertical-align:middle}
+.sync-dot.ok{background:#5dfc8a;box-shadow:0 0 5px #5dfc8a88}
+.sync-dot.err{background:#ef9a9a}
+.sync-dot.syncing{background:#ffb74d;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.tab-content{display:none;padding:12px}
+.tab-content.active{display:block}
+
+/* ── CARDS ── */
+.card{background:#0f1e11;border:1px solid #1a3020;border-radius:14px;padding:14px;margin-bottom:10px}
+.label{font-size:9px;color:#3d5c42;letter-spacing:1.5px;margin-bottom:6px;font-weight:700;text-transform:uppercase}
+.section-title{font-size:10px;color:#3d5c42;letter-spacing:1.5px;font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.section-sep{display:flex;align-items:center;gap:10px;margin:4px 0 10px}
+.section-sep-line{flex:1;height:1px;background:#1a3020}
+.section-sep-txt{font-size:9px;color:#3d5c42;letter-spacing:1.5px;font-weight:700;white-space:nowrap}
+
+/* ── GRID ── */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* ── INPUTS ── */
+input[type=number]{width:100%;border:1px solid #1e3822;border-radius:10px;padding:10px;font-size:24px;font-weight:700;text-align:center;background:#132015;color:#fff;-moz-appearance:textfield;outline:none}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
+.small-input{font-size:18px!important;padding:9px!important}
+
+/* ── CLUB STRIP ── */
+.club-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.club-btn{border:1px solid #1a3020;border-radius:8px;padding:8px 2px;text-align:center;cursor:pointer;background:#132015;-webkit-tap-highlight-color:transparent}
+.club-btn.active{background:#1b4d20;border-color:#5dfc8a;box-shadow:0 0 8px #5dfc8a22}
+.club-abbr{font-size:8px;color:#3d5c42;font-weight:700}
+.club-btn.active .club-abbr{color:#a5d6a7}
+.club-val{font-size:12px;font-weight:700;color:#8aa88e}
+.club-btn.active .club-val{color:#5dfc8a}
+
+/* ── ANGLE ── */
+.angle-ctrl{display:flex;align-items:center;border:1px solid #1e3822;border-radius:10px;overflow:hidden;background:#132015}
+.angle-btn{width:44px;height:54px;border:none;background:transparent;font-size:24px;color:#4caf50;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.angle-btn:active{background:#1a3020}
+.angle-mid{flex:1;text-align:center;padding:4px 0}
+.angle-deg{font-size:22px;font-weight:700;color:#fff}
+.angle-lbl{font-size:9px;color:#3d5c42;margin-top:2px;font-weight:700;letter-spacing:.8px}
+.presets8{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}
+.preset-btn{padding:7px 2px;border:1px solid #1a3020;border-radius:7px;font-size:9px;font-weight:700;text-align:center;cursor:pointer;background:#132015;color:#3d5c42;-webkit-tap-highlight-color:transparent;letter-spacing:.3px}
+.preset-btn.active{background:#1b4d20;border-color:#4caf50;color:#a5d6a7}
+.preset-manual{margin-top:6px;display:flex;align-items:center;gap:6px}
+.preset-manual input{flex:1;font-size:14px!important;padding:7px!important}
+.go-btn{padding:7px 12px;background:#1b4d20;border:1px solid #4caf50;border-radius:8px;color:#5dfc8a;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+
+/* ── ELEVATION ── */
+.elev-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;padding:8px;border-radius:8px;cursor:pointer;border:1px solid;font-size:11px;font-weight:700;letter-spacing:.5px;-webkit-tap-highlight-color:transparent}
+.elev-up{color:#5dfc8a;border-color:#2e7d32;background:#0d2e10}
+.elev-dn{color:#ffb74d;border-color:#7b4f00;background:#2a1a00}
+
+/* ── AIM RING RESULT ── */
+.aim-block{text-align:center;padding:10px 6px}
+.aim-lbl{font-size:9px;color:#3d5c42;letter-spacing:1.5px;margin-bottom:4px;font-weight:700}
+.aim-val{font-size:58px;font-weight:700;line-height:1;color:#5dfc8a}
+.aim-sub{font-size:11px;margin-top:4px;color:#3d5c42;font-weight:600;letter-spacing:.3px}
+
+/* ── ML BOX ── */
+.ml-rec{background:#0a1e0d;border:1px solid #1a4520;border-radius:12px;padding:12px;margin-top:10px}
+.ml-rec-title{font-size:9px;color:#5dfc8a;letter-spacing:1.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ml-badge{background:#1a4520;border:1px solid #2e7d32;border-radius:4px;padding:1px 6px;font-size:8px;font-weight:700;color:#5dfc8a;letter-spacing:.5px}
+.ml-rec-row{display:grid;grid-template-columns:1fr 1px 1fr;align-items:center}
+.ml-divider{background:#1a4520;height:50px}
+.ml-block{text-align:center;padding:4px}
+.ml-lbl{font-size:9px;color:#3d5c42;letter-spacing:1px;font-weight:700;margin-bottom:2px}
+.ml-val{font-size:30px;font-weight:700;color:#f0e968}
+.ml-conf{font-size:9px;color:#3d5c42;margin-top:4px}
+.ml-empty{font-size:11px;color:#3d5c42;text-align:center;padding:8px 0;font-style:italic}
+
+/* ── BUTTONS ── */
+.btn{width:100%;padding:14px;border:none;border-radius:11px;font-size:13px;font-weight:800;letter-spacing:.8px;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-top:4px}
+.btn-green{background:#2e7d32;color:#fff}
+.btn-green:active{background:#1b5e20}
+.btn-clear{background:#132015;color:#5dfc8a;border:1px solid #2e7d32}
+.btn-export{background:#132015;color:#5dfc8a;border:1px solid #2e7d32}
+.btn-import{background:#132015;color:#80cbc4;border:1px solid #1e5555}
+.btn-sm{padding:5px 10px;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn-sm-red{background:#3e1010;color:#ef9a9a}
+.btn-sm-edit{background:#1e3020;color:#80cbc4;border:1px solid #1e5555}
+
+/* ── LOG RESULT TOGGLE ── */
+.result-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.result-btn{padding:12px;border:1px solid #2a3e2c;border-radius:10px;text-align:center;cursor:pointer;font-size:14px;font-weight:800;-webkit-tap-highlight-color:transparent}
+.result-btn.in{background:#1b5e20;border-color:#4caf50;color:#5dfc8a}
+.result-btn.miss{background:#3e1010;border-color:#c62828;color:#ef9a9a}
+.result-btn.inactive{background:#132015;color:#3d5c42}
+
+/* ── DATA TABLE ── */
+.data-table{width:100%;border-collapse:collapse;font-size:10px}
+.data-table th{background:#132015;color:#3d5c42;padding:7px 4px;text-align:center;font-size:8px;letter-spacing:.5px;font-weight:700;position:sticky;top:0}
+.data-table td{padding:6px 4px;text-align:center;border-bottom:1px solid #0f1e11;color:#8aa88e}
+.data-table tr:last-child td{border-bottom:none}
+.td-in{color:#5dfc8a;font-weight:700}
+.td-miss{color:#ef9a9a;font-weight:700}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #1a3020;max-height:340px;overflow-y:auto}
+
+/* ── STATS ── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.stat-card{background:#132015;border-radius:10px;padding:10px;text-align:center}
+.stat-val{font-size:20px;font-weight:700;color:#5dfc8a}
+.stat-lbl{font-size:8px;color:#3d5c42;margin-top:2px;letter-spacing:.5px;font-weight:700}
+.stat-val.neutral{color:#8aa88e}
+.club-rate-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.club-rate-card{background:#132015;border-radius:10px;padding:10px}
+.club-rate-name{font-size:9px;color:#3d5c42;font-weight:700;letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase}
+.club-rate-pct{font-size:22px;font-weight:700;color:#5dfc8a}
+.club-rate-sub{font-size:9px;color:#3d5c42;margin-top:1px}
+.success-bar{height:4px;background:#1a3020;border-radius:2px;margin-top:6px;overflow:hidden}
+.success-fill{height:4px;background:#5dfc8a;border-radius:2px}
+
+/* ── PER CLUB ML INSIGHT ── */
+.club-insight{background:#132015;border-radius:10px;padding:10px;margin-bottom:6px}
+.club-insight-name{font-size:10px;color:#3d5c42;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.insight-row{display:flex;justify-content:space-between;font-size:10px;margin-top:3px;align-items:center}
+.isl{color:#3d7060}
+.isv{color:#cfd8dc;font-weight:700}
+
+/* ── MISC ── */
+.y-box{background:#0a1e0d;border:1px solid #1a4520;border-radius:8px;padding:9px;font-size:11px;color:#80cbc4;margin-top:8px}
+.corrected-hint{font-size:10px;color:#ffb74d;background:#3e2a00;border:1px solid #7b4f00;border-radius:6px;padding:6px 8px;margin-top:8px;display:none}
+.warn-box{display:flex;align-items:flex-start;gap:10px;background:#3e2a00;border:1px solid #7b4f00;border-radius:10px;padding:10px 12px;margin-top:8px}
+.warn-title{font-size:11px;color:#ffb74d;font-weight:700}
+.warn-sub{font-size:10px;color:#8d6e63;margin-top:2px}
+.divider{border:none;border-top:1px solid #1a3020;margin:10px 0}
+.empty{text-align:center;color:#3d5c42;font-size:12px;padding:30px 0}
+.hdr-btn{font-size:10px;font-weight:700;padding:5px 12px;border:1px solid #1e3822;border-radius:7px;cursor:pointer;background:#132015;color:#66bb6a;-webkit-tap-highlight-color:transparent;letter-spacing:.5px}
+.edit-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.edit-name{font-size:13px;color:#cfd8dc}
+.inline-actions{display:flex;gap:4px;justify-content:center}
+.sync-status{font-size:10px;text-align:center;padding:6px;border-radius:6px;margin-top:6px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('play')">⛳ PLAY <span class="sync-dot" id="sync-dot"></span></div>
+  <div class="tab" onclick="showTab('data')">📊 DATA</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- PLAY TAB (CALC + LOG merged)                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="tab-content active" id="tab-play">
+
+  <!-- Club strip -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="label" style="margin:0">CLUB</div>
+      <button class="hdr-btn" onclick="toggleEl('club-editor')">EDIT CONSTANTS</button>
+    </div>
+    <div class="club-grid" id="club-grid"></div>
+  </div>
+
+  <!-- Club editor -->
+  <div class="card hidden" id="club-editor">
+    <div class="section-title">EDIT CLUB CONSTANTS</div>
+    <div id="club-editor-rows"></div>
+    <div style="font-size:9px;color:#3d5c42;margin-top:4px">Changes save automatically</div>
+  </div>
+
+  <!-- Wind + Angle -->
+  <div class="card">
+    <div class="row2" style="margin-bottom:12px">
+      <div>
+        <div class="label">WIND SPEED</div>
+        <input type="number" id="wind" min="0" step="0.5" placeholder="0" oninput="calc()">
+      </div>
+      <div>
+        <div class="label">WIND ANGLE (TEE)</div>
+        <div class="angle-ctrl">
+          <button class="angle-btn" onclick="stepAngle(-15)">−</button>
+          <div class="angle-mid">
+            <div class="angle-deg" id="angle-deg">0°</div>
+            <div class="angle-lbl" id="angle-lbl">TAILWIND</div>
+          </div>
+          <button class="angle-btn" onclick="stepAngle(15)">+</button>
+        </div>
+        <div class="presets8">
+          <div class="preset-btn active" data-a="0"   onclick="setAngle(0)">0°</div>
+          <div class="preset-btn"        data-a="45"  onclick="setAngle(45)">45°</div>
+          <div class="preset-btn"        data-a="90"  onclick="setAngle(90)">90°</div>
+          <div class="preset-btn"        data-a="135" onclick="setAngle(135)">135°</div>
+          <div class="preset-btn"        data-a="180" onclick="setAngle(180)">180°</div>
+          <div class="preset-btn"        data-a="225" onclick="setAngle(225)">225°</div>
+          <div class="preset-btn"        data-a="270" onclick="setAngle(270)">270°</div>
+          <div class="preset-btn"        data-a="315" onclick="setAngle(315)">315°</div>
+        </div>
+        <div class="preset-manual">
+          <input type="number" id="manual-angle" min="0" max="359" placeholder="custom°" style="font-size:13px!important;padding:6px!important">
+          <button class="go-btn" onclick="applyManualAngle()">SET°</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Elevation -->
+    <div style="max-width:50%;padding-right:5px">
+      <div class="label">ELEVATION (yds)</div>
+      <input type="number" id="elev" min="0" step="1" placeholder="0" oninput="calc()">
+      <div class="elev-toggle elev-up" id="elev-toggle" onclick="toggleElev()">
+        <span id="elev-arrow">▲</span>
+        <span id="elev-text">UPHILL → aim further</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ① AIM RINGS result -->
+  <div class="card">
+    <div class="aim-block">
+      <div class="aim-lbl">① WIND PULL — LATERAL RINGS</div>
+      <div class="aim-val" id="aim-rings">0.00</div>
+      <div class="aim-sub">rings offset along wind direction</div>
+    </div>
+
+    <!-- ML Recommended Additional Pull -->
+    <div class="ml-rec">
+      <div class="ml-rec-title">
+        🧠 RECOMMENDED ② ADDITIONAL PULL
+        <span class="ml-badge" id="ml-badge"></span>
+      </div>
+      <div id="ml-content"><div class="ml-empty">Log shots to build recommendations</div></div>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+      <button class="btn btn-clear" onclick="clearCalc()" style="margin:0">✕ CLEAR</button>
+      <div></div>
+    </div>
+  </div>
+
+  <!-- ══ LOG SECTION ══ -->
+  <div class="section-sep">
+    <div class="section-sep-line"></div>
+    <div class="section-sep-txt">📝 LOG THIS SHOT</div>
+    <div class="section-sep-line"></div>
+  </div>
+
+  <!-- Rings pulled -->
+  <div class="card">
+    <div class="section-title">RINGS ACTUALLY PULLED</div>
+    <div class="row2">
+      <div>
+        <div class="label">① WIND PULLED</div>
+        <div style="font-size:9px;color:#3d5c42;margin-bottom:4px">actual lateral pull made</div>
+        <input type="number" id="log-ring1" class="small-input" step="0.25" placeholder="0.00">
+      </div>
+      <div>
+        <div class="label">② ADDITIONAL PULLED</div>
+        <div style="font-size:9px;color:#3d5c42;margin-bottom:4px">+ added pull &nbsp;|&nbsp; − subtracted</div>
+        <input type="number" id="log-ring2" class="small-input" step="0.25" placeholder="0.00" oninput="updateCorrectedHint()">
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="label">TARGET DISTANCE (yds)</div>
+      <input type="number" id="log-dist" class="small-input" step="1" placeholder="0" style="max-width:50%">
+    </div>
+  </div>
+
+  <!-- Miss distance -->
+  <div class="card">
+    <div class="section-title">MISS DISTANCE (rings · 0 = holed)</div>
+    <div class="row2">
+      <div>
+        <div class="label">X — SIDEWAYS</div>
+        <div style="font-size:9px;color:#3d5c42;margin-bottom:4px">+ over-aimed &nbsp;|&nbsp; − under-aimed</div>
+        <input type="number" id="log-x" class="small-input" step="0.25" placeholder="0.00" oninput="updateYBreakdown()">
+      </div>
+      <div>
+        <div class="label">Y — LONG / SHORT</div>
+        <div style="font-size:9px;color:#3d5c42;margin-bottom:4px">+ overshoot &nbsp;|&nbsp; − short</div>
+        <input type="number" id="log-y" class="small-input" step="0.25" placeholder="0.00" oninput="updateYBreakdown()">
+      </div>
+    </div>
+    <div class="y-box hidden" id="y-breakdown">
+      <span style="color:#3d5c42">Y breakdown: </span>
+      From X drift: <b id="y-from-x">0.00</b>
+      &nbsp;|&nbsp;
+      Pure dist error: <b id="y-pure">0.00</b>
+    </div>
+    <div class="corrected-hint" id="corrected-hint"></div>
+  </div>
+
+  <!-- Result + Save -->
+  <div class="card">
+    <div class="section-title">RESULT</div>
+    <div class="result-toggle">
+      <div class="result-btn inactive" id="rb-in"   onclick="setResult('In')">⛳ IN</div>
+      <div class="result-btn inactive" id="rb-miss" onclick="setResult('Miss')">❌ MISS</div>
+    </div>
+    <div id="result-hint" style="font-size:11px;color:#3d5c42;text-align:center;margin-top:8px"></div>
+    <button class="btn btn-green" onclick="saveShot()" style="margin-top:12px">💾 SAVE SHOT</button>
+  </div>
+
+</div><!-- /tab-play -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- DATA TAB                                              -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-data">
+
+  <!-- Sync status -->
+  <div class="card" id="sync-card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="section-title" style="margin:0">☁️ FIREBASE SYNC</div>
+      <button class="hdr-btn" onclick="syncNow()">SYNC NOW</button>
+    </div>
+    <div class="sync-status" id="sync-status-text" style="color:#3d5c42">Checking...</div>
+  </div>
+
+  <!-- Overall stats -->
+  <div class="card">
+    <div class="section-title">OVERALL</div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-val neutral" id="st-shots">0</div><div class="stat-lbl">TOTAL SHOTS</div></div>
+      <div class="stat-card"><div class="stat-val" id="st-in">0</div><div class="stat-lbl">HOLED</div></div>
+    </div>
+    <div style="margin-top:8px">
+      <div class="section-title" style="margin-bottom:8px;margin-top:4px">SUCCESS RATE BY CLUB</div>
+      <div class="club-rate-grid" id="club-rates"><div class="empty">No data yet</div></div>
+    </div>
+  </div>
+
+  <!-- ML insights per club -->
+  <div class="card">
+    <div class="section-title">🧠 LEARNED PULL VALUES (② per club)</div>
+    <div id="club-ml-insights"><div class="empty">No data yet</div></div>
+  </div>
+
+  <!-- Shot log -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div class="section-title" style="margin:0">SHOT LOG</div>
+      <button class="btn-sm btn-sm-red" onclick="clearData()">CLEAR ALL</button>
+    </div>
+    <div id="shot-table-wrap"><div class="empty">No shots logged yet</div></div>
+  </div>
+
+  <!-- Import / Export -->
+  <div class="card">
+    <div class="section-title">DATA MANAGEMENT</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn btn-export" onclick="exportCSV()" style="margin:0">⬇ EXPORT CSV</button>
+      <button class="btn btn-import" onclick="document.getElementById('csv-file-input').click()" style="margin:0">⬆ IMPORT CSV</button>
+    </div>
+    <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="importCSV(this)">
+    <div id="import-status" style="font-size:10px;color:#80cbc4;text-align:center;margin-top:8px;display:none"></div>
+  </div>
+
+</div><!-- /tab-data -->
+
+<!-- ══ EDIT MODAL ══ -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;background:#000a;z-index:200;padding:20px;align-items:center;justify-content:center">
+  <div style="background:#0f1e11;border:1px solid #2e7d32;border-radius:16px;padding:20px;width:100%;max-width:380px">
+    <div class="section-title" style="margin-bottom:14px">EDIT SHOT</div>
+    <div id="edit-fields"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+      <button class="btn btn-clear" onclick="closeEdit()" style="margin:0">CANCEL</button>
+      <button class="btn btn-green" onclick="saveEdit()" style="margin:0">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════
+const CLUBS=[
+  {a:'DRV',n:'Driver'},
+  {a:'WD',n:'Wood'},
+  {a:'L.IRN',n:'Long Iron'},
+  {a:'S.IRN',n:'Short Iron'},
+  {a:'R.IRN',n:'Rough Iron'},
+  {a:'SW',n:'Sand Wedge'},
+  {a:'WDG',n:'Wedge'}
+];
+
+const FIREBASE_URL='https://vibegolfing-default-rtdb.asia-southeast1.firebasedatabase.app/shots.json';
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let selClub=0, windAngle=0, elevUp=true, logResult='', editIdx=-1;
+let consts=CLUBS.map((_,i)=>parseFloat(localStorage.getItem('gsc_c'+i)||'1'));
+
+// ═══════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════
+function getShots(){try{return JSON.parse(localStorage.getItem('gsc_shots')||'[]')}catch(e){return[]}}
+function saveShots(a){localStorage.setItem('gsc_shots',JSON.stringify(a))}
+function fmt(v){return parseFloat(v).toFixed(2)}
+function fmtS(v){return(v>=0?'+':'')+parseFloat(v).toFixed(2)}
+
+// ═══════════════════════════════════════════════════════
+// FIREBASE SYNC
+// ═══════════════════════════════════════════════════════
+function setSyncStatus(state, msg){
+  const dot=document.getElementById('sync-dot');
+  const txt=document.getElementById('sync-status-text');
+  dot.className='sync-dot '+state;
+  if(txt) txt.textContent=msg;
+}
+
+async function pushToFirebase(shots){
+  setSyncStatus('syncing','Syncing to cloud...');
+  try{
+    const res=await fetch(FIREBASE_URL,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(shots)
+    });
+    if(res.ok){
+      setSyncStatus('ok','☁️ Synced — '+new Date().toLocaleTimeString());
+    } else {
+      setSyncStatus('err','⚠️ Sync failed (HTTP '+res.status+')');
+    }
+  }catch(e){
+    setSyncStatus('err','⚠️ Offline — saved locally');
+  }
+}
+
+async function pullFromFirebase(){
+  setSyncStatus('syncing','Fetching from cloud...');
+  try{
+    const res=await fetch(FIREBASE_URL);
+    if(!res.ok){setSyncStatus('err','⚠️ Could not reach Firebase');return}
+    const data=await res.json();
+    if(!data){setSyncStatus('ok','☁️ Cloud empty — using local data');return}
+    // Merge: cloud + local, deduplicate by timestamp
+    const local=getShots();
+    const merged=mergeShots(local, Array.isArray(data)?data:Object.values(data));
+    saveShots(merged);
+    setSyncStatus('ok','☁️ Synced — '+merged.length+' shots');
+  }catch(e){
+    setSyncStatus('err','⚠️ Offline — using local data');
+  }
+}
+
+function mergeShots(a, b){
+  const map=new Map();
+  [...a,...b].forEach(s=>map.set(s.ts, s));
+  return Array.from(map.values()).sort((x,y)=>x.ts-y.ts);
+}
+
+async function syncNow(){
+  await pullFromFirebase();
+  if(document.getElementById('tab-data').classList.contains('active')) renderData();
+  calc();
+}
+
+// ═══════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.tab')[{play:0,data:1}[id]].classList.add('active');
+  if(id==='data') renderData();
+}
+function toggleEl(id){document.getElementById(id).classList.toggle('hidden')}
+
+// ═══════════════════════════════════════════════════════
+// CLUB RENDER — using DOM to avoid input bug
+// ═══════════════════════════════════════════════════════
+function renderClubs(){
+  // Strip
+  const grid=document.getElementById('club-grid');
+  grid.innerHTML='';
+  CLUBS.forEach((c,i)=>{
+    const btn=document.createElement('div');
+    btn.className='club-btn'+(i===selClub?' active':'');
+    btn.innerHTML=`<div class="club-abbr">${c.a}</div><div class="club-val">${fmt(consts[i])}</div>`;
+    btn.onclick=()=>{selClub=i;renderClubs();calc()};
+    grid.appendChild(btn);
+  });
+
+  // Editor — built with DOM to avoid template string quote issues
+  const editor=document.getElementById('club-editor-rows');
+  editor.innerHTML='';
+  CLUBS.forEach((c,i)=>{
+    const row=document.createElement('div');
+    row.className='edit-row';
+    const name=document.createElement('div');
+    name.className='edit-name';
+    name.textContent=c.n;
+    const inp=document.createElement('input');
+    inp.className='edit-input';
+    inp.type='number';
+    inp.step='0.01';
+    inp.min='0.01';
+    inp.value=fmt(consts[i]);
+    inp.style.cssText='width:90px;border:1px solid #1e3822;border-radius:7px;padding:8px;font-size:16px;font-weight:700;text-align:center;background:#132015;color:#fff;outline:none;-moz-appearance:textfield';
+    inp.addEventListener('focus',()=>inp.select());
+    inp.addEventListener('input',()=>{
+      const v=parseFloat(inp.value);
+      if(!isNaN(v)&&v>0){
+        consts[i]=v;
+        localStorage.setItem('gsc_c'+i,v);
+        // Update just the club strip value, not full re-render (keeps focus)
+        const vals=document.querySelectorAll('#club-grid .club-val');
+        if(vals[i]) vals[i].textContent=fmt(v);
+        calc();
+      }
+    });
+    row.appendChild(name);
+    row.appendChild(inp);
+    editor.appendChild(row);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// ANGLE
+// ═══════════════════════════════════════════════════════
+function stepAngle(d){setAngle((windAngle+d+360)%360)}
+function applyManualAngle(){
+  const v=parseInt(document.getElementById('manual-angle').value);
+  if(!isNaN(v)) setAngle(((v%360)+360)%360);
+}
+function setAngle(a){
+  windAngle=a;
+  document.getElementById('angle-deg').textContent=a+'°';
+  let lbl;
+  if(a<=22||a>=338)     lbl='TAILWIND';
+  else if(a<=67)        lbl='TAIL-CROSS';
+  else if(a<=112)       lbl='CROSSWIND →';
+  else if(a<=157)       lbl='HEAD-CROSS';
+  else if(a<=202)       lbl='HEADWIND';
+  else if(a<=247)       lbl='HEAD-CROSS';
+  else if(a<=292)       lbl='CROSSWIND ←';
+  else                  lbl='TAIL-CROSS';
+  document.getElementById('angle-lbl').textContent=lbl;
+  document.querySelectorAll('.preset-btn').forEach(b=>
+    b.classList.toggle('active',parseInt(b.dataset.a)===a)
+  );
+  calc();
+}
+
+// ═══════════════════════════════════════════════════════
+// ELEVATION
+// ═══════════════════════════════════════════════════════
+function toggleElev(){
+  elevUp=!elevUp;
+  document.getElementById('elev-arrow').textContent=elevUp?'▲':'▼';
+  document.getElementById('elev-text').textContent=elevUp?'UPHILL → aim further':'DOWNHILL → aim shorter';
+  document.getElementById('elev-toggle').className='elev-toggle '+(elevUp?'elev-up':'elev-dn');
+  calc();
+}
+
+// ═══════════════════════════════════════════════════════
+// CLEAR
+// ═══════════════════════════════════════════════════════
+function clearCalc(){
+  document.getElementById('wind').value='';
+  document.getElementById('elev').value='';
+  document.getElementById('log-ring1').value='';
+  document.getElementById('log-ring2').value='';
+  document.getElementById('log-dist').value='';
+  document.getElementById('log-x').value='';
+  document.getElementById('log-y').value='';
+  document.getElementById('y-breakdown').classList.add('hidden');
+  document.getElementById('corrected-hint').style.display='none';
+  logResult='';
+  document.getElementById('rb-in').className='result-btn inactive';
+  document.getElementById('rb-miss').className='result-btn inactive';
+  document.getElementById('result-hint').textContent='';
+  setAngle(0);
+  elevUp=true;
+  document.getElementById('elev-arrow').textContent='▲';
+  document.getElementById('elev-text').textContent='UPHILL → aim further';
+  document.getElementById('elev-toggle').className='elev-toggle elev-up';
+  calc();
+}
+
+// ═══════════════════════════════════════════════════════
+// ML ENGINE
+// ═══════════════════════════════════════════════════════
+function getEffectivePull(s){
+  // For IN shots: use ring2 directly (good data)
+  if(s.result==='In') return s.ring2;
+  // For MISS shots: infer corrected pull from Y miss
+  // Corrected = actual_pull - Y_pure_error
+  // (if you went long [+Y], you pulled too much, so correct pull = pull - Y)
+  const yErr=s.yPure||s.y||0;
+  return parseFloat((s.ring2-yErr).toFixed(4));
+}
+
+function mlRecommend(clubIdx, wind, angle){
+  const shots=getShots().filter(s=>s.clubIdx===clubIdx);
+  if(!shots.length) return null;
+
+  const withPull=shots.map(s=>({...s, ePull:getEffectivePull(s)}));
+
+  const angleBucket=a=>Math.round(a/22.5)*22.5;
+  const thisAngle=angleBucket(angle);
+
+  // Priority 1: exact wind + angle bucket
+  const exact=withPull.filter(s=>s.wind===wind&&angleBucket(s.windAngle)===thisAngle);
+  if(exact.length){
+    const avg=exact.reduce((a,s)=>a+s.ePull,0)/exact.length;
+    return{value:avg, count:exact.length, type:'exact'};
+  }
+
+  // Priority 2: ±0.5 wind, ±22.5° angle
+  const near=withPull.filter(s=>
+    Math.abs(s.wind-wind)<=0.5&&
+    Math.abs(angleBucket(s.windAngle)-thisAngle)<=22.5
+  );
+  if(near.length){
+    const avg=near.reduce((a,s)=>a+s.ePull,0)/near.length;
+    return{value:avg, count:near.length, type:'nearest'};
+  }
+
+  // Priority 3: club-only fallback
+  const avg=withPull.reduce((a,s)=>a+s.ePull,0)/withPull.length;
+  return{value:avg, count:withPull.length, type:'club'};
+}
+
+// ═══════════════════════════════════════════════════════
+// MAIN CALC
+// ═══════════════════════════════════════════════════════
+function calc(){
+  const wind=parseFloat(document.getElementById('wind').value)||0;
+  const elevAbs=parseFloat(document.getElementById('elev').value)||0;
+  const cc=consts[selClub];
+
+  // ① Wind Pull = (Club × Wind) / 2
+  const windUnits=cc*wind;
+  const aimRings=windUnits/2;
+
+  document.getElementById('aim-rings').textContent=fmt(aimRings);
+
+  // Pre-fill Wind Pulled in log section
+  document.getElementById('log-ring1').value=fmt(aimRings);
+
+  // ML recommendation
+  const rec=mlRecommend(selClub,wind,windAngle);
+  const mlEl=document.getElementById('ml-content');
+  const badge=document.getElementById('ml-badge');
+  if(rec){
+    const typeLabel=rec.type==='exact'?'EXACT':rec.type==='nearest'?'NEAREST':'CLUB AVG';
+    badge.textContent=typeLabel;
+    mlEl.innerHTML=`
+      <div class="ml-rec-row">
+        <div class="ml-block">
+          <div class="ml-lbl">PULL VALUE</div>
+          <div class="ml-val">${fmtS(rec.value)}</div>
+        </div>
+        <div class="ml-divider"></div>
+        <div class="ml-block">
+          <div class="ml-lbl">FROM</div>
+          <div class="ml-val" style="font-size:22px">${rec.count} shot${rec.count>1?'s':''}</div>
+          <div class="ml-conf" style="margin-top:2px;font-size:8px;color:#3d5c42">${typeLabel} MATCH</div>
+        </div>
+      </div>`;
+  } else {
+    badge.textContent='';
+    mlEl.innerHTML='<div class="ml-empty">Log shots to build recommendations</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// LOG HELPERS
+// ═══════════════════════════════════════════════════════
+function updateYBreakdown(){
+  const x=parseFloat(document.getElementById('log-x').value)||0;
+  const y=parseFloat(document.getElementById('log-y').value)||0;
+  const bd=document.getElementById('y-breakdown');
+  if(x===0&&y===0){bd.classList.add('hidden');return}
+  const yFromX=parseFloat((x*0.1).toFixed(2));
+  const yPure=parseFloat((y-yFromX).toFixed(2));
+  document.getElementById('y-from-x').textContent=fmtS(yFromX);
+  document.getElementById('y-pure').textContent=fmtS(yPure);
+  bd.classList.remove('hidden');
+  updateCorrectedHint();
+}
+
+function updateCorrectedHint(){
+  if(logResult!=='Miss') return;
+  const y=parseFloat(document.getElementById('log-y').value)||0;
+  const r2=parseFloat(document.getElementById('log-ring2').value)||0;
+  const ch=document.getElementById('corrected-hint');
+  if(y!==0){
+    const corrected=(r2-y).toFixed(2);
+    ch.style.display='block';
+    ch.textContent=`🧠 Learned: Corrected Pull = ${fmtS(parseFloat(corrected))} (pulled ${fmtS(r2)} − miss ${fmtS(y)})`;
+  } else {
+    ch.style.display='none';
+  }
+}
+
+function setResult(r){
+  logResult=r;
+  document.getElementById('rb-in').className=r==='In'?'result-btn in':'result-btn inactive';
+  document.getElementById('rb-miss').className=r==='Miss'?'result-btn miss':'result-btn inactive';
+  document.getElementById('result-hint').textContent=r==='In'?'⛳ Nicely done!':'❌ Logged for analysis';
+  if(r==='Miss') updateCorrectedHint();
+  else document.getElementById('corrected-hint').style.display='none';
+}
+
+async function saveShot(){
+  if(!logResult){alert('Please select IN or MISS.');return}
+  const wind=parseFloat(document.getElementById('wind').value)||0;
+  const elevAbs=parseFloat(document.getElementById('elev').value)||0;
+  const x=parseFloat(document.getElementById('log-x').value)||0;
+  const y=parseFloat(document.getElementById('log-y').value)||0;
+  const r1=parseFloat(document.getElementById('log-ring1').value)||0;
+  const r2=parseFloat(document.getElementById('log-ring2').value)||0;
+  const dist=parseFloat(document.getElementById('log-dist').value)||0;
+  const yFromX=parseFloat((x*0.1).toFixed(4));
+  const yPure=parseFloat((y-yFromX).toFixed(4));
+  const cc=consts[selClub];
+  const aimRings=cc*wind/2;
+
+  const shot={
+    ts:Date.now(),
+    club:CLUBS[selClub].a, clubIdx:selClub,
+    wind, windAngle,
+    elev:elevAbs, elevUp,
+    dist,
+    ring1:r1, ring2:r2,
+    aimCalc:aimRings,
+    x, y, yFromX, yPure,
+    result:logResult
+  };
+
+  const shots=getShots();
+  shots.push(shot);
+  saveShots(shots);
+
+  // Push to Firebase
+  await pushToFirebase(shots);
+
+  // Update ML
+  calc();
+
+  // Reset log fields (keep calc inputs)
+  logResult='';
+  document.getElementById('rb-in').className='result-btn inactive';
+  document.getElementById('rb-miss').className='result-btn inactive';
+  document.getElementById('result-hint').textContent='';
+  document.getElementById('log-ring2').value='';
+  document.getElementById('log-dist').value='';
+  document.getElementById('log-x').value='';
+  document.getElementById('log-y').value='';
+  document.getElementById('y-breakdown').classList.add('hidden');
+  document.getElementById('corrected-hint').style.display='none';
+
+  // Brief confirmation
+  const btn=document.querySelector('[onclick="saveShot()"]');
+  const orig=btn.textContent;
+  btn.textContent='✅ SAVED!';
+  btn.style.background='#1b5e20';
+  setTimeout(()=>{btn.textContent=orig;btn.style.background='';},1500);
+}
+
+// ═══════════════════════════════════════════════════════
+// DATA TAB
+// ═══════════════════════════════════════════════════════
+function renderData(){
+  const shots=getShots();
+  const total=shots.length;
+  const holed=shots.filter(s=>s.result==='In').length;
+  document.getElementById('st-shots').textContent=total;
+  document.getElementById('st-in').textContent=holed;
+
+  // Per-club success rates
+  const byClub={};
+  shots.forEach(s=>{
+    const key=s.clubIdx+'|'+s.club;
+    if(!byClub[key]) byClub[key]=[];
+    byClub[key].push(s);
+  });
+
+  const ratesEl=document.getElementById('club-rates');
+  if(!Object.keys(byClub).length){
+    ratesEl.innerHTML='<div class="empty" style="grid-column:1/-1">No data yet</div>';
+  } else {
+    ratesEl.innerHTML=Object.entries(byClub).map(([key,arr])=>{
+      const n=arr.length, ins=arr.filter(s=>s.result==='In').length;
+      const pct=Math.round(ins/n*100);
+      return`<div class="club-rate-card">
+        <div class="club-rate-name">${arr[0].club}</div>
+        <div class="club-rate-pct">${pct}%</div>
+        <div class="club-rate-sub">${ins}/${n} holed</div>
+        <div class="success-bar"><div class="success-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // ML insights per club
+  const insightEl=document.getElementById('club-ml-insights');
+  if(!Object.keys(byClub).length){
+    insightEl.innerHTML='<div class="empty">No data yet</div>';
+  } else {
+    insightEl.innerHTML=Object.entries(byClub).map(([key,arr])=>{
+      const withPull=arr.map(s=>({...s,ePull:getEffectivePull(s)}));
+      const avgPull=withPull.reduce((a,s)=>a+s.ePull,0)/withPull.length;
+      const inShots=arr.filter(s=>s.result==='In');
+      const avgInPull=inShots.length?inShots.reduce((a,s)=>a+s.ring2,0)/inShots.length:null;
+      // Group by wind strength buckets that emerge from data
+      const windGroups={};
+      withPull.forEach(s=>{
+        const wk=s.wind.toFixed(1);
+        if(!windGroups[wk]) windGroups[wk]=[];
+        windGroups[wk].push(s);
+      });
+      const windRows=Object.entries(windGroups)
+        .sort((a,b)=>parseFloat(a[0])-parseFloat(b[0]))
+        .map(([w,gs])=>{
+          const avg=gs.reduce((a,s)=>a+s.ePull,0)/gs.length;
+          return`<div class="insight-row">
+            <span class="isl">Wind ${w} (${gs.length}x)</span>
+            <span class="isv">${fmtS(avg)}</span>
+          </div>`;
+        }).join('');
+      return`<div class="club-insight">
+        <div class="club-insight-name">${arr[0].club} — ${arr.length} shots</div>
+        <div class="insight-row"><span class="isl">Overall avg pull</span><span class="isv">${fmtS(avgPull)}</span></div>
+        ${avgInPull!==null?`<div class="insight-row"><span class="isl">IN shots avg pull</span><span class="isv">${fmtS(avgInPull)}</span></div>`:''}
+        ${windRows?`<hr style="border-color:#1a3020;margin:6px 0"><div style="font-size:9px;color:#3d5c42;margin-bottom:4px;letter-spacing:.5px">BY WIND STRENGTH:</div>${windRows}`:''}
+      </div>`;
+    }).join('');
+  }
+
+  // Shot table
+  renderTable(shots);
+}
+
+function renderTable(shots){
+  const wrap=document.getElementById('shot-table-wrap');
+  if(!shots.length){wrap.innerHTML='<div class="empty">No shots logged yet</div>';return}
+  const rows=[...shots].reverse().map((s,ri)=>{
+    const realIdx=shots.length-1-ri;
+    const d=new Date(s.ts);
+    const ds=`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    return`<tr id="row-${realIdx}">
+      <td>${ds}</td>
+      <td>${s.club}</td>
+      <td>${s.wind}</td>
+      <td>${s.windAngle}°</td>
+      <td>${s.elevUp?'+':'−'}${s.elev}</td>
+      <td>${fmt(s.ring1)}</td>
+      <td>${fmt(s.ring2)}</td>
+      <td>${fmtS(s.x)}</td>
+      <td>${fmtS(s.yPure||0)}</td>
+      <td class="${s.result==='In'?'td-in':'td-miss'}">${s.result==='In'?'⛳':'❌'}</td>
+      <td><div class="inline-actions">
+        <button class="btn-sm btn-sm-edit" onclick="openEdit(${realIdx})">✏️</button>
+        <button class="btn-sm btn-sm-red"  onclick="deleteShot(${realIdx})">✕</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  wrap.innerHTML=`<div class="table-wrap"><table class="data-table">
+    <thead><tr>
+      <th>TIME</th><th>CLUB</th><th>WIND</th><th>ANG</th><th>ELEV</th>
+      <th>①W.PULL</th><th>②ADD</th><th>X</th><th>Y</th><th>RES</th><th></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// INLINE EDIT (MODAL)
+// ═══════════════════════════════════════════════════════
+function openEdit(idx){
+  editIdx=idx;
+  const s=getShots()[idx];
+  const modal=document.getElementById('edit-modal');
+  const fields=document.getElementById('edit-fields');
+  fields.innerHTML='';
+
+  const addField=(label,id,val,step)=>{
+    const wrap=document.createElement('div');
+    wrap.style.marginBottom='10px';
+    const lbl=document.createElement('div');
+    lbl.className='label';
+    lbl.textContent=label;
+    const inp=document.createElement('input');
+    inp.id='ef-'+id; inp.type='number'; inp.step=step||'0.25';
+    inp.value=val; inp.className='small-input';
+    inp.style.cssText='width:100%;border:1px solid #1e3822;border-radius:8px;padding:8px;font-size:18px;font-weight:700;text-align:center;background:#132015;color:#fff;outline:none;-moz-appearance:textfield';
+    wrap.appendChild(lbl); wrap.appendChild(inp);
+    fields.appendChild(wrap);
+  };
+
+  addField('① WIND PULLED','ring1',fmt(s.ring1));
+  addField('② ADDITIONAL PULLED','ring2',fmt(s.ring2));
+  addField('X MISS','x',fmt(s.x));
+  addField('Y MISS','y',fmt(s.y||0));
+
+  // Result toggle
+  const rWrap=document.createElement('div');
+  rWrap.style.marginBottom='10px';
+  const rLbl=document.createElement('div'); rLbl.className='label'; rLbl.textContent='RESULT';
+  const rGrid=document.createElement('div'); rGrid.className='result-toggle';
+  const rIn=document.createElement('div'); rIn.className='result-btn '+(s.result==='In'?'in':'inactive');
+  rIn.textContent='⛳ IN'; rIn.onclick=()=>{rIn.className='result-btn in';rMiss.className='result-btn inactive'};
+  const rMiss=document.createElement('div'); rMiss.className='result-btn '+(s.result==='Miss'?'miss':'inactive');
+  rMiss.textContent='❌ MISS'; rMiss.onclick=()=>{rMiss.className='result-btn miss';rIn.className='result-btn inactive'};
+  rGrid.appendChild(rIn); rGrid.appendChild(rMiss);
+  rWrap.appendChild(rLbl); rWrap.appendChild(rGrid);
+  fields.appendChild(rWrap);
+
+  modal.style.display='flex';
+}
+
+function closeEdit(){
+  document.getElementById('edit-modal').style.display='none';
+  editIdx=-1;
+}
+
+async function saveEdit(){
+  if(editIdx<0) return;
+  const shots=getShots();
+  const s=shots[editIdx];
+  s.ring1=parseFloat(document.getElementById('ef-ring1').value)||0;
+  s.ring2=parseFloat(document.getElementById('ef-ring2').value)||0;
+  s.x=parseFloat(document.getElementById('ef-x').value)||0;
+  s.y=parseFloat(document.getElementById('ef-y').value)||0;
+  s.yFromX=parseFloat((s.x*0.1).toFixed(4));
+  s.yPure=parseFloat((s.y-s.yFromX).toFixed(4));
+  // Get result from modal buttons
+  const inBtn=document.querySelector('.result-btn.in');
+  const missBtn=document.querySelector('.result-btn.miss');
+  if(inBtn) s.result='In';
+  else if(missBtn) s.result='Miss';
+  shots[editIdx]=s;
+  saveShots(shots);
+  await pushToFirebase(shots);
+  calc();
+  closeEdit();
+  renderData();
+}
+
+function deleteShot(idx){
+  if(!confirm('Delete this shot?')) return;
+  const shots=getShots();
+  shots.splice(idx,1);
+  saveShots(shots);
+  pushToFirebase(shots);
+  calc();
+  renderData();
+}
+
+// ═══════════════════════════════════════════════════════
+// CSV EXPORT
+// ═══════════════════════════════════════════════════════
+function exportCSV(){
+  const shots=getShots();
+  if(!shots.length){alert('No shots to export.');return}
+  const hdr=['Time','Club','ClubIdx','Wind','WindAngle','ElevYds','ElevDir','Dist','Ring1_WindPulled','Ring2_AdditionalPulled','AimCalc','X_miss','Y_miss','Y_from_X','Y_pure','Result'];
+  const rows=shots.map(s=>[
+    new Date(s.ts).toISOString(),
+    s.club,s.clubIdx||0,s.wind,s.windAngle,
+    s.elev,s.elevUp?'UP':'DOWN',s.dist||0,
+    s.ring1,s.ring2,(s.aimCalc||0).toFixed(3),
+    s.x,s.y||0,(s.yFromX||0).toFixed(3),(s.yPure||0).toFixed(3),
+    s.result
+  ].join(','));
+  const csv=[hdr.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='GSC_ShotLog_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ═══════════════════════════════════════════════════════
+// CSV IMPORT (merge)
+// ═══════════════════════════════════════════════════════
+function importCSV(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=async function(e){
+    try{
+      const lines=e.target.result.trim().split('\n');
+      const hdr=lines[0].split(',');
+      const gi=k=>hdr.indexOf(k);
+      const existing=getShots();
+      const existTs=new Set(existing.map(s=>s.ts));
+      let added=0;
+      lines.slice(1).forEach(line=>{
+        if(!line.trim()) return;
+        const c=line.split(',');
+        const ts=new Date(c[gi('Time')]).getTime();
+        if(existTs.has(ts)) return;
+        existing.push({
+          ts,
+          club:c[gi('Club')]||'',
+          clubIdx:parseInt(c[gi('ClubIdx')])||0,
+          wind:parseFloat(c[gi('Wind')])||0,
+          windAngle:parseFloat(c[gi('WindAngle')])||0,
+          elev:parseFloat(c[gi('ElevYds')])||0,
+          elevUp:(c[gi('ElevDir')]||'UP').trim()==='UP',
+          dist:parseFloat(c[gi('Dist')])||0,
+          ring1:parseFloat(c[gi('Ring1_WindPulled')])||0,
+          ring2:parseFloat(c[gi('Ring2_AdditionalPulled')])||0,
+          aimCalc:parseFloat(c[gi('AimCalc')])||0,
+          x:parseFloat(c[gi('X_miss')])||0,
+          y:parseFloat(c[gi('Y_miss')])||0,
+          yFromX:parseFloat(c[gi('Y_from_X')])||0,
+          yPure:parseFloat(c[gi('Y_pure')])||0,
+          result:(c[gi('Result')]||'').trim()
+        });
+        added++;
+      });
+      saveShots(existing);
+      await pushToFirebase(existing);
+      const st=document.getElementById('import-status');
+      st.style.display='block';
+      st.textContent=`✅ Imported ${added} new shot${added!==1?'s':''} (${existing.length} total)`;
+      setTimeout(()=>st.style.display='none',4000);
+      renderData(); calc();
+    }catch(err){alert('Import failed: '+err.message);}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+function clearData(){
+  if(!confirm('Clear ALL shot data? Cannot be undone.')) return;
+  saveShots([]);
+  pushToFirebase([]);
+  renderData(); calc();
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+renderClubs();
+calc();
+// Pull from Firebase on load then sync
+pullFromFirebase().then(()=>{calc();});
+</script>
+</body>
+</html>
