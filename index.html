@@ -442,21 +442,20 @@ async function pullFromFirebase(){
     const res=await fetch(FIREBASE_URL);
     if(!res.ok){setSyncStatus('err','⚠️ Could not reach Firebase');return}
     const data=await res.json();
-    if(!data){setSyncStatus('ok','☁️ Cloud empty — using local data');return}
-    // Merge: cloud + local, deduplicate by timestamp
-    const local=getShots();
-    const merged=mergeShots(local, Array.isArray(data)?data:Object.values(data));
-    saveShots(merged);
-    setSyncStatus('ok','☁️ Synced — '+merged.length+' shots');
+    // Firebase is the SINGLE SOURCE OF TRUTH.
+    // Always replace local — this ensures deletes & edits propagate to all devices.
+    if(!data||data===null){
+      saveShots([]);
+      setSyncStatus('ok','☁️ Cloud empty — local cleared');
+      return;
+    }
+    const cloud=Array.isArray(data)?data:Object.values(data);
+    const sorted=cloud.sort((a,b)=>a.ts-b.ts);
+    saveShots(sorted);
+    setSyncStatus('ok','☁️ Synced — '+sorted.length+' shots');
   }catch(e){
     setSyncStatus('err','⚠️ Offline — using local data');
   }
-}
-
-function mergeShots(a, b){
-  const map=new Map();
-  [...a,...b].forEach(s=>map.set(s.ts, s));
-  return Array.from(map.values()).sort((x,y)=>x.ts-y.ts);
 }
 
 async function syncNow(){
