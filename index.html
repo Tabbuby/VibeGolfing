@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -656,31 +657,46 @@ function mlRecommend(clubIdx,wind,angle){
 
   const snap=a=>Math.round(a/22.5)*22.5;
   const thisAngle=snap(angle);
+  const angleDiff=(a,b)=>{const d=Math.abs(snap(a)-b);return Math.min(d,360-d)};
 
-  // Exact: same wind ±0.2, same angle bucket
-  const exact=withPull.filter(s=>Math.abs(s.wind-wind)<=0.2&&snap(s.windAngle)===thisAngle);
-  if(exact.length){
+  // 1. EXACT — wind ±0.2, angle ±22.5°
+  const exact=withPull.filter(s=>
+    Math.abs(s.wind-wind)<=0.2 && angleDiff(s.windAngle,thisAngle)<=22.5);
+  if(exact.length)
     return{value:weightedAvg(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT'};
-  }
-  // Near: ±1 wind, ±22.5° angle
-  const near=withPull.filter(s=>Math.abs(s.wind-wind)<=1&&Math.abs(snap(s.windAngle)-thisAngle)<=22.5);
-  if(near.length){
+
+  // 2. NEAREST — wind ±1.0, angle ±22.5°
+  const near=withPull.filter(s=>
+    Math.abs(s.wind-wind)<=1 && angleDiff(s.windAngle,thisAngle)<=22.5);
+  if(near.length)
     return{value:weightedAvg(near),count:weightedCount(near),raw:near.length,type:'NEAREST'};
-  }
-  // Club fallback
+
+  // 3. WIND ONLY — wind ±1.5, any angle
+  const windOnly=withPull.filter(s=>Math.abs(s.wind-wind)<=1.5);
+  if(windOnly.length)
+    return{value:weightedAvg(windOnly),count:weightedCount(windOnly),raw:windOnly.length,type:'WIND MATCH'};
+
+  // 4. ANGLE ONLY — any wind, angle ±45°
+  const angleOnly=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
+  if(angleOnly.length)
+    return{value:weightedAvg(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH'};
+
+  // 5. CLUB AVG — last resort, all shots
   return{value:weightedAvg(withPull),count:weightedCount(withPull),raw:withPull.length,type:'CLUB AVG'};
 }
 
 function confLevel(count,type,raw){
-  // Use raw (actual shot count) for confidence threshold
-  // Use weighted count for display feel
   const n=raw||count;
-  if(type==='EXACT'&&n>=5) return{pct:100,cls:'conf-high',lbl:'HIGH'};
-  if(type==='EXACT'&&n>=3) return{pct:65,cls:'conf-med',lbl:'MEDIUM'};
-  if(type==='EXACT')       return{pct:30,cls:'conf-low',lbl:'LOW'};
-  if(type==='NEAREST'&&n>=5) return{pct:55,cls:'conf-med',lbl:'MEDIUM'};
-  if(type==='NEAREST')       return{pct:25,cls:'conf-low',lbl:'LOW'};
-  return{pct:15,cls:'conf-low',lbl:'LOW — USE CLUB AVG'};
+  if(type==='EXACT'&&n>=5)    return{pct:100,cls:'conf-high',lbl:'HIGH'};
+  if(type==='EXACT'&&n>=3)    return{pct:65, cls:'conf-med', lbl:'MEDIUM'};
+  if(type==='EXACT')          return{pct:30, cls:'conf-low', lbl:'LOW'};
+  if(type==='NEAREST'&&n>=5)  return{pct:55, cls:'conf-med', lbl:'MEDIUM'};
+  if(type==='NEAREST')        return{pct:25, cls:'conf-low', lbl:'LOW'};
+  if(type==='WIND MATCH'&&n>=3) return{pct:20,cls:'conf-low',lbl:'LOW — WIND ONLY'};
+  if(type==='WIND MATCH')     return{pct:12, cls:'conf-low', lbl:'VERY LOW — WIND ONLY'};
+  if(type==='ANGLE MATCH'&&n>=3) return{pct:15,cls:'conf-low',lbl:'LOW — ANGLE ONLY'};
+  if(type==='ANGLE MATCH')    return{pct:8,  cls:'conf-low', lbl:'VERY LOW — ANGLE ONLY'};
+  return{pct:5,cls:'conf-low',lbl:'VERY LOW — CLUB AVG ONLY'};
 }
 
 // ═══ CONSTANT CORRECTION ══════════════════════════════
