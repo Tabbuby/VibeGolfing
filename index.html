@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>GSC Wind Calc</title>
+<title>GSC Wind Calc v1.6</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07130a;color:#fff;min-height:100vh;font-size:15px;padding-bottom:40px}
@@ -234,6 +233,10 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
         <span class="ml-badge" id="ml-badge"></span>
       </div>
       <div id="ml-content"><div class="ml-empty">Log shots to build recommendations</div></div>
+      <!-- Forecast warning -->
+      <div id="forecast-warn" class="hidden" style="background:#3e2a00;border:1px solid #7b4f00;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10px;color:#ffb74d">
+        📈 <b>FORECASTED</b> — extrapolated from existing data. No shots logged at this exact wind/angle yet. Log shots to confirm.
+      </div>
       <!-- Confidence bar -->
       <div class="conf-bar-wrap hidden" id="conf-bar-wrap">
         <div class="conf-bar-label">
@@ -326,6 +329,10 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
       <button class="hdr-btn" onclick="syncNow()">SYNC NOW</button>
     </div>
     <div class="sync-status" id="sync-status-text" style="color:#3d5c42">Checking...</div>
+    <div style="margin-top:8px">
+      <div style="font-size:10px;color:#3d5c42;font-weight:700;letter-spacing:.5px;margin-bottom:4px">VERSION</div>
+      <div id="version-block"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -623,6 +630,17 @@ function getEffectivePull(s){
   return parseFloat((s.ring2+yErr*windCos).toFixed(4));
 }
 
+const APP_VERSION='1.6';
+const APP_CHANGES=[
+  'v1.6 — Linear regression forecast for unknown wind ranges',
+  'v1.5 — WIND MATCH / ANGLE MATCH fallback tiers',
+  'v1.4 — Recency weighting (recent shots count more)',
+  'v1.3 — MISS shots excluded if Y not logged',
+  'v1.2 — Smooth cos() correction for crosswind misses',
+  'v1.1 — Firebase sync as single source of truth',
+  'v1.0 — Initial release with ML pull recommendation',
+];
+
 // Recency weight: most recent shot = 1.0, each step back decays by 0.85
 // After ~5 shots back → 0.44, after ~10 → 0.20, after ~20 → 0.04
 // Wrong early data fades away as correct recent data accumulates
@@ -663,40 +681,103 @@ function mlRecommend(clubIdx,wind,angle){
   const exact=withPull.filter(s=>
     Math.abs(s.wind-wind)<=0.2 && angleDiff(s.windAngle,thisAngle)<=22.5);
   if(exact.length)
-    return{value:weightedAvg(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT'};
+    return{value:weightedAvg(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT',forecast:false};
 
   // 2. NEAREST — wind ±1.0, angle ±22.5°
   const near=withPull.filter(s=>
     Math.abs(s.wind-wind)<=1 && angleDiff(s.windAngle,thisAngle)<=22.5);
   if(near.length)
-    return{value:weightedAvg(near),count:weightedCount(near),raw:near.length,type:'NEAREST'};
+    return{value:weightedAvg(near),count:weightedCount(near),raw:near.length,type:'NEAREST',forecast:false};
 
-  // 3. WIND ONLY — wind ±1.5, any angle
+  // 3. LINEAR REGRESSION on same angle bucket (any wind)
+  // Fits pull = a×wind + b using weighted least squares
+  // Can interpolate AND extrapolate with forecast flag
+  const sameAngle=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
+  if(sameAngle.length>=2){
+    const reg=weightedRegression(sameAngle,wind);
+    if(reg!==null){
+      const inRange=wind>=reg.minWind-0.5&&wind<=reg.maxWind+0.5;
+      return{
+        value:reg.value, count:sameAngle.length, raw:sameAngle.length,
+        type: inRange?'REGRESSION':'FORECAST',
+        forecast:!inRange,
+        r2:reg.r2
+      };
+    }
+  }
+
+  // 4. WIND ONLY regression — any angle
+  if(withPull.length>=2){
+    const reg=weightedRegression(withPull,wind);
+    if(reg!==null){
+      return{
+        value:reg.value, count:withPull.length, raw:withPull.length,
+        type:'FORECAST', forecast:true, r2:reg.r2
+      };
+    }
+  }
+
+  // 5. WIND ONLY simple avg — wind ±1.5
   const windOnly=withPull.filter(s=>Math.abs(s.wind-wind)<=1.5);
   if(windOnly.length)
-    return{value:weightedAvg(windOnly),count:weightedCount(windOnly),raw:windOnly.length,type:'WIND MATCH'};
+    return{value:weightedAvg(windOnly),count:weightedCount(windOnly),raw:windOnly.length,type:'WIND MATCH',forecast:false};
 
-  // 4. ANGLE ONLY — any wind, angle ±45°
+  // 6. ANGLE ONLY simple avg — angle ±45°
   const angleOnly=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
   if(angleOnly.length)
-    return{value:weightedAvg(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH'};
+    return{value:weightedAvg(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH',forecast:false};
 
-  // 5. CLUB AVG — last resort, all shots
-  return{value:weightedAvg(withPull),count:weightedCount(withPull),raw:withPull.length,type:'CLUB AVG'};
+  // 7. CLUB AVG — last resort
+  return{value:weightedAvg(withPull),count:weightedCount(withPull),raw:withPull.length,type:'CLUB AVG',forecast:false};
 }
 
-function confLevel(count,type,raw){
+// Weighted linear regression: pull = a*wind + b
+// Returns predicted value at targetWind, or null if degenerate
+function weightedRegression(shots,targetWind){
+  // shots already have .ePull and .w (recency weight)
+  const n=shots.length;
+  if(n<2) return null;
+  let sw=0,swx=0,swy=0,swxx=0,swxy=0;
+  shots.forEach(s=>{
+    const x=s.wind, y=s.ePull, w=s.w||1;
+    sw+=w; swx+=w*x; swy+=w*y; swxx+=w*x*x; swxy+=w*x*y;
+  });
+  const denom=sw*swxx-swx*swx;
+  if(Math.abs(denom)<1e-10) return null; // all same wind speed — can't fit line
+  const a=(sw*swxy-swx*swy)/denom;
+  const b=(swy-a*swx)/sw;
+  const value=parseFloat((a*targetWind+b).toFixed(4));
+  // R² for quality indicator
+  const meanY=swy/sw;
+  let ssTot=0,ssRes=0;
+  shots.forEach(s=>{
+    ssTot+=s.w*(s.ePull-meanY)**2;
+    ssRes+=s.w*(s.ePull-(a*s.wind+b))**2;
+  });
+  const r2=ssTot>0?Math.max(0,1-ssRes/ssTot):0;
+  const minWind=Math.min(...shots.map(s=>s.wind));
+  const maxWind=Math.max(...shots.map(s=>s.wind));
+  return{value,r2,minWind,maxWind,a,b};
+}
+
+function confLevel(count,type,raw,r2){
   const n=raw||count;
-  if(type==='EXACT'&&n>=5)    return{pct:100,cls:'conf-high',lbl:'HIGH'};
-  if(type==='EXACT'&&n>=3)    return{pct:65, cls:'conf-med', lbl:'MEDIUM'};
-  if(type==='EXACT')          return{pct:30, cls:'conf-low', lbl:'LOW'};
-  if(type==='NEAREST'&&n>=5)  return{pct:55, cls:'conf-med', lbl:'MEDIUM'};
-  if(type==='NEAREST')        return{pct:25, cls:'conf-low', lbl:'LOW'};
-  if(type==='WIND MATCH'&&n>=3) return{pct:20,cls:'conf-low',lbl:'LOW — WIND ONLY'};
-  if(type==='WIND MATCH')     return{pct:12, cls:'conf-low', lbl:'VERY LOW — WIND ONLY'};
-  if(type==='ANGLE MATCH'&&n>=3) return{pct:15,cls:'conf-low',lbl:'LOW — ANGLE ONLY'};
-  if(type==='ANGLE MATCH')    return{pct:8,  cls:'conf-low', lbl:'VERY LOW — ANGLE ONLY'};
-  return{pct:5,cls:'conf-low',lbl:'VERY LOW — CLUB AVG ONLY'};
+  const r=r2||0;
+  if(type==='EXACT'&&n>=5)      return{pct:100,cls:'conf-high',lbl:'HIGH'};
+  if(type==='EXACT'&&n>=3)      return{pct:65, cls:'conf-med', lbl:'MEDIUM'};
+  if(type==='EXACT')            return{pct:30, cls:'conf-low', lbl:'LOW'};
+  if(type==='NEAREST'&&n>=5)    return{pct:55, cls:'conf-med', lbl:'MEDIUM'};
+  if(type==='NEAREST')          return{pct:25, cls:'conf-low', lbl:'LOW'};
+  if(type==='REGRESSION'&&r>=0.8&&n>=4) return{pct:50,cls:'conf-med',lbl:'MEDIUM — REGRESSION'};
+  if(type==='REGRESSION'&&n>=3) return{pct:30,cls:'conf-low',lbl:'LOW — REGRESSION'};
+  if(type==='REGRESSION')       return{pct:18,cls:'conf-low',lbl:'LOW — REGRESSION'};
+  if(type==='FORECAST'&&r>=0.8) return{pct:20,cls:'conf-low',lbl:'LOW — FORECASTED'};
+  if(type==='FORECAST')         return{pct:10,cls:'conf-low',lbl:'VERY LOW — FORECASTED'};
+  if(type==='WIND MATCH'&&n>=3) return{pct:15,cls:'conf-low',lbl:'LOW — WIND ONLY'};
+  if(type==='WIND MATCH')       return{pct:10,cls:'conf-low',lbl:'VERY LOW — WIND ONLY'};
+  if(type==='ANGLE MATCH'&&n>=3)return{pct:10,cls:'conf-low',lbl:'LOW — ANGLE ONLY'};
+  if(type==='ANGLE MATCH')      return{pct:6, cls:'conf-low',lbl:'VERY LOW — ANGLE ONLY'};
+  return{pct:4,cls:'conf-low',lbl:'VERY LOW — CLUB AVG ONLY'};
 }
 
 // ═══ CONSTANT CORRECTION ══════════════════════════════
@@ -732,7 +813,7 @@ function calc(){
 
   if(rec){
     badge.textContent=rec.type;
-    const conf=confLevel(rec.count,rec.type,rec.raw);
+    const conf=confLevel(rec.count,rec.type,rec.raw,rec.r2);
     mlEl.innerHTML=`
       <div class="ml-rec-row">
         <div class="ml-block">
@@ -740,13 +821,14 @@ function calc(){
           <div class="ml-val">${fmtS(rec.value)}</div>
         </div>
         <div class="ml-divider"></div>
-        <div class="ml-block">
+          <div class="ml-block">
           <div class="ml-lbl">BASED ON</div>
           <div class="ml-val" style="font-size:22px">${rec.raw}</div>
-          <div style="font-size:9px;color:#3d5c42;margin-top:2px">${rec.type} · recency weighted</div>
+          <div style="font-size:9px;color:${rec.forecast?'#ffb74d':'#3d5c42'};margin-top:2px">${rec.type}${rec.forecast?' 📈':''}</div>
         </div>
       </div>`;
     confWrap.classList.remove('hidden');
+    document.getElementById('forecast-warn').classList.toggle('hidden',!rec.forecast);
     document.getElementById('conf-label').textContent=conf.lbl;
     const fill=document.getElementById('conf-bar-fill');
     fill.style.width=conf.pct+'%';
@@ -755,6 +837,7 @@ function calc(){
     badge.textContent='';
     mlEl.innerHTML='<div class="ml-empty">Log shots to build recommendations</div>';
     confWrap.classList.add('hidden');
+    document.getElementById('forecast-warn').classList.add('hidden');
   }
 
   // Constant correction check
@@ -925,6 +1008,13 @@ function renderData(){
   }
 
   renderTable(shots);
+  // Version block
+  const vb=document.getElementById('version-block');
+  if(vb){
+    vb.innerHTML=`<div style="background:#132015;border-radius:8px;padding:8px">
+      ${APP_CHANGES.map((ch,i)=>`<div style="font-size:${i===0?'11':'10'}px;color:${i===0?'#5dfc8a':'#3d5c42'};padding:2px 0;font-weight:${i===0?'700':'400'}">${ch}</div>`).join('')}
+    </div>`;
+  }
 }
 
 function renderTable(shots){
