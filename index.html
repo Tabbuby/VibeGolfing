@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -623,34 +622,64 @@ function getEffectivePull(s){
   return parseFloat((s.ring2+yErr*windCos).toFixed(4));
 }
 
+// Recency weight: most recent shot = 1.0, each step back decays by 0.85
+// After ~5 shots back → 0.44, after ~10 → 0.20, after ~20 → 0.04
+// Wrong early data fades away as correct recent data accumulates
+const DECAY=0.85;
+function recencyWeight(idx,total){
+  // idx=0 is oldest, idx=total-1 is newest
+  const stepsBack=total-1-idx;
+  return Math.pow(DECAY,stepsBack);
+}
+function weightedAvg(arr){
+  // arr sorted oldest→newest, each item has .ePull and .w (weight)
+  const sumW=arr.reduce((a,s)=>a+s.w,0);
+  if(!sumW) return null;
+  return arr.reduce((a,s)=>a+s.ePull*s.w,0)/sumW;
+}
+function weightedCount(arr){
+  // Effective sample count = sum of weights (normalized feel)
+  const sumW=arr.reduce((a,s)=>a+s.w,0);
+  const maxW=arr.length; // if all had weight 1.0
+  return parseFloat((sumW/maxW*arr.length).toFixed(1));
+}
+
 function mlRecommend(clubIdx,wind,angle){
   const shots=getShots().filter(s=>s.clubIdx===clubIdx);
   if(!shots.length) return null;
-  const withPull=shots.map(s=>({...s,ePull:getEffectivePull(s)})).filter(s=>s.ePull!==null);
-  if(!withPull.length) return null; // all misses had no Y data
+  // Sort oldest→newest so recency index is correct
+  const sorted=shots.slice().sort((a,b)=>a.ts-b.ts);
+  const withPull=sorted
+    .map((s,i)=>({...s,ePull:getEffectivePull(s),w:recencyWeight(i,sorted.length)}))
+    .filter(s=>s.ePull!==null);
+  if(!withPull.length) return null;
+
   const snap=a=>Math.round(a/22.5)*22.5;
   const thisAngle=snap(angle);
 
   // Exact: same wind ±0.2, same angle bucket
   const exact=withPull.filter(s=>Math.abs(s.wind-wind)<=0.2&&snap(s.windAngle)===thisAngle);
   if(exact.length){
-    return{value:exact.reduce((a,s)=>a+s.ePull,0)/exact.length,count:exact.length,type:'EXACT'};
+    return{value:weightedAvg(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT'};
   }
   // Near: ±1 wind, ±22.5° angle
   const near=withPull.filter(s=>Math.abs(s.wind-wind)<=1&&Math.abs(snap(s.windAngle)-thisAngle)<=22.5);
   if(near.length){
-    return{value:near.reduce((a,s)=>a+s.ePull,0)/near.length,count:near.length,type:'NEAREST'};
+    return{value:weightedAvg(near),count:weightedCount(near),raw:near.length,type:'NEAREST'};
   }
   // Club fallback
-  return{value:withPull.reduce((a,s)=>a+s.ePull,0)/withPull.length,count:withPull.length,type:'CLUB AVG'};
+  return{value:weightedAvg(withPull),count:weightedCount(withPull),raw:withPull.length,type:'CLUB AVG'};
 }
 
-function confLevel(count,type){
-  if(type==='EXACT'&&count>=5) return{pct:100,cls:'conf-high',lbl:'HIGH'};
-  if(type==='EXACT'&&count>=3) return{pct:65,cls:'conf-med',lbl:'MEDIUM'};
-  if(type==='EXACT')           return{pct:30,cls:'conf-low',lbl:'LOW'};
-  if(type==='NEAREST'&&count>=5) return{pct:55,cls:'conf-med',lbl:'MEDIUM'};
-  if(type==='NEAREST')           return{pct:25,cls:'conf-low',lbl:'LOW'};
+function confLevel(count,type,raw){
+  // Use raw (actual shot count) for confidence threshold
+  // Use weighted count for display feel
+  const n=raw||count;
+  if(type==='EXACT'&&n>=5) return{pct:100,cls:'conf-high',lbl:'HIGH'};
+  if(type==='EXACT'&&n>=3) return{pct:65,cls:'conf-med',lbl:'MEDIUM'};
+  if(type==='EXACT')       return{pct:30,cls:'conf-low',lbl:'LOW'};
+  if(type==='NEAREST'&&n>=5) return{pct:55,cls:'conf-med',lbl:'MEDIUM'};
+  if(type==='NEAREST')       return{pct:25,cls:'conf-low',lbl:'LOW'};
   return{pct:15,cls:'conf-low',lbl:'LOW — USE CLUB AVG'};
 }
 
@@ -687,7 +716,7 @@ function calc(){
 
   if(rec){
     badge.textContent=rec.type;
-    const conf=confLevel(rec.count,rec.type);
+    const conf=confLevel(rec.count,rec.type,rec.raw);
     mlEl.innerHTML=`
       <div class="ml-rec-row">
         <div class="ml-block">
@@ -697,8 +726,8 @@ function calc(){
         <div class="ml-divider"></div>
         <div class="ml-block">
           <div class="ml-lbl">BASED ON</div>
-          <div class="ml-val" style="font-size:22px">${rec.count}</div>
-          <div style="font-size:9px;color:#3d5c42;margin-top:2px">${rec.type} MATCH</div>
+          <div class="ml-val" style="font-size:22px">${rec.raw}</div>
+          <div style="font-size:9px;color:#3d5c42;margin-top:2px">${rec.type} · recency weighted</div>
         </div>
       </div>`;
     confWrap.classList.remove('hidden');
@@ -843,26 +872,31 @@ function renderData(){
   } else {
     insightEl.innerHTML=Object.entries(byClub).map(([,arr])=>{
       const withPull=arr.map(s=>({...s,ePull:getEffectivePull(s)})).filter(s=>s.ePull!==null);
-      const avgPull=withPull.reduce((a,s)=>a+s.ePull,0)/withPull.length;
+      // Add recency weights for insight display too
+      const sortedPull=withPull.slice().sort((a,b)=>a.ts-b.ts);
+      const wPull=sortedPull.map((s,i)=>({...s,w:recencyWeight(i,sortedPull.length)}));
+      const avgPull=weightedAvg(wPull)||0;
       const inShots=arr.filter(s=>s.result==='In');
-      const avgInPull=inShots.length?inShots.reduce((a,s)=>a+s.ring2,0)/inShots.length:null;
+      const wInShots=inShots.slice().sort((a,b)=>a.ts-b.ts)
+        .map((s,i)=>({...s,ePull:s.ring2,w:recencyWeight(i,inShots.length)}));
+      const avgInPull=wInShots.length?weightedAvg(wInShots):null;
       // Group by wind
       const wg={};
-      withPull.forEach(s=>{const k=s.wind.toFixed(1);if(!wg[k])wg[k]=[];wg[k].push(s)});
+      wPull.forEach(s=>{const k=s.wind.toFixed(1);if(!wg[k])wg[k]=[];wg[k].push(s)});
       const windRows=Object.entries(wg).sort((a,b)=>parseFloat(a[0])-parseFloat(b[0]))
         .map(([w,gs])=>`<div class="insight-row">
           <span class="isl">Wind ${w} · ${gs.length}x</span>
-          <span class="isv">${fmtS(gs.reduce((a,s)=>a+s.ePull,0)/gs.length)}</span>
+          <span class="isv">${fmtS(weightedAvg(gs)||0)}</span>
         </div>`).join('');
       // Angle groups
       const ag={};
-      withPull.forEach(s=>{
+      wPull.forEach(s=>{
         const k=angleLbl(s.windAngle);
         if(!ag[k])ag[k]=[];ag[k].push(s);
       });
       const angleRows=Object.entries(ag).map(([lbl,gs])=>`<div class="insight-row">
         <span class="isl">${lbl}</span>
-        <span class="isv">${fmtS(gs.reduce((a,s)=>a+s.ePull,0)/gs.length)}</span>
+        <span class="isv">${fmtS(weightedAvg(gs)||0)}</span>
       </div>`).join('');
       return`<div class="club-insight">
         <div class="club-insight-name">${arr[0].club} — ${arr.length} shots</div>
