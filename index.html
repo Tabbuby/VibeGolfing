@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -611,15 +612,22 @@ function renderClubs(){
 
 // ═══ ML ENGINE ════════════════════════════════════════
 function getEffectivePull(s){
+  // IN shots: ring2 is the correct pull — learn directly
   if(s.result==='In') return s.ring2;
+  // MISS shots: only learn if Y was actually logged
+  // If Y=0 on a miss we have no idea if pull was right or wrong — skip
   const yErr=s.yPure||s.y||0;
-  return parseFloat((s.ring2-yErr).toFixed(4));
+  if(yErr===0) return null; // null = exclude from learning
+  // Smooth cosine correction — full at 0°/180°, partial at 45°/135°, near-zero at 90°
+  const windCos=Math.cos((s.windAngle||0)*Math.PI/180);
+  return parseFloat((s.ring2+yErr*windCos).toFixed(4));
 }
 
 function mlRecommend(clubIdx,wind,angle){
   const shots=getShots().filter(s=>s.clubIdx===clubIdx);
   if(!shots.length) return null;
-  const withPull=shots.map(s=>({...s,ePull:getEffectivePull(s)}));
+  const withPull=shots.map(s=>({...s,ePull:getEffectivePull(s)})).filter(s=>s.ePull!==null);
+  if(!withPull.length) return null; // all misses had no Y data
   const snap=a=>Math.round(a/22.5)*22.5;
   const thisAngle=snap(angle);
 
@@ -747,7 +755,10 @@ function updateCorrectedHint(){
   const ch=document.getElementById('corrected-hint');
   if(y!==0){
     ch.style.display='block';
-    ch.textContent=`🧠 Corrected pull = ${fmtS(parseFloat((r2-y).toFixed(2)))} (pulled ${fmtS(r2)} − miss ${fmtS(y)})`;
+    const windCos=Math.cos(windAngle*Math.PI/180);
+    const corrected=parseFloat((r2+y*windCos).toFixed(2));
+    const pct=Math.round(Math.abs(windCos)*100);
+    ch.textContent=`🧠 Corrected pull = ${fmtS(corrected)} (${pct}% Y correction at ${windAngle}°)`;
   } else ch.style.display='none';
 }
 function setResult(r){
@@ -831,7 +842,7 @@ function renderData(){
     insightEl.innerHTML='<div class="empty">No data yet</div>';
   } else {
     insightEl.innerHTML=Object.entries(byClub).map(([,arr])=>{
-      const withPull=arr.map(s=>({...s,ePull:getEffectivePull(s)}));
+      const withPull=arr.map(s=>({...s,ePull:getEffectivePull(s)})).filter(s=>s.ePull!==null);
       const avgPull=withPull.reduce((a,s)=>a+s.ePull,0)/withPull.length;
       const inShots=arr.filter(s=>s.result==='In');
       const avgInPull=inShots.length?inShots.reduce((a,s)=>a+s.ring2,0)/inShots.length:null;
