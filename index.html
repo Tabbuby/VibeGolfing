@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>GSC Wind Calc v1.6</title>
+<title>GSC Wind Calc v1.7</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07130a;color:#fff;min-height:100vh;font-size:15px;padding-bottom:40px}
@@ -35,8 +35,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .club-btn.active .club-abbr{color:#a5d6a7}
 .club-val{font-size:12px;font-weight:700;color:#8aa88e}
 .club-btn.active .club-val{color:#5dfc8a}
-
-/* ── WIND PANEL: compass + angle ── */
 .wind-panel{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
 .compass-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
 .compass-lbl{font-size:8px;color:#3d5c42;letter-spacing:1px;font-weight:700}
@@ -55,14 +53,10 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .elev-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;padding:8px;border-radius:8px;cursor:pointer;border:1px solid;font-size:11px;font-weight:700;letter-spacing:.5px;-webkit-tap-highlight-color:transparent}
 .elev-up{color:#5dfc8a;border-color:#2e7d32;background:#0d2e10}
 .elev-dn{color:#ffb74d;border-color:#7b4f00;background:#2a1a00}
-
-/* ── AIM RESULT ── */
 .aim-block{text-align:center;padding:10px 6px}
 .aim-lbl{font-size:9px;color:#3d5c42;letter-spacing:1.5px;margin-bottom:4px;font-weight:700}
 .aim-val{font-size:58px;font-weight:700;line-height:1;color:#5dfc8a}
 .aim-sub{font-size:11px;margin-top:4px;color:#3d5c42;font-weight:600;letter-spacing:.3px}
-
-/* ── ML BOX ── */
 .ml-rec{background:#0a1e0d;border:1px solid #1a4520;border-radius:12px;padding:12px;margin-top:10px}
 .ml-rec-title{font-size:9px;color:#5dfc8a;letter-spacing:1.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .ml-badge{background:#1a4520;border:1px solid #2e7d32;border-radius:4px;padding:1px 6px;font-size:8px;font-weight:700;color:#5dfc8a;letter-spacing:.5px}
@@ -72,8 +66,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .ml-lbl{font-size:9px;color:#3d5c42;letter-spacing:1px;font-weight:700;margin-bottom:2px}
 .ml-val{font-size:30px;font-weight:700;color:#f0e968}
 .ml-empty{font-size:11px;color:#3d5c42;text-align:center;padding:8px 0;font-style:italic}
-
-/* ── CONFIDENCE BAR ── */
 .conf-bar-wrap{margin-top:8px;padding-top:8px;border-top:1px solid #1a4520}
 .conf-bar-label{display:flex;justify-content:space-between;font-size:9px;color:#3d5c42;margin-bottom:4px;font-weight:700;letter-spacing:.5px}
 .conf-bar-track{height:6px;background:#1a3020;border-radius:3px;overflow:hidden}
@@ -81,16 +73,12 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .conf-low{background:#c62828}
 .conf-med{background:#ffb74d}
 .conf-high{background:#5dfc8a}
-
-/* ── CONSTANT CORRECTION ── */
 .correction-box{background:#2a1a00;border:1px solid #7b4f00;border-radius:10px;padding:10px;margin-top:8px}
 .correction-title{font-size:9px;color:#ffb74d;font-weight:700;letter-spacing:1px;margin-bottom:6px}
 .correction-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-top:4px}
 .correction-lbl{color:#8d6e63}
 .correction-val{color:#ffb74d;font-weight:700}
 .correction-btn{padding:4px 10px;background:#3e2a00;border:1px solid #ffb74d;border-radius:6px;color:#ffb74d;font-size:10px;font-weight:700;cursor:pointer;margin-top:8px;-webkit-tap-highlight-color:transparent}
-
-/* ── BUTTONS ── */
 .btn{width:100%;padding:14px;border:none;border-radius:11px;font-size:13px;font-weight:800;letter-spacing:.8px;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-top:4px}
 .btn-green{background:#2e7d32;color:#fff}
 .btn-green:active{background:#1b5e20}
@@ -105,13 +93,29 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .result-btn.in{background:#1b5e20;border-color:#4caf50;color:#5dfc8a}
 .result-btn.miss{background:#3e1010;border-color:#c62828;color:#ef9a9a}
 .result-btn.inactive{background:#132015;color:#3d5c42}
+
+/* ── SHOT LOG TABLE ── */
 .data-table{width:100%;border-collapse:collapse;font-size:10px}
-.data-table th{background:#132015;color:#3d5c42;padding:7px 4px;text-align:center;font-size:8px;letter-spacing:.5px;font-weight:700;position:sticky;top:0}
+.data-table th{background:#132015;color:#3d5c42;padding:7px 4px;text-align:center;font-size:8px;letter-spacing:.5px;font-weight:700;position:sticky;top:0;z-index:2}
+.data-table th.sortable{cursor:pointer;user-select:none}
+.data-table th.sortable:hover{color:#a5d6a7}
+.data-table th .sort-arrow{margin-left:2px;opacity:.4}
+.data-table th.sort-asc .sort-arrow::after{content:'▲'}
+.data-table th.sort-desc .sort-arrow::after{content:'▼'}
+.data-table th.sort-asc .sort-arrow,.data-table th.sort-desc .sort-arrow{opacity:1;color:#5dfc8a}
 .data-table td{padding:6px 4px;text-align:center;border-bottom:1px solid #0f1e11;color:#8aa88e}
 .data-table tr:last-child td{border-bottom:none}
 .td-in{color:#5dfc8a;font-weight:700}
 .td-miss{color:#ef9a9a;font-weight:700}
 .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #1a3020;max-height:340px;overflow-y:auto}
+
+/* ── FILTER ROW ── */
+.filter-row td{padding:3px 2px;background:#0a1a0c;position:sticky;top:28px;z-index:1}
+.filter-row input,.filter-row select{width:100%;background:#132015;border:1px solid #1a3020;border-radius:4px;color:#cfd8dc;font-size:9px;padding:3px 2px;text-align:center;outline:none;-moz-appearance:textfield}
+.filter-row input::-webkit-outer-spin-button,.filter-row input::-webkit-inner-spin-button{-webkit-appearance:none}
+.filter-row input:focus,.filter-row select:focus{border-color:#4caf50}
+.filter-row select{-webkit-appearance:none;appearance:none}
+
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .stat-card{background:#132015;border-radius:10px;padding:10px;text-align:center}
 .stat-val{font-size:20px;font-weight:700;color:#5dfc8a}
@@ -124,14 +128,24 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .club-rate-sub{font-size:9px;color:#3d5c42;margin-top:1px}
 .success-bar{height:4px;background:#1a3020;border-radius:2px;margin-top:6px;overflow:hidden}
 .success-fill{height:4px;background:#5dfc8a;border-radius:2px}
-.club-insight{background:#132015;border-radius:10px;padding:10px;margin-bottom:6px}
+
+/* ── LEARNED PULL — COLLAPSED ── */
+.ml-summary-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.ml-sum-btn{border:1px solid #1a3020;border-radius:8px;padding:6px 2px;text-align:center;cursor:pointer;background:#132015;-webkit-tap-highlight-color:transparent}
+.ml-sum-btn.has-data{border-color:#1a4520;background:#0a1e0d}
+.ml-sum-abbr{font-size:8px;color:#3d5c42;font-weight:700}
+.ml-sum-val{font-size:11px;font-weight:700;color:#3d5c42}
+.ml-sum-btn.has-data .ml-sum-abbr{color:#a5d6a7}
+.ml-sum-btn.has-data .ml-sum-val{color:#f0e968}
+.ml-detail{background:#0a1e0d;border:1px solid #1a4520;border-radius:10px;padding:10px;margin-top:8px;display:none}
+.ml-detail.open{display:block}
 .club-insight-name{font-size:10px;color:#3d5c42;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
 .insight-row{display:flex;justify-content:space-between;font-size:10px;margin-top:3px;align-items:center}
 .isl{color:#3d7060}
 .isv{color:#cfd8dc;font-weight:700}
+.divider{border:none;border-top:1px solid #1a3020;margin:10px 0}
 .y-box{background:#0a1e0d;border:1px solid #1a4520;border-radius:8px;padding:9px;font-size:11px;color:#80cbc4;margin-top:8px}
 .corrected-hint{font-size:10px;color:#ffb74d;background:#3e2a00;border:1px solid #7b4f00;border-radius:6px;padding:6px 8px;margin-top:8px;display:none}
-.divider{border:none;border-top:1px solid #1a3020;margin:10px 0}
 .empty{text-align:center;color:#3d5c42;font-size:12px;padding:30px 0}
 .hdr-btn{font-size:10px;font-weight:700;padding:5px 12px;border:1px solid #1e3822;border-radius:7px;cursor:pointer;background:#132015;color:#66bb6a;-webkit-tap-highlight-color:transparent;letter-spacing:.5px}
 .edit-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -139,6 +153,38 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .inline-actions{display:flex;gap:4px;justify-content:center}
 .sync-status{font-size:10px;text-align:center;padding:6px;border-radius:6px;margin-top:6px}
 .hidden{display:none}
+
+/* ── WIND BRACKET SUMMARY ── */
+.bracket-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.bracket-card{background:#132015;border-radius:10px;padding:10px}
+.bracket-title{font-size:9px;color:#3d5c42;font-weight:700;letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase}
+.bracket-rows{}
+.bracket-row{display:flex;justify-content:space-between;align-items:center;font-size:10px;padding:3px 0;border-bottom:1px solid #0f1e11}
+.bracket-row:last-child{border-bottom:none}
+.bracket-lbl{color:#3d7060;font-size:9px}
+.bracket-val{font-weight:700}
+.bracket-val.over{color:#ef9a9a}
+.bracket-val.under{color:#80cbc4}
+.bracket-val.ok{color:#5dfc8a}
+.bracket-val.neutral{color:#8aa88e}
+.bracket-n{font-size:8px;color:#3d5c42;margin-left:3px}
+
+/* ── ELEV TUNER ── */
+.elev-tuner-card{background:#0a1e0d;border:1px solid #1a4520;border-radius:12px;padding:12px;margin-top:10px}
+.elev-tuner-title{font-size:9px;color:#5dfc8a;letter-spacing:1.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.elev-tuner-badge{background:#1a4520;border:1px solid #2e7d32;border-radius:4px;padding:1px 6px;font-size:8px;color:#5dfc8a;font-weight:700}
+.elev-zone-grid{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:4px;align-items:center;margin-bottom:10px}
+.elev-zone-sep{background:#1a4520;height:50px}
+.elev-zone{text-align:center;padding:4px}
+.elev-zone-lbl{font-size:8px;color:#3d5c42;letter-spacing:.5px;font-weight:700;margin-bottom:3px}
+.elev-zone-val{font-size:18px;font-weight:700;color:#f0e968}
+.elev-zone-sub{font-size:8px;color:#3d5c42;margin-top:2px}
+.elev-zone-n{font-size:8px;color:#3d5c42}
+.elev-tune-hint{font-size:10px;color:#80cbc4;background:#0f2535;border:1px solid #1e5555;border-radius:6px;padding:7px 10px;margin-top:4px}
+.elev-tune-none{font-size:11px;color:#3d5c42;text-align:center;padding:8px;font-style:italic}
+.piece-bar{height:4px;background:#1a3020;border-radius:2px;margin-top:6px;overflow:hidden;position:relative}
+.piece-fill-lo{position:absolute;left:0;height:4px;background:#80cbc4;border-radius:2px}
+.piece-fill-hi{position:absolute;height:4px;background:#ffb74d;border-radius:2px}
 </style>
 </head>
 <body>
@@ -165,14 +211,12 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
     <div style="font-size:9px;color:#3d5c42;margin-top:4px">Changes save automatically</div>
   </div>
 
-  <!-- Wind speed + Compass + Angle -->
   <div class="card">
     <div class="row2" style="margin-bottom:12px">
       <div>
         <div class="label">WIND SPEED</div>
         <input type="number" id="wind" min="0" step="0.5" placeholder="0" oninput="calc()">
       </div>
-      <!-- Compass rose -->
       <div class="compass-wrap">
         <div class="compass-lbl">WIND DIRECTION</div>
         <canvas id="compass" width="90" height="90" onclick="compassClick(event)" style="cursor:pointer;border-radius:50%"></canvas>
@@ -180,7 +224,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
       </div>
     </div>
 
-    <!-- Angle fine control -->
     <div>
       <div class="label">WIND ANGLE (TEE)</div>
       <div class="angle-ctrl">
@@ -207,7 +250,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
       </div>
     </div>
 
-    <!-- Elevation -->
     <div style="margin-top:12px;max-width:50%;padding-right:5px">
       <div class="label">ELEVATION (yds)</div>
       <input type="number" id="elev" min="0" step="1" placeholder="0" oninput="calc()">
@@ -218,7 +260,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
     </div>
   </div>
 
-  <!-- Results -->
   <div class="card">
     <div class="aim-block">
       <div class="aim-lbl">① WIND PULL — LATERAL RINGS</div>
@@ -226,18 +267,15 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
       <div class="aim-sub">rings offset along wind direction</div>
     </div>
 
-    <!-- ML Recommendation -->
     <div class="ml-rec">
       <div class="ml-rec-title">
         🧠 RECOMMENDED ② ADDITIONAL PULL
         <span class="ml-badge" id="ml-badge"></span>
       </div>
       <div id="ml-content"><div class="ml-empty">Log shots to build recommendations</div></div>
-      <!-- Forecast warning -->
       <div id="forecast-warn" class="hidden" style="background:#3e2a00;border:1px solid #7b4f00;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10px;color:#ffb74d">
         📈 <b>FORECASTED</b> — extrapolated from existing data. No shots logged at this exact wind/angle yet. Log shots to confirm.
       </div>
-      <!-- Confidence bar -->
       <div class="conf-bar-wrap hidden" id="conf-bar-wrap">
         <div class="conf-bar-label">
           <span>CONFIDENCE</span>
@@ -249,7 +287,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
       </div>
     </div>
 
-    <!-- Constant correction warning -->
     <div class="correction-box hidden" id="correction-box">
       <div class="correction-title">⚠️ CONSTANT CORRECTION SUGGESTED</div>
       <div id="correction-rows"></div>
@@ -260,7 +297,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
     </div>
   </div>
 
-  <!-- LOG SECTION -->
   <div class="section-sep">
     <div class="section-sep-line"></div>
     <div class="section-sep-txt">📝 LOG THIS SHOT</div>
@@ -318,7 +354,7 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
     <button class="btn btn-green" onclick="saveShot()" style="margin-top:12px">💾 SAVE SHOT</button>
   </div>
 
-</div><!-- /tab-play -->
+</div>
 
 <!-- ══ DATA TAB ═══════════════════════════════════════════ -->
 <div class="tab-content" id="tab-data">
@@ -347,9 +383,24 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
     </div>
   </div>
 
+  <!-- LEARNED PULL — MINIMIZED with tap-to-expand -->
   <div class="card">
-    <div class="section-title">🧠 LEARNED PULL VALUES (② per club)</div>
-    <div id="club-ml-insights"><div class="empty">No data yet</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="section-title" style="margin:0">🧠 LEARNED PULL VALUES (②)</div>
+      <div style="font-size:9px;color:#3d5c42">tap club to expand</div>
+    </div>
+    <div class="ml-summary-grid" id="ml-summary-grid"></div>
+    <div id="ml-detail-panel"></div>
+  </div>
+
+  <!-- WIND BRACKET SUMMARY -->
+  <div class="card">
+    <div class="section-title">💨 WIND BRACKET SUMMARY</div>
+    <div style="font-size:9px;color:#3d5c42;margin-bottom:8px">avg ② pull error by condition · + = over-pulled · − = under-pulled</div>
+    <div id="wind-bracket-content"><div class="empty">No data yet</div></div>
+
+    <!-- ELEVATION AUTO-TUNER -->
+    <div id="elev-tuner-wrap"></div>
   </div>
 
   <div class="card">
@@ -370,7 +421,7 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
     <div id="import-status" style="font-size:10px;color:#80cbc4;text-align:center;margin-top:8px;display:none"></div>
   </div>
 
-</div><!-- /tab-data -->
+</div>
 
 <!-- ══ EDIT MODAL ══ -->
 <div id="edit-modal" style="display:none;position:fixed;inset:0;background:#000a;z-index:200;padding:20px;align-items:center;justify-content:center">
@@ -400,6 +451,9 @@ const FIREBASE_URL='https://vibegolfing-default-rtdb.asia-southeast1.firebasedat
 // ═══ STATE ════════════════════════════════════════════
 let selClub=0,windAngle=0,elevUp=true,logResult='',editIdx=-1;
 let consts=CLUBS.map((_,i)=>parseFloat(localStorage.getItem('gsc_c'+i)||'1'));
+let openMlClub=-1; // which club detail is expanded
+let tableSort={col:'ts',dir:'desc'};
+let tableFilters={};
 
 // ═══ STORAGE ══════════════════════════════════════════
 function getShots(){try{return JSON.parse(localStorage.getItem('gsc_shots')||'[]')}catch(e){return[]}}
@@ -440,90 +494,60 @@ async function syncNow(){
   calc();
 }
 
-// ═══ TABS (auto-sync on DATA switch) ══════════════════
+// ═══ TABS ═════════════════════════════════════════════
 function showTab(id){
   document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   document.querySelectorAll('.tab')[{play:0,data:1}[id]].classList.add('active');
-  if(id==='data'){
-    // Auto-sync when switching to DATA tab
-    pullFromFirebase().then(()=>renderData());
-  }
+  if(id==='data') pullFromFirebase().then(()=>renderData());
 }
 function toggleEl(id){document.getElementById(id).classList.toggle('hidden')}
 
-// ═══ COMPASS ROSE ═════════════════════════════════════
+// ═══ COMPASS ══════════════════════════════════════════
 function drawCompass(angle){
   const canvas=document.getElementById('compass');
   const ctx=canvas.getContext('2d');
-  const W=canvas.width, H=canvas.height, cx=W/2, cy=H/2, r=W/2-2;
+  const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=W/2-2;
   ctx.clearRect(0,0,W,H);
-
-  // Background circle
-  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
-  ctx.fillStyle='#0f1e11'; ctx.fill();
-  ctx.strokeStyle='#1a4520'; ctx.lineWidth=1.5; ctx.stroke();
-
-  // Cardinal labels
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.fillStyle='#0f1e11';ctx.fill();
+  ctx.strokeStyle='#1a4520';ctx.lineWidth=1.5;ctx.stroke();
   const labels=[['N',0],['E',90],['S',180],['W',270]];
-  ctx.font='bold 9px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
   labels.forEach(([lbl,deg])=>{
     const rad=(deg-90)*Math.PI/180;
-    const lx=cx+Math.cos(rad)*(r-10);
-    const ly=cy+Math.sin(rad)*(r-10);
-    ctx.fillStyle='#3d5c42'; ctx.fillText(lbl,lx,ly);
+    ctx.fillStyle='#3d5c42';
+    ctx.fillText(lbl,cx+Math.cos(rad)*(r-10),cy+Math.sin(rad)*(r-10));
   });
-
-  // Tick marks at 45°
   for(let d=0;d<360;d+=45){
     const rad=(d-90)*Math.PI/180;
-    const ix=cx+Math.cos(rad)*(r-18), iy=cy+Math.sin(rad)*(r-18);
-    const ox=cx+Math.cos(rad)*(r-4),  oy=cy+Math.sin(rad)*(r-4);
-    ctx.beginPath(); ctx.moveTo(ix,iy); ctx.lineTo(ox,oy);
-    ctx.strokeStyle='#2a4030'; ctx.lineWidth=1; ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(rad)*(r-18),cy+Math.sin(rad)*(r-18));
+    ctx.lineTo(cx+Math.cos(rad)*(r-4),cy+Math.sin(rad)*(r-4));
+    ctx.strokeStyle='#2a4030';ctx.lineWidth=1;ctx.stroke();
   }
-
-  // Tee-off target dot at center-bottom (0° = tailwind = wind from S, pushing to N = tee direction is up)
-  ctx.beginPath(); ctx.arc(cx,cy-r+20,3,0,Math.PI*2);
-  ctx.fillStyle='#5dfc8a'; ctx.fill();
-
-  // Wind arrow — angle=0 means wind from behind (tailwind), pushing ball toward top
-  // Arrow shows where wind comes FROM
+  ctx.beginPath();ctx.arc(cx,cy-r+20,3,0,Math.PI*2);
+  ctx.fillStyle='#5dfc8a';ctx.fill();
   const fromRad=((angle+180)%360-90)*Math.PI/180;
   const arrowLen=r*0.55;
-  const ax=cx+Math.cos(fromRad)*arrowLen;
-  const ay=cy+Math.sin(fromRad)*arrowLen;
-
-  // Draw arrow from center toward source
-  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(ax,ay);
-  ctx.strokeStyle='#f0e968'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.stroke();
-
-  // Arrowhead
-  const headLen=8, headAngle=Math.PI/6;
-  const angle1=fromRad+Math.PI-headAngle;
-  const angle2=fromRad+Math.PI+headAngle;
+  const ax=cx+Math.cos(fromRad)*arrowLen,ay=cy+Math.sin(fromRad)*arrowLen;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(ax,ay);
+  ctx.strokeStyle='#f0e968';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
+  const headLen=8,headAngle=Math.PI/6;
   ctx.beginPath();
-  ctx.moveTo(ax,ay);
-  ctx.lineTo(ax+Math.cos(angle1)*headLen, ay+Math.sin(angle1)*headLen);
-  ctx.moveTo(ax,ay);
-  ctx.lineTo(ax+Math.cos(angle2)*headLen, ay+Math.sin(angle2)*headLen);
+  ctx.moveTo(ax,ay);ctx.lineTo(ax+Math.cos(fromRad+Math.PI-headAngle)*headLen,ay+Math.sin(fromRad+Math.PI-headAngle)*headLen);
+  ctx.moveTo(ax,ay);ctx.lineTo(ax+Math.cos(fromRad+Math.PI+headAngle)*headLen,ay+Math.sin(fromRad+Math.PI+headAngle)*headLen);
   ctx.stroke();
-
-  // Highlight dot at arrow tip
-  ctx.beginPath(); ctx.arc(ax,ay,3,0,Math.PI*2);
-  ctx.fillStyle='#f0e968'; ctx.fill();
+  ctx.beginPath();ctx.arc(ax,ay,3,0,Math.PI*2);ctx.fillStyle='#f0e968';ctx.fill();
 }
-
 function compassClick(e){
   const canvas=document.getElementById('compass');
   const rect=canvas.getBoundingClientRect();
-  const cx=canvas.width/2, cy=canvas.height/2;
-  const x=e.clientX-rect.left-cx, y=e.clientY-rect.top-cy;
-  // atan2 gives angle from east, convert to our angle system
+  const cx=canvas.width/2,cy=canvas.height/2;
+  const x=e.clientX-rect.left-cx,y=e.clientY-rect.top-cy;
   let deg=Math.round((Math.atan2(y,x)*180/Math.PI+90+360))%360;
-  // Snap to nearest 5°
-  deg=Math.round(deg/5)*5 % 360;
+  deg=Math.round(deg/5)*5%360;
   setAngle(deg);
 }
 
@@ -566,7 +590,7 @@ function toggleElev(){
 // ═══ CLEAR ════════════════════════════════════════════
 function clearCalc(){
   ['wind','elev','log-ring1','log-ring2','log-dist','log-x','log-y'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value='';
+    const el=document.getElementById(id);if(el) el.value='';
   });
   document.getElementById('y-breakdown').classList.add('hidden');
   document.getElementById('corrected-hint').style.display='none';
@@ -574,8 +598,7 @@ function clearCalc(){
   document.getElementById('rb-in').className='result-btn inactive';
   document.getElementById('rb-miss').className='result-btn inactive';
   document.getElementById('result-hint').textContent='';
-  setAngle(0);
-  elevUp=true;
+  setAngle(0);elevUp=true;
   document.getElementById('elev-arrow').textContent='▲';
   document.getElementById('elev-text').textContent='UPHILL → aim further';
   document.getElementById('elev-toggle').className='elev-toggle elev-up';
@@ -599,39 +622,36 @@ function renderClubs(){
     const row=document.createElement('div');
     row.className='edit-row';
     const name=document.createElement('div');
-    name.className='edit-name'; name.textContent=c.n;
+    name.className='edit-name';name.textContent=c.n;
     const inp=document.createElement('input');
-    inp.type='number'; inp.step='0.01'; inp.min='0.01'; inp.value=fmt(consts[i]);
+    inp.type='number';inp.step='0.01';inp.min='0.01';inp.value=fmt(consts[i]);
     inp.style.cssText='width:90px;border:1px solid #1e3822;border-radius:7px;padding:8px;font-size:16px;font-weight:700;text-align:center;background:#132015;color:#fff;outline:none;-moz-appearance:textfield';
     inp.addEventListener('focus',()=>inp.select());
     inp.addEventListener('input',()=>{
       const v=parseFloat(inp.value);
       if(!isNaN(v)&&v>0){
-        consts[i]=v; localStorage.setItem('gsc_c'+i,v);
+        consts[i]=v;localStorage.setItem('gsc_c'+i,v);
         const vals=document.querySelectorAll('#club-grid .club-val');
         if(vals[i]) vals[i].textContent=fmt(v);
         calc();
       }
     });
-    row.appendChild(name); row.appendChild(inp); editor.appendChild(row);
+    row.appendChild(name);row.appendChild(inp);editor.appendChild(row);
   });
 }
 
 // ═══ ML ENGINE ════════════════════════════════════════
 function getEffectivePull(s){
-  // IN shots: ring2 is the correct pull — learn directly
   if(s.result==='In') return s.ring2;
-  // MISS shots: only learn if Y was actually logged
-  // If Y=0 on a miss we have no idea if pull was right or wrong — skip
   const yErr=s.yPure||s.y||0;
-  if(yErr===0) return null; // null = exclude from learning
-  // Smooth cosine correction — full at 0°/180°, partial at 45°/135°, near-zero at 90°
+  if(yErr===0) return null;
   const windCos=Math.cos((s.windAngle||0)*Math.PI/180);
   return parseFloat((s.ring2+yErr*windCos).toFixed(4));
 }
 
-const APP_VERSION='1.6';
+const APP_VERSION='1.7';
 const APP_CHANGES=[
+  'v1.7 — Minimized ML panel, Shot log filters, Piecewise elev tuner, Wind bracket summary',
   'v1.6 — Linear regression forecast for unknown wind ranges',
   'v1.5 — WIND MATCH / ANGLE MATCH fallback tiers',
   'v1.4 — Recency weighting (recent shots count more)',
@@ -641,119 +661,68 @@ const APP_CHANGES=[
   'v1.0 — Initial release with ML pull recommendation',
 ];
 
-// Recency weight: most recent shot = 1.0, each step back decays by 0.85
-// After ~5 shots back → 0.44, after ~10 → 0.20, after ~20 → 0.04
-// Wrong early data fades away as correct recent data accumulates
 const DECAY=0.85;
 function recencyWeight(idx,total){
-  // idx=0 is oldest, idx=total-1 is newest
   const stepsBack=total-1-idx;
   return Math.pow(DECAY,stepsBack);
 }
 function weightedAvg(arr){
-  // arr sorted oldest→newest, each item has .ePull and .w (weight)
   const sumW=arr.reduce((a,s)=>a+s.w,0);
   if(!sumW) return null;
   return arr.reduce((a,s)=>a+s.ePull*s.w,0)/sumW;
 }
 function weightedCount(arr){
-  // Effective sample count = sum of weights (normalized feel)
   const sumW=arr.reduce((a,s)=>a+s.w,0);
-  const maxW=arr.length; // if all had weight 1.0
+  const maxW=arr.length;
   return parseFloat((sumW/maxW*arr.length).toFixed(1));
 }
 
 function mlRecommend(clubIdx,wind,angle){
   const shots=getShots().filter(s=>s.clubIdx===clubIdx);
   if(!shots.length) return null;
-  // Sort oldest→newest so recency index is correct
   const sorted=shots.slice().sort((a,b)=>a.ts-b.ts);
   const withPull=sorted
     .map((s,i)=>({...s,ePull:getEffectivePull(s),w:recencyWeight(i,sorted.length)}))
     .filter(s=>s.ePull!==null);
   if(!withPull.length) return null;
-
   const snap=a=>Math.round(a/22.5)*22.5;
   const thisAngle=snap(angle);
   const angleDiff=(a,b)=>{const d=Math.abs(snap(a)-b);return Math.min(d,360-d)};
-
-  // 1. EXACT — wind ±0.2, angle ±22.5°
-  const exact=withPull.filter(s=>
-    Math.abs(s.wind-wind)<=0.2 && angleDiff(s.windAngle,thisAngle)<=22.5);
-  if(exact.length)
-    return{value:weightedAvg(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT',forecast:false};
-
-  // 2. NEAREST — wind ±1.0, angle ±22.5°
-  const near=withPull.filter(s=>
-    Math.abs(s.wind-wind)<=1 && angleDiff(s.windAngle,thisAngle)<=22.5);
-  if(near.length)
-    return{value:weightedAvg(near),count:weightedCount(near),raw:near.length,type:'NEAREST',forecast:false};
-
-  // 3. LINEAR REGRESSION on same angle bucket (any wind)
-  // Fits pull = a×wind + b using weighted least squares
-  // Can interpolate AND extrapolate with forecast flag
+  const exact=withPull.filter(s=>Math.abs(s.wind-wind)<=0.2&&angleDiff(s.windAngle,thisAngle)<=22.5);
+  if(exact.length) return{value:weightedAvg(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT',forecast:false};
+  const near=withPull.filter(s=>Math.abs(s.wind-wind)<=1&&angleDiff(s.windAngle,thisAngle)<=22.5);
+  if(near.length) return{value:weightedAvg(near),count:weightedCount(near),raw:near.length,type:'NEAREST',forecast:false};
   const sameAngle=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
   if(sameAngle.length>=2){
     const reg=weightedRegression(sameAngle,wind);
     if(reg!==null){
       const inRange=wind>=reg.minWind-0.5&&wind<=reg.maxWind+0.5;
-      return{
-        value:reg.value, count:sameAngle.length, raw:sameAngle.length,
-        type: inRange?'REGRESSION':'FORECAST',
-        forecast:!inRange,
-        r2:reg.r2
-      };
+      return{value:reg.value,count:sameAngle.length,raw:sameAngle.length,type:inRange?'REGRESSION':'FORECAST',forecast:!inRange,r2:reg.r2};
     }
   }
-
-  // 4. WIND ONLY regression — any angle
   if(withPull.length>=2){
     const reg=weightedRegression(withPull,wind);
-    if(reg!==null){
-      return{
-        value:reg.value, count:withPull.length, raw:withPull.length,
-        type:'FORECAST', forecast:true, r2:reg.r2
-      };
-    }
+    if(reg!==null) return{value:reg.value,count:withPull.length,raw:withPull.length,type:'FORECAST',forecast:true,r2:reg.r2};
   }
-
-  // 5. WIND ONLY simple avg — wind ±1.5
   const windOnly=withPull.filter(s=>Math.abs(s.wind-wind)<=1.5);
-  if(windOnly.length)
-    return{value:weightedAvg(windOnly),count:weightedCount(windOnly),raw:windOnly.length,type:'WIND MATCH',forecast:false};
-
-  // 6. ANGLE ONLY simple avg — angle ±45°
+  if(windOnly.length) return{value:weightedAvg(windOnly),count:weightedCount(windOnly),raw:windOnly.length,type:'WIND MATCH',forecast:false};
   const angleOnly=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
-  if(angleOnly.length)
-    return{value:weightedAvg(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH',forecast:false};
-
-  // 7. CLUB AVG — last resort
+  if(angleOnly.length) return{value:weightedAvg(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH',forecast:false};
   return{value:weightedAvg(withPull),count:weightedCount(withPull),raw:withPull.length,type:'CLUB AVG',forecast:false};
 }
 
-// Weighted linear regression: pull = a*wind + b
-// Returns predicted value at targetWind, or null if degenerate
 function weightedRegression(shots,targetWind){
-  // shots already have .ePull and .w (recency weight)
-  const n=shots.length;
-  if(n<2) return null;
+  const n=shots.length;if(n<2) return null;
   let sw=0,swx=0,swy=0,swxx=0,swxy=0;
-  shots.forEach(s=>{
-    const x=s.wind, y=s.ePull, w=s.w||1;
-    sw+=w; swx+=w*x; swy+=w*y; swxx+=w*x*x; swxy+=w*x*y;
-  });
+  shots.forEach(s=>{const x=s.wind,y=s.ePull,w=s.w||1;sw+=w;swx+=w*x;swy+=w*y;swxx+=w*x*x;swxy+=w*x*y});
   const denom=sw*swxx-swx*swx;
-  if(Math.abs(denom)<1e-10) return null; // all same wind speed — can't fit line
+  if(Math.abs(denom)<1e-10) return null;
   const a=(sw*swxy-swx*swy)/denom;
   const b=(swy-a*swx)/sw;
   const value=parseFloat((a*targetWind+b).toFixed(4));
-  // R² for quality indicator
   const meanY=swy/sw;
   let ssTot=0,ssRes=0;
-  shots.forEach(s=>{
-    ssTot+=s.w*(s.ePull-meanY)**2;
-    ssRes+=s.w*(s.ePull-(a*s.wind+b))**2;
-  });
+  shots.forEach(s=>{ssTot+=s.w*(s.ePull-meanY)**2;ssRes+=s.w*(s.ePull-(a*s.wind+b))**2});
   const r2=ssTot>0?Math.max(0,1-ssRes/ssTot):0;
   const minWind=Math.min(...shots.map(s=>s.wind));
   const maxWind=Math.max(...shots.map(s=>s.wind));
@@ -761,13 +730,12 @@ function weightedRegression(shots,targetWind){
 }
 
 function confLevel(count,type,raw,r2){
-  const n=raw||count;
-  const r=r2||0;
+  const n=raw||count,r=r2||0;
   if(type==='EXACT'&&n>=5)      return{pct:100,cls:'conf-high',lbl:'HIGH'};
-  if(type==='EXACT'&&n>=3)      return{pct:65, cls:'conf-med', lbl:'MEDIUM'};
-  if(type==='EXACT')            return{pct:30, cls:'conf-low', lbl:'LOW'};
-  if(type==='NEAREST'&&n>=5)    return{pct:55, cls:'conf-med', lbl:'MEDIUM'};
-  if(type==='NEAREST')          return{pct:25, cls:'conf-low', lbl:'LOW'};
+  if(type==='EXACT'&&n>=3)      return{pct:65,cls:'conf-med',lbl:'MEDIUM'};
+  if(type==='EXACT')            return{pct:30,cls:'conf-low',lbl:'LOW'};
+  if(type==='NEAREST'&&n>=5)    return{pct:55,cls:'conf-med',lbl:'MEDIUM'};
+  if(type==='NEAREST')          return{pct:25,cls:'conf-low',lbl:'LOW'};
   if(type==='REGRESSION'&&r>=0.8&&n>=4) return{pct:50,cls:'conf-med',lbl:'MEDIUM — REGRESSION'};
   if(type==='REGRESSION'&&n>=3) return{pct:30,cls:'conf-low',lbl:'LOW — REGRESSION'};
   if(type==='REGRESSION')       return{pct:18,cls:'conf-low',lbl:'LOW — REGRESSION'};
@@ -776,23 +744,120 @@ function confLevel(count,type,raw,r2){
   if(type==='WIND MATCH'&&n>=3) return{pct:15,cls:'conf-low',lbl:'LOW — WIND ONLY'};
   if(type==='WIND MATCH')       return{pct:10,cls:'conf-low',lbl:'VERY LOW — WIND ONLY'};
   if(type==='ANGLE MATCH'&&n>=3)return{pct:10,cls:'conf-low',lbl:'LOW — ANGLE ONLY'};
-  if(type==='ANGLE MATCH')      return{pct:6, cls:'conf-low',lbl:'VERY LOW — ANGLE ONLY'};
+  if(type==='ANGLE MATCH')      return{pct:6,cls:'conf-low',lbl:'VERY LOW — ANGLE ONLY'};
   return{pct:4,cls:'conf-low',lbl:'VERY LOW — CLUB AVG ONLY'};
 }
 
 // ═══ CONSTANT CORRECTION ══════════════════════════════
 function checkConstantCorrection(clubIdx){
   const shots=getShots().filter(s=>s.clubIdx===clubIdx&&(s.x||0)!==0);
-  if(shots.length<3) return null; // need at least 3 X-miss shots
+  if(shots.length<3) return null;
   const avgX=shots.reduce((a,s)=>a+(s.x||0),0)/shots.length;
-  if(Math.abs(avgX)<0.3) return null; // not significant
-  // X miss > 0 means over-aimed → constant was too high
-  // X miss < 0 means under-aimed → constant was too low
+  if(Math.abs(avgX)<0.3) return null;
   const currentConst=consts[clubIdx];
-  // Correction heuristic: each 0.5 ring X error ≈ 5% constant shift
   const correctionFactor=1-(avgX*0.1);
   const suggested=parseFloat((currentConst*correctionFactor).toFixed(2));
   return{avgX,current:currentConst,suggested,shots:shots.length};
+}
+
+// ═══ PIECEWISE ELEVATION TUNER ════════════════════════
+// Splits elevation shots into: flat (0-2), mid (3-5), steep (>5)
+// Each zone learns its own avg Y error → suggests per-zone multiplier
+// "Piecewise linear": flat and mid each get a constant rate, steep gets its own steeper rate
+function buildElevTuner(){
+  const shots=getShots().filter(s=>(s.elev||0)>0&&(s.yPure||s.y||0)!==0);
+  if(shots.length<3) return null;
+
+  const zones=[
+    {lbl:'FLAT',range:'1–2 yds',min:0,max:2.5,shots:[]},
+    {lbl:'MID',range:'3–5 yds',min:2.5,max:5.5,shots:[]},
+    {lbl:'STEEP',range:'>5 yds',min:5.5,max:999,shots:[]}
+  ];
+
+  shots.forEach(s=>{
+    const elev=s.elev||0;
+    // Y is always: + = overshot, − = short. No sign flip by elevUp direction.
+    const yErr=s.yPure||s.y||0;
+    const zone=zones.find(z=>elev>z.min&&elev<=z.max);
+    if(zone) zone.shots.push({elev,yErr,elevUp:s.elevUp,ts:s.ts});
+  });
+
+  // For each zone: weighted avg Y error
+  zones.forEach(z=>{
+    const sorted=z.shots.slice().sort((a,b)=>a.ts-b.ts);
+    const w=sorted.map((s,i)=>({...s,w:recencyWeight(i,sorted.length),ePull:s.yErr}));
+    z.avgErr=w.length?weightedAvg(w):null;
+    z.n=w.length;
+    z.wArr=w;
+  });
+
+  // Check if steep zone shows significantly more error than flat (ramp-up)
+  const flatErr=zones[0].avgErr||0;
+  const steepErr=zones[2].avgErr||0;
+  const rampDiff=Math.abs(steepErr)-Math.abs(flatErr);
+  const hasRamp=rampDiff>0.2&&zones[2].n>=2;
+
+  return{zones,hasRamp,rampDiff};
+}
+
+// ═══ WIND BRACKET SUMMARY ═════════════════════════════
+// Groups shots into wind speed brackets & angle types
+// Shows avg ② pull error (effective pull − recommended) per bracket
+function buildWindBrackets(){
+  const shots=getShots();
+  if(!shots.length) return null;
+
+  // Wind speed brackets
+  const wBrackets=[
+    {lbl:'CALM',range:'0–5',min:0,max:5,shots:[]},
+    {lbl:'LIGHT',range:'6–10',min:5,max:10,shots:[]},
+    {lbl:'MOD',range:'11–15',min:10,max:15,shots:[]},
+    {lbl:'STRONG',range:'16–20',min:15,max:20,shots:[]},
+    {lbl:'HEAVY',range:'>20',min:20,max:999,shots:[]}
+  ];
+
+  // Angle type brackets
+  const aBrackets=[
+    {lbl:'TAILWIND',angles:[0],shots:[]},
+    {lbl:'TAIL-X',angles:[45,315],shots:[]},
+    {lbl:'CROSS',angles:[90,270],shots:[]},
+    {lbl:'HEAD-X',angles:[135,225],shots:[]},
+    {lbl:'HEADWIND',angles:[180],shots:[]}
+  ];
+
+  shots.forEach(s=>{
+    const ePull=getEffectivePull(s);
+    if(ePull===null) return;
+    const sorted=shots.slice().sort((a,b)=>a.ts-b.ts);
+    const idx=sorted.findIndex(x=>x.ts===s.ts);
+    const w=recencyWeight(idx,sorted.length);
+    const entry={ePull,ring2:s.ring2,w,wind:s.wind,angle:s.windAngle,ts:s.ts};
+
+    // Wind bracket
+    const wb=wBrackets.find(b=>s.wind>b.min&&s.wind<=b.max);
+    if(wb) wb.shots.push(entry);
+
+    // Angle bracket — snap to nearest 45° and find bucket
+    const snap=Math.round(s.windAngle/45)*45%360;
+    const ab=aBrackets.find(b=>b.angles.includes(snap));
+    if(ab) ab.shots.push(entry);
+  });
+
+  // For each bracket: avg ② pull (weighted), trend vs ring2 actually used
+  const processGroup=arr=>{
+    if(!arr.length) return null;
+    const sorted=arr.slice().sort((a,b)=>a.ts-b.ts);
+    const w=sorted.map((s,i)=>({...s,w:recencyWeight(i,sorted.length)}));
+    const avgEPull=weightedAvg(w); // what the correct pull should have been
+    const avgUsed=w.reduce((a,s)=>a+s.ring2*s.w,0)/w.reduce((a,s)=>a+s.w,0); // what was actually used
+    const err=avgUsed-avgEPull; // + means over-pulled, − means under-pulled
+    return{avgEPull,avgUsed,err,n:arr.length};
+  };
+
+  wBrackets.forEach(b=>{b.stats=processGroup(b.shots)});
+  aBrackets.forEach(b=>{b.stats=processGroup(b.shots)});
+
+  return{wBrackets,aBrackets};
 }
 
 // ═══ MAIN CALC ════════════════════════════════════════
@@ -805,7 +870,6 @@ function calc(){
   document.getElementById('aim-rings').textContent=fmt(aimRings);
   document.getElementById('log-ring1').value=fmt(aimRings);
 
-  // ML Rec
   const rec=mlRecommend(selClub,wind,windAngle);
   const mlEl=document.getElementById('ml-content');
   const badge=document.getElementById('ml-badge');
@@ -821,7 +885,7 @@ function calc(){
           <div class="ml-val">${fmtS(rec.value)}</div>
         </div>
         <div class="ml-divider"></div>
-          <div class="ml-block">
+        <div class="ml-block">
           <div class="ml-lbl">BASED ON</div>
           <div class="ml-val" style="font-size:22px">${rec.raw}</div>
           <div style="font-size:9px;color:${rec.forecast?'#ffb74d':'#3d5c42'};margin-top:2px">${rec.type}${rec.forecast?' 📈':''}</div>
@@ -840,7 +904,6 @@ function calc(){
     document.getElementById('forecast-warn').classList.add('hidden');
   }
 
-  // Constant correction check
   const corr=checkConstantCorrection(selClub);
   const corrBox=document.getElementById('correction-box');
   if(corr){
@@ -916,10 +979,9 @@ async function saveShot(){
     ring1:r1,ring2:r2,aimCalc:consts[selClub]*wind/2,
     x,y,yFromX,yPure,result:logResult
   };
-  const shots=getShots(); shots.push(shot); saveShots(shots);
+  const shots=getShots();shots.push(shot);saveShots(shots);
   await pushToFirebase(shots);
   calc();
-  // Reset log fields
   logResult='';
   document.getElementById('rb-in').className='result-btn inactive';
   document.getElementById('rb-miss').className='result-btn inactive';
@@ -928,17 +990,15 @@ async function saveShot(){
   document.getElementById('y-breakdown').classList.add('hidden');
   document.getElementById('corrected-hint').style.display='none';
   const btn=document.querySelector('[onclick="saveShot()"]');
-  const orig=btn.textContent; btn.textContent='✅ SAVED!'; btn.style.background='#1b5e20';
+  const orig=btn.textContent;btn.textContent='✅ SAVED!';btn.style.background='#1b5e20';
   setTimeout(()=>{btn.textContent=orig;btn.style.background=''},1500);
 }
 
 // ═══ DATA RENDER ══════════════════════════════════════
 function renderData(){
   const shots=getShots();
-  const total=shots.length;
-  const holed=shots.filter(s=>s.result==='In').length;
-  document.getElementById('st-shots').textContent=total;
-  document.getElementById('st-in').textContent=holed;
+  document.getElementById('st-shots').textContent=shots.length;
+  document.getElementById('st-in').textContent=shots.filter(s=>s.result==='In').length;
 
   const byClub={};
   shots.forEach(s=>{
@@ -947,6 +1007,7 @@ function renderData(){
     byClub[k].push(s);
   });
 
+  // Success rates
   const ratesEl=document.getElementById('club-rates');
   if(!Object.keys(byClub).length){
     ratesEl.innerHTML='<div class="empty" style="grid-column:1/-1">No data yet</div>';
@@ -964,64 +1025,231 @@ function renderData(){
     }).join('');
   }
 
-  // ML insights
-  const insightEl=document.getElementById('club-ml-insights');
-  if(!Object.keys(byClub).length){
-    insightEl.innerHTML='<div class="empty">No data yet</div>';
-  } else {
-    insightEl.innerHTML=Object.entries(byClub).map(([,arr])=>{
-      const withPull=arr.map(s=>({...s,ePull:getEffectivePull(s)})).filter(s=>s.ePull!==null);
-      // Add recency weights for insight display too
-      const sortedPull=withPull.slice().sort((a,b)=>a.ts-b.ts);
-      const wPull=sortedPull.map((s,i)=>({...s,w:recencyWeight(i,sortedPull.length)}));
-      const avgPull=weightedAvg(wPull)||0;
-      const inShots=arr.filter(s=>s.result==='In');
-      const wInShots=inShots.slice().sort((a,b)=>a.ts-b.ts)
-        .map((s,i)=>({...s,ePull:s.ring2,w:recencyWeight(i,inShots.length)}));
-      const avgInPull=wInShots.length?weightedAvg(wInShots):null;
-      // Group by wind
-      const wg={};
-      wPull.forEach(s=>{const k=s.wind.toFixed(1);if(!wg[k])wg[k]=[];wg[k].push(s)});
-      const windRows=Object.entries(wg).sort((a,b)=>parseFloat(a[0])-parseFloat(b[0]))
-        .map(([w,gs])=>`<div class="insight-row">
-          <span class="isl">Wind ${w} · ${gs.length}x</span>
-          <span class="isv">${fmtS(weightedAvg(gs)||0)}</span>
-        </div>`).join('');
-      // Angle groups
-      const ag={};
-      wPull.forEach(s=>{
-        const k=angleLbl(s.windAngle);
-        if(!ag[k])ag[k]=[];ag[k].push(s);
-      });
-      const angleRows=Object.entries(ag).map(([lbl,gs])=>`<div class="insight-row">
-        <span class="isl">${lbl}</span>
-        <span class="isv">${fmtS(weightedAvg(gs)||0)}</span>
-      </div>`).join('');
-      return`<div class="club-insight">
-        <div class="club-insight-name">${arr[0].club} — ${arr.length} shots</div>
-        <div class="insight-row"><span class="isl">Overall ② avg (effective)</span><span class="isv">${fmtS(avgPull)}</span></div>
-        ${avgInPull!==null?`<div class="insight-row"><span class="isl">IN shots ② avg</span><span class="isv">${fmtS(avgInPull)}</span></div>`:''}
-        ${windRows?`<div class="divider"></div><div style="font-size:8px;color:#3d5c42;letter-spacing:.5px;margin-bottom:3px">BY WIND:</div>${windRows}`:''}
-        ${angleRows?`<div class="divider"></div><div style="font-size:8px;color:#3d5c42;letter-spacing:.5px;margin-bottom:3px">BY ANGLE:</div>${angleRows}`:''}
-      </div>`;
-    }).join('');
-  }
+  // ── ML SUMMARY GRID (minimized) ──────────────────────
+  renderMlSummary(byClub);
 
+  // ── WIND BRACKET SUMMARY ────────────────────────────
+  renderWindBrackets();
+
+  // ── SHOT TABLE ──────────────────────────────────────
   renderTable(shots);
+
   // Version block
   const vb=document.getElementById('version-block');
-  if(vb){
-    vb.innerHTML=`<div style="background:#132015;border-radius:8px;padding:8px">
-      ${APP_CHANGES.map((ch,i)=>`<div style="font-size:${i===0?'11':'10'}px;color:${i===0?'#5dfc8a':'#3d5c42'};padding:2px 0;font-weight:${i===0?'700':'400'}">${ch}</div>`).join('')}
-    </div>`;
-  }
+  if(vb) vb.innerHTML=`<div style="background:#132015;border-radius:8px;padding:8px">
+    ${APP_CHANGES.map((ch,i)=>`<div style="font-size:${i===0?'11':'10'}px;color:${i===0?'#5dfc8a':'#3d5c42'};padding:2px 0;font-weight:${i===0?'700':'400'}">${ch}</div>`).join('')}
+  </div>`;
 }
 
+// ── MINIMIZED ML SUMMARY ──────────────────────────────
+function renderMlSummary(byClub){
+  const grid=document.getElementById('ml-summary-grid');
+  const detail=document.getElementById('ml-detail-panel');
+  grid.innerHTML='';
+  CLUBS.forEach((c,i)=>{
+    const arr=byClub[i+'|'+c.a]||[];
+    const sorted=arr.slice().sort((a,b)=>a.ts-b.ts);
+    const withPull=sorted.map((s,idx)=>({...s,ePull:getEffectivePull(s),w:recencyWeight(idx,sorted.length)})).filter(s=>s.ePull!==null);
+    const avg=withPull.length?weightedAvg(withPull):null;
+    const btn=document.createElement('div');
+    btn.className='ml-sum-btn'+(arr.length?' has-data':'');
+    btn.innerHTML=`<div class="ml-sum-abbr">${c.a}</div><div class="ml-sum-val">${avg!==null?fmtS(avg):'—'}</div>`;
+    btn.onclick=()=>toggleMlDetail(i,byClub);
+    grid.appendChild(btn);
+  });
+}
+
+function toggleMlDetail(clubIdx,byClub){
+  const detail=document.getElementById('ml-detail-panel');
+  if(openMlClub===clubIdx){
+    openMlClub=-1;
+    detail.innerHTML='';
+    return;
+  }
+  openMlClub=clubIdx;
+  const c=CLUBS[clubIdx];
+  const arr=(byClub[clubIdx+'|'+c.a])||[];
+  if(!arr.length){detail.innerHTML='<div class="ml-detail open"><div class="ml-empty">No shots for '+c.n+' yet</div></div>';return}
+
+  const sorted=arr.slice().sort((a,b)=>a.ts-b.ts);
+  const withPull=sorted.map((s,i)=>({...s,ePull:getEffectivePull(s),w:recencyWeight(i,sorted.length)})).filter(s=>s.ePull!==null);
+  const avgPull=weightedAvg(withPull)||0;
+  const inShots=arr.filter(s=>s.result==='In');
+  const wInShots=inShots.slice().sort((a,b)=>a.ts-b.ts).map((s,i)=>({...s,ePull:s.ring2,w:recencyWeight(i,inShots.length)}));
+  const avgInPull=wInShots.length?weightedAvg(wInShots):null;
+
+  const wg={};
+  withPull.forEach(s=>{const k=s.wind.toFixed(1);if(!wg[k])wg[k]=[];wg[k].push(s)});
+  const windRows=Object.entries(wg).sort((a,b)=>parseFloat(a[0])-parseFloat(b[0]))
+    .map(([w,gs])=>`<div class="insight-row"><span class="isl">Wind ${w} · ${gs.length}x</span><span class="isv">${fmtS(weightedAvg(gs)||0)}</span></div>`).join('');
+
+  const ag={};
+  withPull.forEach(s=>{const k=angleLbl(s.windAngle);if(!ag[k])ag[k]=[];ag[k].push(s)});
+  const angleRows=Object.entries(ag).map(([lbl,gs])=>`<div class="insight-row"><span class="isl">${lbl}</span><span class="isv">${fmtS(weightedAvg(gs)||0)}</span></div>`).join('');
+
+  detail.innerHTML=`<div class="ml-detail open">
+    <div class="club-insight-name">${c.n} — ${arr.length} shots</div>
+    <div class="insight-row"><span class="isl">Overall ② avg (effective)</span><span class="isv">${fmtS(avgPull)}</span></div>
+    ${avgInPull!==null?`<div class="insight-row"><span class="isl">IN shots ② avg</span><span class="isv">${fmtS(avgInPull)}</span></div>`:''}
+    ${windRows?`<div class="divider"></div><div style="font-size:8px;color:#3d5c42;letter-spacing:.5px;margin-bottom:3px">BY WIND:</div>${windRows}`:''}
+    ${angleRows?`<div class="divider"></div><div style="font-size:8px;color:#3d5c42;letter-spacing:.5px;margin-bottom:3px">BY ANGLE:</div>${angleRows}`:''}
+    <div style="margin-top:8px;text-align:center"><span style="font-size:9px;color:#3d5c42;cursor:pointer" onclick="toggleMlDetail(${clubIdx},{})">▲ collapse</span></div>
+  </div>`;
+}
+
+// ── WIND BRACKET SUMMARY ──────────────────────────────
+function renderWindBrackets(){
+  const data=buildWindBrackets();
+  const wrap=document.getElementById('wind-bracket-content');
+  if(!data){wrap.innerHTML='<div class="empty">No data yet</div>';return}
+
+  const errColor=err=>{
+    if(Math.abs(err)<0.1) return'ok';
+    return err>0?'over':'under';
+  };
+  const errLabel=(err,n)=>{
+    if(!n) return'<span style="color:#3d5c42">—</span>';
+    const cls=errColor(err);
+    const label=Math.abs(err)<0.1?'on target':err>0?'over-pulling':'under-pulling';
+    return`<span class="bracket-val ${cls}">${fmtS(err)}</span><span class="bracket-n">(${n}x)</span>`;
+  };
+
+  // Wind speed table
+  const wRows=data.wBrackets.filter(b=>b.stats&&b.stats.n>0).map(b=>`
+    <div class="bracket-row">
+      <span class="bracket-lbl">${b.lbl} ${b.range} mph</span>
+      ${errLabel(b.stats.err,b.stats.n)}
+    </div>`).join('');
+
+  // Angle type table
+  const aRows=data.aBrackets.filter(b=>b.stats&&b.stats.n>0).map(b=>`
+    <div class="bracket-row">
+      <span class="bracket-lbl">${b.lbl}</span>
+      ${errLabel(b.stats.err,b.stats.n)}
+    </div>`).join('');
+
+  wrap.innerHTML=`
+    <div class="bracket-grid">
+      <div class="bracket-card">
+        <div class="bracket-title">BY WIND SPEED</div>
+        <div class="bracket-rows">${wRows||'<div style="font-size:10px;color:#3d5c42">No data</div>'}</div>
+      </div>
+      <div class="bracket-card">
+        <div class="bracket-title">BY WIND TYPE</div>
+        <div class="bracket-rows">${aRows||'<div style="font-size:10px;color:#3d5c42">No data</div>'}</div>
+      </div>
+    </div>
+    <div style="font-size:9px;color:#3d5c42;margin-top:6px;text-align:center">
+      <span style="color:#5dfc8a">■</span> on target &nbsp;
+      <span style="color:#ef9a9a">■</span> over-pulling &nbsp;
+      <span style="color:#80cbc4">■</span> under-pulling
+    </div>`;
+
+  // Elevation tuner
+  renderElevTuner();
+}
+
+// ── PIECEWISE ELEVATION TUNER ─────────────────────────
+function renderElevTuner(){
+  const wrap=document.getElementById('elev-tuner-wrap');
+  const data=buildElevTuner();
+
+  if(!data){
+    wrap.innerHTML=`<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a3020">
+      <div class="section-title" style="margin-bottom:4px">📐 ELEVATION AUTO-TUNER</div>
+      <div class="elev-tune-none">Log 3+ elevation shots (with Y miss) to calibrate</div>
+    </div>`;
+    return;
+  }
+
+  const {zones,hasRamp}=data;
+
+  const zoneHtml=zones.map(z=>{
+    if(!z.n) return`<div class="elev-zone">
+      <div class="elev-zone-lbl">${z.lbl}</div>
+      <div class="elev-zone-val" style="color:#3d5c42">—</div>
+      <div class="elev-zone-sub">${z.range}</div>
+      <div class="elev-zone-n">no data</div>
+    </div>`;
+    const col=Math.abs(z.avgErr)<0.2?'#5dfc8a':Math.abs(z.avgErr)<0.5?'#ffb74d':'#ef9a9a';
+    // Y+ = overshot = aimed too far | Y- = undershot = aimed too little
+    const sign=z.avgErr>0?'aim less':'aim more';
+    return`<div class="elev-zone">
+      <div class="elev-zone-lbl">${z.lbl}</div>
+      <div class="elev-zone-val" style="color:${col}">${fmtS(z.avgErr)}</div>
+      <div class="elev-zone-sub">${z.range}</div>
+      <div class="elev-zone-n">${z.n}x · ${sign}</div>
+    </div>`;
+  });
+
+  const sepDiv='<div class="elev-zone-sep"></div>';
+
+  let hintHtml='';
+  if(hasRamp){
+    const steepErr=zones[2].avgErr||0;
+    const midErr=zones[1].avgErr||steepErr*0.5;
+    const action=steepErr>0
+      ? 'reduce aim by ~'+Math.abs(steepErr).toFixed(1)+' ring (overshooting steep elev)'
+      : 'add ~'+Math.abs(steepErr).toFixed(1)+' ring aim (undershooting steep elev)';
+    const midAction=Math.abs(midErr)>0.1
+      ? ' Mid-slope: '+(midErr>0?'reduce':'add')+' ~'+Math.abs(midErr).toFixed(1)+' ring.'
+      : '';
+    hintHtml='<div class="elev-tune-hint">'+
+      '📐 <b>RAMP DETECTED</b> — at &gt;5 yds Y error is '+fmtS(steepErr)+' vs flat. <b>'+action+'</b>.'+midAction+
+      '<div style="margin-top:5px;font-size:9px;color:#80cbc4">Y+ = overshot (aimed too far) · Y− = undershot (aimed too little)</div>'+
+      '</div>';
+  } else if(zones.some(z=>z.n>0)){
+    hintHtml='<div class="elev-tune-hint" style="color:#5dfc8a;background:#0a1e0d;border-color:#1a4520">'+
+      '✅ Y errors consistent across zones — no ramp detected yet. Keep logging.'+
+      '</div>';
+  }
+
+  wrap.innerHTML=`<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a3020">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="section-title" style="margin:0">📐 ELEVATION AUTO-TUNER</div>
+      <div style="font-size:9px;color:#3d5c42">piecewise · avg Y error</div>
+    </div>
+    <div class="elev-tuner-card">
+      <div class="elev-zone-grid">
+        ${zoneHtml[0]}${sepDiv}${zoneHtml[1]}${sepDiv}${zoneHtml[2]}
+      </div>
+      ${hintHtml}
+    </div>
+  </div>`;
+}
+
+// ═══ SHOT TABLE WITH FILTERS ══════════════════════════
 function renderTable(shots){
   const wrap=document.getElementById('shot-table-wrap');
   if(!shots.length){wrap.innerHTML='<div class="empty">No shots logged yet</div>';return}
-  const rows=[...shots].reverse().map((s,ri)=>{
-    const realIdx=shots.length-1-ri;
+
+  // Apply filters
+  const f=tableFilters;
+  let filtered=shots.filter(s=>{
+    if(f.club&&!s.club.toLowerCase().includes(f.club.toLowerCase())) return false;
+    if(f.wind){const wv=parseFloat(f.wind);if(!isNaN(wv)&&Math.abs(s.wind-wv)>0.5) return false}
+    if(f.ang){const av=parseFloat(f.ang);if(!isNaN(av)&&Math.abs(s.windAngle-av)>22) return false}
+    if(f.res&&s.result.toLowerCase()!==f.res.toLowerCase()) return false;
+    return true;
+  });
+
+  // Sort
+  const {col,dir}=tableSort;
+  const mult=dir==='asc'?1:-1;
+  filtered=[...filtered].sort((a,b)=>{
+    const va=a[col],vb=b[col];
+    if(typeof va==='number') return(va-vb)*mult;
+    return String(va).localeCompare(String(vb))*mult;
+  });
+
+  const thSort=(label,colKey)=>{
+    const active=tableSort.col===colKey;
+    const cls=active?(tableSort.dir==='asc'?'sort-asc':'sort-desc'):'';
+    return`<th class="sortable ${cls}" onclick="sortTable('${colKey}')">${label}<span class="sort-arrow"></span></th>`;
+  };
+
+  const rows=filtered.map(s=>{
+    const realIdx=shots.findIndex(x=>x.ts===s.ts);
     const d=new Date(s.ts);
     const ds=`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
     return`<tr>
@@ -1036,49 +1264,91 @@ function renderTable(shots){
       </div></td>
     </tr>`;
   }).join('');
-  wrap.innerHTML=`<div class="table-wrap"><table class="data-table">
-    <thead><tr><th>TIME</th><th>CLUB</th><th>WIND</th><th>ANG</th><th>ELEV</th>
-    <th>①PULL</th><th>②ADD</th><th>X</th><th>Y</th><th>RES</th><th></th></tr></thead>
-    <tbody>${rows}</tbody></table></div>`;
+
+  // Restore filter input values from tableFilters state
+  const fClub=tableFilters.club||'';
+  const fWind=tableFilters.wind||'';
+  const fAng=tableFilters.ang||'';
+  const fRes=tableFilters.res||'';
+
+  wrap.innerHTML=`
+    <div style="font-size:9px;color:#3d5c42;margin-bottom:4px">
+      Showing ${filtered.length} of ${shots.length} shots · tap header to sort · filter below
+    </div>
+    <div class="table-wrap"><table class="data-table">
+      <thead>
+        <tr>
+          ${thSort('TIME','ts')}${thSort('CLUB','club')}${thSort('WIND','wind')}
+          ${thSort('ANG','windAngle')}${thSort('ELEV','elev')}
+          ${thSort('①','ring1')}${thSort('②','ring2')}
+          ${thSort('X','x')}${thSort('Y','yPure')}
+          ${thSort('RES','result')}<th></th>
+        </tr>
+        <tr class="filter-row">
+          <td></td>
+          <td><input type="text" placeholder="all" value="${fClub}" oninput="setFilter('club',this.value)"></td>
+          <td><input type="number" placeholder="≈" step="1" value="${fWind}" oninput="setFilter('wind',this.value)"></td>
+          <td><input type="number" placeholder="≈" step="45" value="${fAng}" oninput="setFilter('ang',this.value)"></td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td><select onchange="setFilter('res',this.value)">
+            <option value="" ${fRes===''?'selected':''}>all</option>
+            <option value="In" ${fRes==='In'?'selected':''}>In</option>
+            <option value="Miss" ${fRes==='Miss'?'selected':''}>Miss</option>
+          </select></td>
+          <td></td>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+function setFilter(key,val){
+  if(!val||val.trim()==='') delete tableFilters[key];
+  else tableFilters[key]=val.trim();
+  renderTable(getShots());
+}
+
+function sortTable(col){
+  if(tableSort.col===col) tableSort.dir=tableSort.dir==='asc'?'desc':'asc';
+  else{tableSort.col=col;tableSort.dir='desc'}
+  renderTable(getShots());
 }
 
 // ═══ EDIT / DELETE ════════════════════════════════════
 let editResultVal='';
 function openEdit(idx){
-  editIdx=idx; editResultVal='';
+  editIdx=idx;editResultVal='';
   const s=getShots()[idx];
   const modal=document.getElementById('edit-modal');
   const fields=document.getElementById('edit-fields');
   fields.innerHTML='';
   const addF=(label,id,val)=>{
-    const w=document.createElement('div'); w.style.marginBottom='10px';
-    const l=document.createElement('div'); l.className='label'; l.textContent=label;
+    const w=document.createElement('div');w.style.marginBottom='10px';
+    const l=document.createElement('div');l.className='label';l.textContent=label;
     const inp=document.createElement('input');
-    inp.id='ef-'+id; inp.type='number'; inp.step='0.25'; inp.value=val;
+    inp.id='ef-'+id;inp.type='number';inp.step='0.25';inp.value=val;
     inp.style.cssText='width:100%;border:1px solid #1e3822;border-radius:8px;padding:8px;font-size:18px;font-weight:700;text-align:center;background:#132015;color:#fff;outline:none;-moz-appearance:textfield';
-    w.appendChild(l); w.appendChild(inp); fields.appendChild(w);
+    w.appendChild(l);w.appendChild(inp);fields.appendChild(w);
   };
   addF('① WIND PULLED','ring1',fmt(s.ring1));
   addF('② ADDITIONAL PULLED','ring2',fmt(s.ring2));
   addF('X MISS','x',fmt(s.x));
   addF('Y MISS','y',fmt(s.y||0));
   editResultVal=s.result;
-  const rw=document.createElement('div'); rw.style.marginBottom='10px';
-  const rl=document.createElement('div'); rl.className='label'; rl.textContent='RESULT';
-  const rg=document.createElement('div'); rg.className='result-toggle';
-  const ri=document.createElement('div'); ri.className='result-btn '+(s.result==='In'?'in':'inactive');
-  ri.textContent='⛳ IN';
+  const rw=document.createElement('div');rw.style.marginBottom='10px';
+  const rl=document.createElement('div');rl.className='label';rl.textContent='RESULT';
+  const rg=document.createElement('div');rg.className='result-toggle';
+  const ri=document.createElement('div');ri.className='result-btn '+(s.result==='In'?'in':'inactive');ri.textContent='⛳ IN';
   ri.onclick=()=>{editResultVal='In';ri.className='result-btn in';rm.className='result-btn inactive'};
-  const rm=document.createElement('div'); rm.className='result-btn '+(s.result==='Miss'?'miss':'inactive');
-  rm.textContent='❌ MISS';
+  const rm=document.createElement('div');rm.className='result-btn '+(s.result==='Miss'?'miss':'inactive');rm.textContent='❌ MISS';
   rm.onclick=()=>{editResultVal='Miss';rm.className='result-btn miss';ri.className='result-btn inactive'};
-  rg.appendChild(ri); rg.appendChild(rm); rw.appendChild(rl); rw.appendChild(rg); fields.appendChild(rw);
+  rg.appendChild(ri);rg.appendChild(rm);rw.appendChild(rl);rw.appendChild(rg);fields.appendChild(rw);
   modal.style.display='flex';
 }
 function closeEdit(){document.getElementById('edit-modal').style.display='none';editIdx=-1}
 async function saveEdit(){
   if(editIdx<0) return;
-  const shots=getShots(); const s=shots[editIdx];
+  const shots=getShots();const s=shots[editIdx];
   s.ring1=parseFloat(document.getElementById('ef-ring1').value)||0;
   s.ring2=parseFloat(document.getElementById('ef-ring2').value)||0;
   s.x=parseFloat(document.getElementById('ef-x').value)||0;
@@ -1086,15 +1356,15 @@ async function saveEdit(){
   s.yFromX=parseFloat((s.x*0.1).toFixed(4));
   s.yPure=parseFloat((s.y-s.yFromX).toFixed(4));
   if(editResultVal) s.result=editResultVal;
-  shots[editIdx]=s; saveShots(shots);
+  shots[editIdx]=s;saveShots(shots);
   await pushToFirebase(shots);
-  calc(); closeEdit(); renderData();
+  calc();closeEdit();renderData();
 }
 async function deleteShot(idx){
   if(!confirm('Delete this shot?')) return;
-  const shots=getShots(); shots.splice(idx,1); saveShots(shots);
+  const shots=getShots();shots.splice(idx,1);saveShots(shots);
   await pushToFirebase(shots);
-  calc(); renderData();
+  calc();renderData();
 }
 
 // ═══ CSV EXPORT / IMPORT ══════════════════════════════
@@ -1110,17 +1380,17 @@ function exportCSV(){
   ].join(','));
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([[hdr.join(','),...rows].join('\n')],{type:'text/csv'}));
-  a.download='GSC_ShotLog_'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
+  a.download='GSC_ShotLog_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 function importCSV(input){
-  const file=input.files[0]; if(!file) return;
+  const file=input.files[0];if(!file) return;
   const reader=new FileReader();
   reader.onload=async function(e){
     try{
       const lines=e.target.result.trim().split('\n');
       const hdr=lines[0].split(',');
       const gi=k=>hdr.indexOf(k);
-      const existing=getShots(); const existTs=new Set(existing.map(s=>s.ts));
+      const existing=getShots();const existTs=new Set(existing.map(s=>s.ts));
       let added=0;
       lines.slice(1).forEach(line=>{
         if(!line.trim()) return;
@@ -1141,12 +1411,12 @@ function importCSV(input){
         });
         added++;
       });
-      saveShots(existing); await pushToFirebase(existing);
+      saveShots(existing);await pushToFirebase(existing);
       const st=document.getElementById('import-status');
       st.style.display='block';
       st.textContent=`✅ Imported ${added} new shot${added!==1?'s':''} (${existing.length} total)`;
       setTimeout(()=>st.style.display='none',4000);
-      renderData(); calc();
+      renderData();calc();
     }catch(err){alert('Import failed: '+err.message)}
     input.value='';
   };
@@ -1154,7 +1424,7 @@ function importCSV(input){
 }
 function clearData(){
   if(!confirm('Clear ALL shot data? Cannot be undone.')) return;
-  saveShots([]); pushToFirebase([]); renderData(); calc();
+  saveShots([]);pushToFirebase([]);renderData();calc();
 }
 
 // ═══ INIT ═════════════════════════════════════════════
