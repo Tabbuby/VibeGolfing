@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>GSC Wind Calc v2.0</title>
+<title>GSC Wind Calc v2.1</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07130a;color:#fff;min-height:100vh;font-size:15px;padding-bottom:40px}
@@ -15,98 +15,79 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .sync-dot.err{background:#ef9a9a}
 .sync-dot.syncing{background:#ffb74d;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.tab-content{display:none;padding:12px}
+.tab-content{display:none;padding:10px}
 .tab-content.active{display:block}
-.card{background:#0f1e11;border:1px solid #1a3020;border-radius:14px;padding:14px;margin-bottom:10px}
-.label{font-size:9px;color:#3d5c42;letter-spacing:1.5px;margin-bottom:6px;font-weight:700;text-transform:uppercase}
+.card{background:#0f1e11;border:1px solid #1a3020;border-radius:14px;padding:12px;margin-bottom:8px}
+.label{font-size:9px;color:#3d5c42;letter-spacing:1.5px;margin-bottom:5px;font-weight:700;text-transform:uppercase}
 .section-title{font-size:10px;color:#3d5c42;letter-spacing:1.5px;font-weight:700;text-transform:uppercase;margin-bottom:10px}
-.section-sep{display:flex;align-items:center;gap:10px;margin:4px 0 10px}
+.section-sep{display:flex;align-items:center;gap:10px;margin:6px 0 8px}
 .section-sep-line{flex:1;height:1px;background:#1a3020}
 .section-sep-txt{font-size:9px;color:#3d5c42;letter-spacing:1.5px;font-weight:700;white-space:nowrap}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-input[type=number]{width:100%;border:1px solid #1e3822;border-radius:10px;padding:10px;font-size:24px;font-weight:700;text-align:center;background:#132015;color:#fff;-moz-appearance:textfield;outline:none}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input[type=number]{width:100%;border:1px solid #1e3822;border-radius:10px;padding:10px;font-size:22px;font-weight:700;text-align:center;background:#132015;color:#fff;-moz-appearance:textfield;outline:none}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .small-input{font-size:18px!important;padding:9px!important}
-.club-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.club-btn{border:1px solid #1a3020;border-radius:8px;padding:8px 2px;text-align:center;cursor:pointer;background:#132015;-webkit-tap-highlight-color:transparent}
+/* Club grid */
+.club-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.club-btn{border:1px solid #1a3020;border-radius:8px;padding:7px 2px;text-align:center;cursor:pointer;background:#132015;-webkit-tap-highlight-color:transparent}
 .club-btn.active{background:#1b4d20;border-color:#5dfc8a;box-shadow:0 0 8px #5dfc8a22}
 .club-abbr{font-size:8px;color:#3d5c42;font-weight:700}
 .club-btn.active .club-abbr{color:#a5d6a7}
-.club-val{font-size:12px;font-weight:700;color:#8aa88e}
+.club-val{font-size:11px;font-weight:700;color:#8aa88e}
 .club-btn.active .club-val{color:#5dfc8a}
-.wind-panel{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
-.compass-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
-.compass-lbl{font-size:8px;color:#3d5c42;letter-spacing:1px;font-weight:700}
+/* Wind direction panel */
+.dir-panel{display:grid;grid-template-columns:76px 1fr;gap:8px;align-items:start;margin-top:10px}
 .angle-ctrl{display:flex;align-items:center;border:1px solid #1e3822;border-radius:10px;overflow:hidden;background:#132015}
-.angle-btn{width:40px;height:50px;border:none;background:transparent;font-size:22px;color:#4caf50;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.angle-btn{width:38px;height:46px;border:none;background:transparent;font-size:20px;color:#4caf50;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0}
 .angle-btn:active{background:#1a3020}
 .angle-mid{flex:1;text-align:center;padding:4px 0}
-.angle-deg{font-size:20px;font-weight:700;color:#fff}
-.angle-lbl{font-size:9px;color:#3d5c42;margin-top:2px;font-weight:700;letter-spacing:.8px}
-.presets8{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}
-.preset-btn{padding:7px 2px;border:1px solid #1a3020;border-radius:7px;font-size:9px;font-weight:700;text-align:center;cursor:pointer;background:#132015;color:#3d5c42;-webkit-tap-highlight-color:transparent;letter-spacing:.3px}
+.angle-deg{font-size:18px;font-weight:700;color:#fff}
+.angle-lbl{font-size:8px;color:#3d5c42;margin-top:1px;font-weight:700;letter-spacing:.8px}
+.presets8{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-top:5px}
+.preset-btn{padding:5px 2px;border:1px solid #1a3020;border-radius:6px;font-size:8px;font-weight:700;text-align:center;cursor:pointer;background:#132015;color:#3d5c42;-webkit-tap-highlight-color:transparent}
 .preset-btn.active{background:#1b4d20;border-color:#4caf50;color:#a5d6a7}
-.preset-manual{margin-top:6px;display:flex;align-items:center;gap:6px}
-.preset-manual input{flex:1;font-size:14px!important;padding:7px!important}
-.go-btn{padding:7px 12px;background:#1b4d20;border:1px solid #4caf50;border-radius:8px;color:#5dfc8a;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
-.elev-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;padding:8px;border-radius:8px;cursor:pointer;border:1px solid;font-size:11px;font-weight:700;letter-spacing:.5px;-webkit-tap-highlight-color:transparent}
+.preset-manual{margin-top:5px;display:flex;align-items:center;gap:6px}
+.preset-manual input{flex:1;font-size:13px!important;padding:6px!important}
+.go-btn{padding:6px 11px;background:#1b4d20;border:1px solid #4caf50;border-radius:8px;color:#5dfc8a;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.elev-toggle-sm{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:4px;padding:5px 8px;border-radius:8px;cursor:pointer;border:1px solid;font-size:10px;font-weight:700;letter-spacing:.5px;-webkit-tap-highlight-color:transparent;width:100%}
 .elev-up{color:#5dfc8a;border-color:#2e7d32;background:#0d2e10}
 .elev-dn{color:#ffb74d;border-color:#7b4f00;background:#2a1a00}
-.aim-block{text-align:center;padding:10px 6px}
-.aim-lbl{font-size:9px;color:#3d5c42;letter-spacing:1.5px;margin-bottom:4px;font-weight:700}
-.aim-val{font-size:58px;font-weight:700;line-height:1;color:#5dfc8a}
-.aim-sub{font-size:11px;margin-top:4px;color:#3d5c42;font-weight:600;letter-spacing:.3px}
-
-/* ── ELEVATION LATERAL ADVISORY ── */
-.elev-lat-advisory{background:#0d1e2a;border:1px solid #1a3a5c;border-radius:12px;padding:12px;margin-top:10px}
-.elev-lat-title{font-size:9px;color:#80cbc4;letter-spacing:1.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.elev-lat-badge{background:#0f2535;border:1px solid #1e5555;border-radius:4px;padding:1px 6px;font-size:8px;font-weight:700;color:#80cbc4;letter-spacing:.5px}
-.elev-lat-row{display:grid;grid-template-columns:1fr 1px 1fr;align-items:center}
-.elev-lat-div{background:#1a3a5c;height:60px}
-.elev-lat-block{text-align:center;padding:4px}
-.elev-lat-lbl{font-size:9px;color:#3d7070;letter-spacing:1px;font-weight:700;margin-bottom:2px}
-.elev-lat-val{font-size:30px;font-weight:700;color:#80cbc4}
-.elev-lat-empty{font-size:11px;color:#3d5c42;text-align:center;padding:8px 0;font-style:italic}
-.elev-lat-conf{margin-top:8px;padding-top:8px;border-top:1px solid #1a3a5c}
-.elev-lat-conf-row{display:flex;justify-content:space-between;font-size:9px;color:#3d7070;margin-bottom:4px;font-weight:700;letter-spacing:.5px}
-.elev-lat-bar-track{height:6px;background:#0a1a2a;border-radius:3px;overflow:hidden}
-.elev-lat-bar-fill{height:6px;border-radius:3px;transition:width .4s ease;background:#80cbc4}
-/* zone indicator strip */
-.elev-zone-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:8px}
-.elev-zone-pip{border-radius:5px;padding:5px 2px;text-align:center;border:1px solid #1a3020;background:#0a1a0c}
-.elev-zone-pip.active-zone{border-color:#80cbc4;background:#0d1e2a}
-.elev-zone-pip-lbl{font-size:7px;color:#3d5c42;font-weight:700;letter-spacing:.3px}
-.elev-zone-pip.active-zone .elev-zone-pip-lbl{color:#80cbc4}
-.elev-zone-pip-val{font-size:10px;font-weight:700;color:#3d5c42}
-.elev-zone-pip.active-zone .elev-zone-pip-val{color:#f0e968}
-.elev-lat-hint{font-size:10px;color:#80cbc4;background:#0a1522;border:1px solid #1a3a5c;border-radius:6px;padding:7px 10px;margin-top:8px}
-
-.ml-rec{background:#0a1e0d;border:1px solid #1a4520;border-radius:12px;padding:12px;margin-top:10px}
-.ml-rec-title{font-size:9px;color:#5dfc8a;letter-spacing:1.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.ml-badge{background:#1a4520;border:1px solid #2e7d32;border-radius:4px;padding:1px 6px;font-size:8px;font-weight:700;color:#5dfc8a;letter-spacing:.5px}
-.ml-rec-row{display:grid;grid-template-columns:1fr 1px 1fr;align-items:center}
-.ml-divider{background:#1a4520;height:60px}
-.ml-block{text-align:center;padding:4px}
-.ml-lbl{font-size:9px;color:#3d5c42;letter-spacing:1px;font-weight:700;margin-bottom:2px}
-.ml-val{font-size:30px;font-weight:700;color:#f0e968}
-.ml-empty{font-size:11px;color:#3d5c42;text-align:center;padding:8px 0;font-style:italic}
-.conf-bar-wrap{margin-top:8px;padding-top:8px;border-top:1px solid #1a4520}
-.conf-bar-label{display:flex;justify-content:space-between;font-size:9px;color:#3d5c42;margin-bottom:4px;font-weight:700;letter-spacing:.5px}
-.conf-bar-track{height:6px;background:#1a3020;border-radius:3px;overflow:hidden}
-.conf-bar-fill{height:6px;border-radius:3px;transition:width .4s ease}
-.conf-low{background:#c62828}
-.conf-med{background:#ffb74d}
-.conf-high{background:#5dfc8a}
-.correction-box{background:#2a1a00;border:1px solid #7b4f00;border-radius:10px;padding:10px;margin-top:8px}
+/* 2-col results row */
+.play-results{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.result-col{background:#0f1e11;border:1px solid #1a3020;border-radius:14px;padding:12px 10px}
+/* ① block */
+.aim-block{text-align:center;padding:2px 0 6px}
+.aim-lbl{font-size:8px;color:#3d5c42;letter-spacing:1.3px;margin-bottom:3px;font-weight:700;text-transform:uppercase}
+.aim-val-lg{font-size:48px;font-weight:700;line-height:1;color:#5dfc8a}
+.aim-val-adj{font-size:38px;font-weight:700;line-height:1;color:#5dfc8a}
+.aim-sub{font-size:9px;margin-top:3px;color:#3d5c42;font-weight:600}
+.elev-adj-badge{display:inline-block;background:#2a1a00;border:1px solid #7b4f00;border-radius:4px;padding:1px 5px;font-size:8px;font-weight:700;color:#ffb74d;letter-spacing:.5px;margin-bottom:4px}
+.elev-adj-rows{border-top:1px solid #1a3020;padding-top:5px;margin-top:2px}
+.elev-adj-row{display:flex;justify-content:space-between;font-size:9px;margin-bottom:2px}
+.elev-adj-lbl{color:#3d5c42}
+.elev-adj-val{font-weight:700}
+.factor-note{font-size:8px;color:#3d7060;margin-top:4px;text-align:center}
+/* ② block */
+.rec-head{font-size:8px;color:#5dfc8a;letter-spacing:1.2px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.ml-badge{background:#1a4520;border:1px solid #2e7d32;border-radius:4px;padding:1px 5px;font-size:7px;font-weight:700;color:#5dfc8a;letter-spacing:.5px}
+.rec-val{font-size:36px;font-weight:700;color:#f0e968;text-align:center;line-height:1;margin:4px 0 2px}
+.spread-row{text-align:center;font-size:9px;color:#80cbc4;margin-bottom:2px}
+.rec-meta{text-align:center;font-size:8px;color:#3d5c42;margin-top:2px}
+.ml-empty-sm{font-size:10px;color:#3d5c42;text-align:center;padding:12px 0;font-style:italic}
+.conf-bar-wrap{margin-top:6px;padding-top:5px;border-top:1px solid #1a4520}
+.conf-bar-label{display:flex;justify-content:space-between;font-size:8px;color:#3d5c42;margin-bottom:3px;font-weight:700;letter-spacing:.5px}
+.conf-bar-track{height:5px;background:#1a3020;border-radius:3px;overflow:hidden}
+.conf-bar-fill{height:5px;border-radius:3px;transition:width .4s ease}
+.conf-low{background:#c62828}.conf-med{background:#ffb74d}.conf-high{background:#5dfc8a}
+/* other */
+.correction-box{background:#2a1a00;border:1px solid #7b4f00;border-radius:10px;padding:10px;margin-bottom:8px}
 .correction-title{font-size:9px;color:#ffb74d;font-weight:700;letter-spacing:1px;margin-bottom:6px}
 .correction-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-top:4px}
-.correction-lbl{color:#8d6e63}
-.correction-val{color:#ffb74d;font-weight:700}
+.correction-lbl{color:#8d6e63}.correction-val{color:#ffb74d;font-weight:700}
 .correction-btn{padding:4px 10px;background:#3e2a00;border:1px solid #ffb74d;border-radius:6px;color:#ffb74d;font-size:10px;font-weight:700;cursor:pointer;margin-top:8px;-webkit-tap-highlight-color:transparent}
-.btn{width:100%;padding:14px;border:none;border-radius:11px;font-size:13px;font-weight:800;letter-spacing:.8px;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-top:4px}
-.btn-green{background:#2e7d32;color:#fff}
-.btn-green:active{background:#1b5e20}
+.btn{width:100%;padding:13px;border:none;border-radius:11px;font-size:13px;font-weight:800;letter-spacing:.8px;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-top:4px}
+.btn-green{background:#2e7d32;color:#fff}.btn-green:active{background:#1b5e20}
 .btn-clear{background:#132015;color:#5dfc8a;border:1px solid #2e7d32}
 .btn-export{background:#132015;color:#5dfc8a;border:1px solid #2e7d32}
 .btn-import{background:#132015;color:#80cbc4;border:1px solid #1e5555}
@@ -118,7 +99,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .result-btn.in{background:#1b5e20;border-color:#4caf50;color:#5dfc8a}
 .result-btn.miss{background:#3e1010;border-color:#c62828;color:#ef9a9a}
 .result-btn.inactive{background:#132015;color:#3d5c42}
-
 .data-table{width:100%;border-collapse:collapse;font-size:10px}
 .data-table th{background:#132015;color:#3d5c42;padding:7px 4px;text-align:center;font-size:8px;letter-spacing:.5px;font-weight:700;position:sticky;top:0;z-index:2}
 .data-table th.sortable{cursor:pointer;user-select:none}
@@ -129,8 +109,7 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .data-table th.sort-asc .sort-arrow,.data-table th.sort-desc .sort-arrow{opacity:1;color:#5dfc8a}
 .data-table td{padding:6px 4px;text-align:center;border-bottom:1px solid #0f1e11;color:#8aa88e}
 .data-table tr:last-child td{border-bottom:none}
-.td-in{color:#5dfc8a;font-weight:700}
-.td-miss{color:#ef9a9a;font-weight:700}
+.td-in{color:#5dfc8a;font-weight:700}.td-miss{color:#ef9a9a;font-weight:700}
 .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #1a3020;max-height:340px;overflow-y:auto}
 .filter-row td{padding:3px 2px;background:#0a1a0c;position:sticky;top:28px;z-index:1}
 .filter-row input,.filter-row select{width:100%;background:#132015;border:1px solid #1a3020;border-radius:4px;color:#cfd8dc;font-size:9px;padding:3px 2px;text-align:center;outline:none;-moz-appearance:textfield}
@@ -160,13 +139,12 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .ml-detail.open{display:block}
 .club-insight-name{font-size:10px;color:#3d5c42;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
 .insight-row{display:flex;justify-content:space-between;font-size:10px;margin-top:3px;align-items:center}
-.isl{color:#3d7060}
-.isv{color:#cfd8dc;font-weight:700}
+.isl{color:#3d7060}.isv{color:#cfd8dc;font-weight:700}
 .divider{border:none;border-top:1px solid #1a3020;margin:10px 0}
 .y-box{background:#0a1e0d;border:1px solid #1a4520;border-radius:8px;padding:9px;font-size:11px;color:#80cbc4;margin-top:8px}
 .corrected-hint{font-size:10px;color:#ffb74d;background:#3e2a00;border:1px solid #7b4f00;border-radius:6px;padding:6px 8px;margin-top:8px;display:none}
 .empty{text-align:center;color:#3d5c42;font-size:12px;padding:30px 0}
-.hdr-btn{font-size:10px;font-weight:700;padding:5px 12px;border:1px solid #1e3822;border-radius:7px;cursor:pointer;background:#132015;color:#66bb6a;-webkit-tap-highlight-color:transparent;letter-spacing:.5px}
+.hdr-btn{font-size:10px;font-weight:700;padding:4px 10px;border:1px solid #1e3822;border-radius:7px;cursor:pointer;background:#132015;color:#66bb6a;-webkit-tap-highlight-color:transparent;letter-spacing:.5px}
 .edit-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .edit-name{font-size:13px;color:#cfd8dc}
 .inline-actions{display:flex;gap:4px;justify-content:center}
@@ -179,10 +157,7 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .bracket-row:last-child{border-bottom:none}
 .bracket-lbl{color:#3d7060;font-size:9px}
 .bracket-val{font-weight:700}
-.bracket-val.over{color:#ef9a9a}
-.bracket-val.under{color:#80cbc4}
-.bracket-val.ok{color:#5dfc8a}
-.bracket-val.neutral{color:#8aa88e}
+.bracket-val.over{color:#ef9a9a}.bracket-val.under{color:#80cbc4}.bracket-val.ok{color:#5dfc8a}.bracket-val.neutral{color:#8aa88e}
 .bracket-n{font-size:8px;color:#3d5c42;margin-left:3px}
 .elev-tuner-card{background:#0a1e0d;border:1px solid #1a4520;border-radius:12px;padding:12px;margin-top:10px}
 .elev-zone-grid{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:4px;align-items:center;margin-bottom:10px}
@@ -194,10 +169,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .elev-zone-n{font-size:8px;color:#3d5c42}
 .elev-tune-hint{font-size:10px;color:#80cbc4;background:#0f2535;border:1px solid #1e5555;border-radius:6px;padding:7px 10px;margin-top:4px}
 .elev-tune-none{font-size:11px;color:#3d5c42;text-align:center;padding:8px;font-style:italic}
-
-/* ── ELEVATION LATERAL DATA VIEW ── */
-.elev-lat-data-card{background:#0d1e2a;border:1px solid #1a3a5c;border-radius:12px;padding:12px;margin-top:10px}
-.elev-lat-data-title{font-size:9px;color:#80cbc4;letter-spacing:1.5px;font-weight:700;margin-bottom:8px}
 .elev-lat-zone-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
 .elev-lat-zone-card{background:#0a1522;border:1px solid #1a3a5c;border-radius:8px;padding:8px 4px;text-align:center}
 .elev-lat-zone-card.active-learning{border-color:#80cbc4}
@@ -206,8 +177,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 .elev-lat-zone-n{font-size:8px;color:#3d5c42;margin-top:1px}
 .elev-lat-zone-bar{height:3px;background:#0a1a2a;border-radius:2px;margin-top:4px;overflow:hidden}
 .elev-lat-zone-fill{height:3px;border-radius:2px}
-.elev-lat-scatter{margin-top:8px}
-.elev-lat-scatter-lbl{font-size:8px;color:#3d7070;letter-spacing:.5px;font-weight:700;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -217,128 +186,115 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
   <div class="tab" onclick="showTab('data')">📊 DATA</div>
 </div>
 
-<!-- ══ PLAY TAB ═══════════════════════════════════════════ -->
+<!-- ══ PLAY TAB ═══════════════════════════════════════ -->
 <div class="tab-content active" id="tab-play">
 
+  <!-- COMPACT INPUT CARD -->
   <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
       <div class="label" style="margin:0">CLUB</div>
       <button class="hdr-btn" onclick="toggleEl('club-editor')">EDIT CONSTANTS</button>
     </div>
     <div class="club-grid" id="club-grid"></div>
+
+    <!-- Wind + Elevation side by side -->
+    <div class="row2" style="margin-top:10px">
+      <div>
+        <div class="label">WIND (mph)</div>
+        <input type="number" id="wind" min="0" step="0.5" placeholder="0" oninput="calc()">
+      </div>
+      <div>
+        <div class="label">ELEVATION (yds)</div>
+        <input type="number" id="elev" min="0" step="1" placeholder="0" style="font-size:20px!important;padding:8px!important" oninput="calc()">
+        <div class="elev-toggle-sm elev-up" id="elev-toggle" onclick="toggleElev()">
+          <span id="elev-arrow">▲</span><span id="elev-text">UPHILL</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Direction row -->
+    <div class="dir-panel">
+      <div style="text-align:center">
+        <canvas id="compass" width="72" height="72" onclick="compassClick(event)" style="cursor:pointer;border-radius:50%;display:block"></canvas>
+        <div style="font-size:8px;color:#3d5c42;margin-top:2px">tap to set</div>
+      </div>
+      <div>
+        <div class="label">WIND DIRECTION</div>
+        <div class="angle-ctrl">
+          <button class="angle-btn" onclick="stepAngle(-5)">−</button>
+          <div class="angle-mid">
+            <div class="angle-deg" id="angle-deg">0°</div>
+            <div class="angle-lbl" id="angle-lbl">TAILWIND</div>
+          </div>
+          <button class="angle-btn" onclick="stepAngle(5)">+</button>
+        </div>
+        <div class="presets8">
+          <div class="preset-btn active" data-a="0"   onclick="setAngle(0)">0°</div>
+          <div class="preset-btn"        data-a="45"  onclick="setAngle(45)">45°</div>
+          <div class="preset-btn"        data-a="90"  onclick="setAngle(90)">90°</div>
+          <div class="preset-btn"        data-a="135" onclick="setAngle(135)">135°</div>
+          <div class="preset-btn"        data-a="180" onclick="setAngle(180)">180°</div>
+          <div class="preset-btn"        data-a="225" onclick="setAngle(225)">225°</div>
+          <div class="preset-btn"        data-a="270" onclick="setAngle(270)">270°</div>
+          <div class="preset-btn"        data-a="315" onclick="setAngle(315)">315°</div>
+        </div>
+        <div class="preset-manual">
+          <input type="number" id="manual-angle" min="0" max="359" placeholder="custom°">
+          <button class="go-btn" onclick="applyManualAngle()">SET°</button>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <!-- Club editor (hidden) -->
   <div class="card hidden" id="club-editor">
     <div class="section-title">EDIT CLUB CONSTANTS</div>
     <div id="club-editor-rows"></div>
     <div style="font-size:9px;color:#3d5c42;margin-top:4px">Changes save automatically</div>
   </div>
 
-  <div class="card">
-    <div class="row2" style="margin-bottom:12px">
-      <div>
-        <div class="label">WIND SPEED</div>
-        <input type="number" id="wind" min="0" step="0.5" placeholder="0" oninput="calc()">
+  <!-- ═══ SIDE-BY-SIDE ① and ② ═══ -->
+  <div class="play-results">
+
+    <!-- ① WIND PULL -->
+    <div class="result-col">
+      <div class="aim-block">
+        <div class="aim-lbl">① WIND PULL</div>
+        <div id="aim-rings" class="aim-val-lg">0.00</div>
+        <div id="aim-sub-1" class="aim-sub" style="text-align:center">lateral rings</div>
       </div>
-      <div class="compass-wrap">
-        <div class="compass-lbl">WIND DIRECTION</div>
-        <canvas id="compass" width="90" height="90" onclick="compassClick(event)" style="cursor:pointer;border-radius:50%"></canvas>
-        <div style="font-size:9px;color:#3d5c42;margin-top:2px">tap to set angle</div>
-      </div>
+      <div id="elev-adj-detail" class="hidden" style="margin-top:2px"></div>
     </div>
 
-    <div>
-      <div class="label">WIND ANGLE (TEE)</div>
-      <div class="angle-ctrl">
-        <button class="angle-btn" onclick="stepAngle(-5)">−</button>
-        <div class="angle-mid">
-          <div class="angle-deg" id="angle-deg">0°</div>
-          <div class="angle-lbl" id="angle-lbl">TAILWIND</div>
-        </div>
-        <button class="angle-btn" onclick="stepAngle(5)">+</button>
-      </div>
-      <div class="presets8">
-        <div class="preset-btn active" data-a="0"   onclick="setAngle(0)">0°</div>
-        <div class="preset-btn"        data-a="45"  onclick="setAngle(45)">45°</div>
-        <div class="preset-btn"        data-a="90"  onclick="setAngle(90)">90°</div>
-        <div class="preset-btn"        data-a="135" onclick="setAngle(135)">135°</div>
-        <div class="preset-btn"        data-a="180" onclick="setAngle(180)">180°</div>
-        <div class="preset-btn"        data-a="225" onclick="setAngle(225)">225°</div>
-        <div class="preset-btn"        data-a="270" onclick="setAngle(270)">270°</div>
-        <div class="preset-btn"        data-a="315" onclick="setAngle(315)">315°</div>
-      </div>
-      <div class="preset-manual">
-        <input type="number" id="manual-angle" min="0" max="359" placeholder="custom°" style="font-size:13px!important;padding:6px!important">
-        <button class="go-btn" onclick="applyManualAngle()">SET°</button>
-      </div>
-    </div>
-
-    <div style="margin-top:12px;max-width:50%;padding-right:5px">
-      <div class="label">ELEVATION (yds)</div>
-      <input type="number" id="elev" min="0" step="1" placeholder="0" oninput="calc()">
-      <div class="elev-toggle elev-up" id="elev-toggle" onclick="toggleElev()">
-        <span id="elev-arrow">▲</span>
-        <span id="elev-text">UPHILL → aim further</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="aim-block">
-      <div class="aim-lbl">① WIND PULL — LATERAL RINGS</div>
-      <div class="aim-val" id="aim-rings">0.00</div>
-      <div class="aim-sub">rings offset along wind direction</div>
-    </div>
-
-    <!-- ELEVATION Y-DISTANCE ADVISORY — shown when elev > 0 -->
-    <div class="elev-lat-advisory hidden" id="elev-lat-advisory">
-      <div class="elev-lat-title">
-        📐 ELEVATION DISTANCE NOTE
-        <span class="elev-lat-badge" id="elev-lat-badge">LEARNING</span>
-      </div>
-      <div id="elev-lat-content"><div class="elev-lat-empty">Log elevation shots to build Y-distance profile</div></div>
-      <div class="elev-lat-conf hidden" id="elev-lat-conf">
-        <div class="elev-lat-conf-row">
-          <span>CONFIDENCE</span>
-          <span id="elev-lat-conf-label">LOW</span>
-        </div>
-        <div class="elev-lat-bar-track">
-          <div class="elev-lat-bar-fill" id="elev-lat-bar-fill" style="width:0%"></div>
-        </div>
-      </div>
-      <div class="elev-zone-strip" id="elev-zone-strip"></div>
-    </div>
-
-    <div class="ml-rec">
-      <div class="ml-rec-title">
-        🧠 RECOMMENDED ② ADDITIONAL PULL
+    <!-- ② ADDITIONAL PULL -->
+    <div class="result-col">
+      <div class="rec-head">
+        🧠 ② ADD'L PULL
         <span class="ml-badge" id="ml-badge"></span>
       </div>
-      <div id="ml-content"><div class="ml-empty">Log shots to build recommendations</div></div>
-      <div id="forecast-warn" class="hidden" style="background:#3e2a00;border:1px solid #7b4f00;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10px;color:#ffb74d">
-        📈 <b>FORECASTED</b> — extrapolated from existing data. No shots logged at this exact wind/angle yet. Log shots to confirm.
-      </div>
+      <div id="ml-content"><div class="ml-empty-sm">Log shots to build</div></div>
       <div class="conf-bar-wrap hidden" id="conf-bar-wrap">
         <div class="conf-bar-label">
-          <span>CONFIDENCE</span>
-          <span id="conf-label">LOW</span>
+          <span>CONF</span><span id="conf-label">LOW</span>
         </div>
         <div class="conf-bar-track">
           <div class="conf-bar-fill" id="conf-bar-fill" style="width:0%"></div>
         </div>
       </div>
+      <div id="forecast-warn" class="hidden" style="background:#3e2a00;border:1px solid #7b4f00;border-radius:6px;padding:5px 7px;margin-top:6px;font-size:9px;color:#ffb74d">📈 FORECASTED — no shots at this wind yet</div>
     </div>
 
-    <div class="correction-box hidden" id="correction-box">
-      <div class="correction-title">⚠️ CONSTANT CORRECTION SUGGESTED</div>
-      <div id="correction-rows"></div>
-    </div>
-
-    <div style="margin-top:12px">
-      <button class="btn btn-clear" onclick="clearCalc()" style="margin:0">✕ CLEAR INPUTS</button>
-    </div>
   </div>
 
+  <!-- Constant correction (full-width, shown only when needed) -->
+  <div class="correction-box hidden" id="correction-box">
+    <div class="correction-title">⚠️ CONSTANT CORRECTION SUGGESTED</div>
+    <div id="correction-rows"></div>
+  </div>
+
+  <button class="btn btn-clear" onclick="clearCalc()" style="margin-bottom:8px">✕ CLEAR INPUTS</button>
+
+  <!-- ═══ LOG THIS SHOT (scroll down to fill after shot) ═══ -->
   <div class="section-sep">
     <div class="section-sep-line"></div>
     <div class="section-sep-txt">📝 LOG THIS SHOT</div>
@@ -375,7 +331,7 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
       </div>
       <div>
         <div class="label">Y — LONG / SHORT</div>
-        <div style="font-size:9px;color:#3d5c42;margin-bottom:4px">+ overshoot (long) &nbsp;|&nbsp; − short</div>
+        <div style="font-size:9px;color:#3d5c42;margin-bottom:4px">+ overshoot &nbsp;|&nbsp; − short</div>
         <input type="number" id="log-y" class="small-input" step="0.25" placeholder="0.00" oninput="updateYBreakdown()">
       </div>
     </div>
@@ -398,7 +354,7 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 
 </div>
 
-<!-- ══ DATA TAB ═══════════════════════════════════════════ -->
+<!-- ══ DATA TAB ═══════════════════════════════════════ -->
 <div class="tab-content" id="tab-data">
 
   <div class="card">
@@ -425,7 +381,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
     </div>
   </div>
 
-  <!-- LEARNED PULL — MINIMIZED -->
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <div class="section-title" style="margin:0">🧠 LEARNED PULL VALUES (②)</div>
@@ -435,20 +390,31 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
     <div id="ml-detail-panel"></div>
   </div>
 
-  <!-- ELEVATION Y-DISTANCE PROFILE — DATA VIEW -->
+  <!-- Elevation X-Factor (new) -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      <div class="section-title" style="margin:0">⛰ ELEVATION X-FACTOR (per club)</div>
+      <div style="font-size:9px;color:#3d7070">learned from X miss</div>
+    </div>
+    <div style="font-size:9px;color:#3d5c42;margin-bottom:8px">
+      ① adj = base rings + elev yd × factor &nbsp;·&nbsp; downhill &amp; uphill tracked separately &nbsp;·&nbsp; seeds at 0.080 / 0.000
+    </div>
+    <div id="elev-xfactor-content"><div class="empty">Log elevation shots to learn factors</div></div>
+  </div>
+
+  <!-- Elevation Y-distance profile -->
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <div class="section-title" style="margin:0">📐 ELEVATION Y-DISTANCE PROFILE</div>
-      <div style="font-size:9px;color:#3d5c42">avg Y error per elevation zone</div>
+      <div style="font-size:9px;color:#3d5c42">avg Y error per zone</div>
     </div>
-    <div style="font-size:9px;color:#3d5c42;margin-bottom:8px">avg Ypure per zone · + = overshot · − = undershot · sign tells you if elevation pushed you off</div>
-    <div id="elev-lat-data-content"><div class="empty">Log elevation shots (with elevation shots to build profile</div></div>
+    <div style="font-size:9px;color:#3d5c42;margin-bottom:8px">+ = overshot · − = undershot</div>
+    <div id="elev-lat-data-content"><div class="empty">Log elevation shots to build profile</div></div>
   </div>
 
-  <!-- WIND BRACKET SUMMARY -->
   <div class="card">
     <div class="section-title">💨 WIND BRACKET SUMMARY</div>
-    <div style="font-size:9px;color:#3d5c42;margin-bottom:8px">avg ② pull error by condition · + = over-pulled · − = under-pulled</div>
+    <div style="font-size:9px;color:#3d5c42;margin-bottom:8px">avg ② pull error · + = over-pulled · − = under-pulled</div>
     <div id="wind-bracket-content"><div class="empty">No data yet</div></div>
     <div id="elev-tuner-wrap"></div>
   </div>
@@ -486,30 +452,29 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
 </div>
 
 <script>
-// ═══ CONSTANTS ═══════════════════════════════════════
+// ═══ CONSTANTS ════════════════════════════════════════
 const CLUBS=[
-  {a:'DRV',n:'Driver'},
-  {a:'WD',n:'Wood'},
-  {a:'L.IRN',n:'Long Iron'},
-  {a:'S.IRN',n:'Short Iron'},
-  {a:'R.IRN',n:'Rough Iron'},
-  {a:'SW',n:'Sand Wedge'},
-  {a:'WDG',n:'Wedge'}
+  {a:'DRV',n:'Driver'},{a:'WD',n:'Wood'},{a:'L.IRN',n:'Long Iron'},
+  {a:'S.IRN',n:'Short Iron'},{a:'R.IRN',n:'Rough Iron'},{a:'SW',n:'Sand Wedge'},{a:'WDG',n:'Wedge'}
 ];
 const FIREBASE_URL='https://vibegolfing-default-rtdb.asia-southeast1.firebasedatabase.app/shots.json';
 
-// ═══ ELEVATION LATERAL ZONES ══════════════════════════
-// 5 zones covering the full range of elevation (absolute value)
-// direction is handled separately — the lateral adjustment sign
-// is consistent regardless of up/down (both extremes need more pull)
-// Zone definition: signed elev ranges — negative = downhill, positive = uphill
-// We split by absolute magnitude to detect that high absolute elev → bigger X error
 // ═══ STATE ════════════════════════════════════════════
 let selClub=0,windAngle=0,elevUp=true,logResult='',editIdx=-1;
 let consts=CLUBS.map((_,i)=>parseFloat(localStorage.getItem('gsc_c'+i)||'1'));
 let openMlClub=-1;
 let tableSort={col:'ts',dir:'desc'};
 let tableFilters={};
+
+// ═══ CACHE (invalidates on new shots) ════════════════
+let _cache={},_cacheShotsLen=-1;
+function getCached(key,fn){
+  const shots=getShots();
+  if(shots.length!==_cacheShotsLen){_cache={};_cacheShotsLen=shots.length}
+  if(!(key in _cache)) _cache[key]=fn();
+  return _cache[key];
+}
+function invalidateCache(){_cache={};_cacheShotsLen=-1}
 
 // ═══ STORAGE ══════════════════════════════════════════
 function getShots(){try{return JSON.parse(localStorage.getItem('gsc_shots')||'[]')}catch(e){return[]}}
@@ -539,13 +504,13 @@ async function pullFromFirebase(){
     const data=await res.json();
     if(!data||data===null){saveShots([]);setSyncStatus('ok','☁️ Cloud empty — local cleared');return}
     const cloud=Array.isArray(data)?data:Object.values(data);
-    const sorted=cloud.sort((a,b)=>a.ts-b.ts);
-    saveShots(sorted);
-    setSyncStatus('ok','☁️ Synced — '+sorted.length+' shots');
+    saveShots(cloud.sort((a,b)=>a.ts-b.ts));
+    setSyncStatus('ok','☁️ Synced — '+cloud.length+' shots');
   }catch(e){setSyncStatus('err','⚠️ Offline — using local data')}
 }
 async function syncNow(){
   await pullFromFirebase();
+  invalidateCache();
   if(document.getElementById('tab-data').classList.contains('active')) renderData();
   calc();
 }
@@ -562,49 +527,43 @@ function toggleEl(id){document.getElementById(id).classList.toggle('hidden')}
 
 // ═══ COMPASS ══════════════════════════════════════════
 function drawCompass(angle){
-  const canvas=document.getElementById('compass');
-  const ctx=canvas.getContext('2d');
-  const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=W/2-2;
+  const cv=document.getElementById('compass');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height,cx=W/2,cy=H/2,r=W/2-2;
   ctx.clearRect(0,0,W,H);
-  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
-  ctx.fillStyle='#0f1e11';ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#0f1e11';ctx.fill();
   ctx.strokeStyle='#1a4520';ctx.lineWidth=1.5;ctx.stroke();
-  const labels=[['N',0],['E',90],['S',180],['W',270]];
-  ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  labels.forEach(([lbl,deg])=>{
-    const rad=(deg-90)*Math.PI/180;
+  ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  [['N',0],['E',90],['S',180],['W',270]].forEach(([l,d])=>{
+    const rad=(d-90)*Math.PI/180;
     ctx.fillStyle='#3d5c42';
-    ctx.fillText(lbl,cx+Math.cos(rad)*(r-10),cy+Math.sin(rad)*(r-10));
+    ctx.fillText(l,cx+Math.cos(rad)*(r-8),cy+Math.sin(rad)*(r-8));
   });
   for(let d=0;d<360;d+=45){
     const rad=(d-90)*Math.PI/180;
-    ctx.beginPath();
-    ctx.moveTo(cx+Math.cos(rad)*(r-18),cy+Math.sin(rad)*(r-18));
-    ctx.lineTo(cx+Math.cos(rad)*(r-4),cy+Math.sin(rad)*(r-4));
+    ctx.beginPath();ctx.moveTo(cx+Math.cos(rad)*(r-14),cy+Math.sin(rad)*(r-14));
+    ctx.lineTo(cx+Math.cos(rad)*(r-3),cy+Math.sin(rad)*(r-3));
     ctx.strokeStyle='#2a4030';ctx.lineWidth=1;ctx.stroke();
   }
-  ctx.beginPath();ctx.arc(cx,cy-r+20,3,0,Math.PI*2);
-  ctx.fillStyle='#5dfc8a';ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy-r+14,2,0,Math.PI*2);ctx.fillStyle='#5dfc8a';ctx.fill();
   const fromRad=((angle+180)%360-90)*Math.PI/180;
-  const arrowLen=r*0.55;
-  const ax=cx+Math.cos(fromRad)*arrowLen,ay=cy+Math.sin(fromRad)*arrowLen;
+  const aLen=r*0.55;
+  const ax=cx+Math.cos(fromRad)*aLen,ay=cy+Math.sin(fromRad)*aLen;
   ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(ax,ay);
   ctx.strokeStyle='#f0e968';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
-  const headLen=8,headAngle=Math.PI/6;
+  const hLen=7,hAng=Math.PI/6;
   ctx.beginPath();
-  ctx.moveTo(ax,ay);ctx.lineTo(ax+Math.cos(fromRad+Math.PI-headAngle)*headLen,ay+Math.sin(fromRad+Math.PI-headAngle)*headLen);
-  ctx.moveTo(ax,ay);ctx.lineTo(ax+Math.cos(fromRad+Math.PI+headAngle)*headLen,ay+Math.sin(fromRad+Math.PI+headAngle)*headLen);
+  ctx.moveTo(ax,ay);ctx.lineTo(ax+Math.cos(fromRad+Math.PI-hAng)*hLen,ay+Math.sin(fromRad+Math.PI-hAng)*hLen);
+  ctx.moveTo(ax,ay);ctx.lineTo(ax+Math.cos(fromRad+Math.PI+hAng)*hLen,ay+Math.sin(fromRad+Math.PI+hAng)*hLen);
   ctx.stroke();
-  ctx.beginPath();ctx.arc(ax,ay,3,0,Math.PI*2);ctx.fillStyle='#f0e968';ctx.fill();
+  ctx.beginPath();ctx.arc(ax,ay,2,0,Math.PI*2);ctx.fillStyle='#f0e968';ctx.fill();
 }
 function compassClick(e){
-  const canvas=document.getElementById('compass');
-  const rect=canvas.getBoundingClientRect();
-  const cx=canvas.width/2,cy=canvas.height/2;
+  const cv=document.getElementById('compass');
+  const rect=cv.getBoundingClientRect();
+  const cx=cv.width/2,cy=cv.height/2;
   const x=e.clientX-rect.left-cx,y=e.clientY-rect.top-cy;
-  let deg=Math.round((Math.atan2(y,x)*180/Math.PI+90+360))%360;
-  deg=Math.round(deg/5)*5%360;
-  setAngle(deg);
+  setAngle(Math.round(Math.round((Math.atan2(y,x)*180/Math.PI+90+360))%360/5)*5%360);
 }
 
 // ═══ ANGLE ════════════════════════════════════════════
@@ -614,32 +573,25 @@ function applyManualAngle(){
   if(!isNaN(v)) setAngle(((v%360)+360)%360);
 }
 function angleLbl(a){
-  if(a<=22||a>=338)  return'TAILWIND';
-  if(a<=67)          return'TAIL-CROSS';
-  if(a<=112)         return'CROSSWIND →';
-  if(a<=157)         return'HEAD-CROSS';
-  if(a<=202)         return'HEADWIND';
-  if(a<=247)         return'HEAD-CROSS';
-  if(a<=292)         return'CROSSWIND ←';
-  return'TAIL-CROSS';
+  if(a<=22||a>=338) return'TAILWIND';if(a<=67) return'TAIL-CROSS';
+  if(a<=112) return'CROSSWIND →';if(a<=157) return'HEAD-CROSS';
+  if(a<=202) return'HEADWIND';if(a<=247) return'HEAD-CROSS';
+  if(a<=292) return'CROSSWIND ←';return'TAIL-CROSS';
 }
 function setAngle(a){
   windAngle=a;
   document.getElementById('angle-deg').textContent=a+'°';
   document.getElementById('angle-lbl').textContent=angleLbl(a);
-  document.querySelectorAll('.preset-btn').forEach(b=>
-    b.classList.toggle('active',parseInt(b.dataset.a)===a)
-  );
-  drawCompass(a);
-  calc();
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.a)===a));
+  drawCompass(a);calc();
 }
 
-// ═══ ELEVATION ════════════════════════════════════════
+// ═══ ELEVATION TOGGLE ═════════════════════════════════
 function toggleElev(){
   elevUp=!elevUp;
   document.getElementById('elev-arrow').textContent=elevUp?'▲':'▼';
-  document.getElementById('elev-text').textContent=elevUp?'UPHILL → aim further':'DOWNHILL → aim shorter';
-  document.getElementById('elev-toggle').className='elev-toggle '+(elevUp?'elev-up':'elev-dn');
+  document.getElementById('elev-text').textContent=elevUp?'UPHILL':'DOWNHILL';
+  document.getElementById('elev-toggle').className='elev-toggle-sm '+(elevUp?'elev-up':'elev-dn');
   calc();
 }
 
@@ -651,14 +603,13 @@ function clearCalc(){
   document.getElementById('y-breakdown').classList.add('hidden');
   document.getElementById('corrected-hint').style.display='none';
   logResult='';
-  document.getElementById('rb-in').className='result-btn inactive';
-  document.getElementById('rb-miss').className='result-btn inactive';
+  ['rb-in','rb-miss'].forEach(id=>document.getElementById(id).className='result-btn inactive');
   document.getElementById('result-hint').textContent='';
-  setAngle(0);elevUp=true;
+  elevUp=true;
   document.getElementById('elev-arrow').textContent='▲';
-  document.getElementById('elev-text').textContent='UPHILL → aim further';
-  document.getElementById('elev-toggle').className='elev-toggle elev-up';
-  calc();
+  document.getElementById('elev-text').textContent='UPHILL';
+  document.getElementById('elev-toggle').className='elev-toggle-sm elev-up';
+  setAngle(0);
 }
 
 // ═══ CLUBS ════════════════════════════════════════════
@@ -675,10 +626,8 @@ function renderClubs(){
   const editor=document.getElementById('club-editor-rows');
   editor.innerHTML='';
   CLUBS.forEach((c,i)=>{
-    const row=document.createElement('div');
-    row.className='edit-row';
-    const name=document.createElement('div');
-    name.className='edit-name';name.textContent=c.n;
+    const row=document.createElement('div');row.className='edit-row';
+    const name=document.createElement('div');name.className='edit-name';name.textContent=c.n;
     const inp=document.createElement('input');
     inp.type='number';inp.step='0.01';inp.min='0.01';inp.value=fmt(consts[i]);
     inp.style.cssText='width:90px;border:1px solid #1e3822;border-radius:7px;padding:8px;font-size:16px;font-weight:700;text-align:center;background:#132015;color:#fff;outline:none;-moz-appearance:textfield';
@@ -696,37 +645,47 @@ function renderClubs(){
   });
 }
 
-// ═══ ML ENGINE ════════════════════════════════════════
-function getEffectivePull(s){
-  // IN: ring2 worked, use directly
-  if(s.result==='In') return s.ring2;
-  // MISS: blank/zero Y treated as 0 — user confirmed X base is reliable,
-  // no Y logged means distance was acceptable, treat pull as-used
-  const yErr=s.yPure||s.y||0;
-  const windCos=Math.cos((s.windAngle||0)*Math.PI/180);
-  return parseFloat((s.ring2+yErr*windCos).toFixed(4));
+// ═══ ELEVATION X-FACTOR ENGINE ════════════════════════
+// Formula:  adjusted_ring1 = ring1 + abs(signedElev) * learned_factor
+// Downhill seed: 0.08  (from your data — refines as shots come in)
+// Uphill seed:   0.00  (no correction yet — will learn if that changes)
+// Per club, per direction — completely independent
+//
+// Learning from X miss (X is lateral, exactly what we want):
+//   factor_i = -X_miss / abs(elev)
+//   (negative X = under-aimed = positive correction needed)
+//   Blended: trust = min(1, n/8) — full confidence at 8 shots
+function getElevXFactorInfo(clubIdx,isDownhill){
+  const DEFAULT=isDownhill?0.08:0.00;
+  const shots=getShots().filter(s=>
+    s.clubIdx===clubIdx&&
+    (s.elev||0)>1&&
+    // elevUp=true means uphill; isDownhill means we want !elevUp
+    (s.elevUp===!isDownhill)
+  );
+  const n=shots.length;
+  if(!n) return{factor:DEFAULT,n:0,learned:DEFAULT,isDefault:true,trust:0,conf:'default seed'};
+  const sorted=shots.slice().sort((a,b)=>a.ts-b.ts);
+  const DECAY=0.85;
+  const weighted=sorted.map((s,i)=>{
+    const elev=Math.max(s.elev||1,0.5);
+    const fi=-(s.x||0)/elev;   // X miss → factor estimate
+    return{factor:fi,w:Math.pow(DECAY,sorted.length-1-i)};
+  });
+  const sumW=weighted.reduce((a,s)=>a+s.w,0);
+  const learned=sumW?weighted.reduce((a,s)=>a+s.factor*s.w,0)/sumW:DEFAULT;
+  const trust=Math.min(1,n/8);
+  const factor=DEFAULT+(learned-DEFAULT)*trust;
+  const conf=n>=8?'fully learned':n>=4?`${Math.round(trust*100)}% learned`:n>=1?`${n} shot${n>1?'s':''} · early`:'no data';
+  return{factor,n,learned,isDefault:false,trust,conf};
+}
+function getElevXFactor(clubIdx,isDownhill){
+  return getCached(`ef_${clubIdx}_${isDownhill?1:0}`,()=>getElevXFactorInfo(clubIdx,isDownhill));
 }
 
-const APP_VERSION='2.0';
-const APP_CHANGES=[
-  'v2.0 — Blank X treated as 0 everywhere (no X filter). Elev lateral profile now uses all elev shots. Constant correction uses full shot pool.',
-  'v1.9 — Elevation lateral zones now fully data-driven: boundaries learned from your shot distribution',
-  'v1.8 — Learned elevation-lateral tuner: learns X miss per elev zone, adjusts ① ring suggestion',
-  'v1.7 — Minimized ML panel, Shot log filters, Piecewise elev tuner, Wind bracket summary',
-  'v1.6 — Linear regression forecast for unknown wind ranges',
-  'v1.5 — WIND MATCH / ANGLE MATCH fallback tiers',
-  'v1.4 — Recency weighting (recent shots count more)',
-  'v1.3 — MISS shots excluded if Y not logged',
-  'v1.2 — Smooth cos() correction for crosswind misses',
-  'v1.1 — Firebase sync as single source of truth',
-  'v1.0 — Initial release with ML pull recommendation',
-];
-
+// ═══ RECENCY / WEIGHTED MATH ══════════════════════════
 const DECAY=0.85;
-function recencyWeight(idx,total){
-  const stepsBack=total-1-idx;
-  return Math.pow(DECAY,stepsBack);
-}
+function recencyWeight(idx,total){return Math.pow(DECAY,total-1-idx)}
 function weightedAvg(arr){
   const sumW=arr.reduce((a,s)=>a+s.w,0);
   if(!sumW) return null;
@@ -734,203 +693,70 @@ function weightedAvg(arr){
 }
 function weightedCount(arr){
   const sumW=arr.reduce((a,s)=>a+s.w,0);
-  const maxW=arr.length;
-  return parseFloat((sumW/maxW*arr.length).toFixed(1));
+  return parseFloat((sumW/arr.length*arr.length).toFixed(1));
+}
+function weightedSpread(arr){
+  if(!arr||arr.length<2) return null;
+  const avg=weightedAvg(arr);
+  if(avg===null) return null;
+  const sumW=arr.reduce((a,s)=>a+s.w,0);
+  if(!sumW) return null;
+  return Math.sqrt(arr.reduce((a,s)=>a+s.w*(s.ePull-avg)**2,0)/sumW);
 }
 
-// ═══ ELEVATION LATERAL ENGINE (DATA-DRIVEN ZONES) ════
-// Signed elevation: positive = uphill, negative = downhill
-function signedElev(s){
-  return (s.elevUp?1:-1)*(s.elev||0);
+// ═══ ML ENGINE ════════════════════════════════════════
+function getEffectivePull(s){
+  if(s.result==='In') return s.ring2;
+  const yErr=s.yPure||s.y||0;
+  const windCos=Math.cos((s.windAngle||0)*Math.PI/180);
+  return parseFloat((s.ring2+yErr*windCos).toFixed(4));
 }
 
-// ── STEP 1: collect all signed elev values — no X filter, blank X = 0
-function getElevSamples(){
-  return getShots()
-    .filter(s=>(s.elev||0)>0)
-    .map(s=>signedElev(s));
-}
-
-// ── STEP 2: build zone boundaries from your actual data distribution
-// Strategy:
-//   • Always anchor a FLAT zone around 0 (±1 yd) — no elevation = no lateral effect
-//   • Separate downhill (negative) and uphill (positive) signed elevations
-//   • Within each side, use percentile-based splits so zones cover equal shot counts
-//   • Minimum 3 shots per side needed to subdivide; otherwise treat whole side as one zone
-//   • Result: 3–7 data-driven zones depending on how many elevation values you've logged
-function buildDataDrivenZones(samples){
-  const FLAT_THRESHOLD=1; // ±1 yd is considered flat
-
-  const down=samples.filter(v=>v<-FLAT_THRESHOLD).sort((a,b)=>a-b); // most negative first
-  const up=samples.filter(v=>v>FLAT_THRESHOLD).sort((a,b)=>a-b);    // smallest positive first
-
-  const zones=[];
-
-  // Build zones for one side (downhill or uphill)
-  // vals: sorted array of signed elev values on this side
-  // sign: -1 for down, +1 for up
-  function buildSideZones(vals,sign){
-    if(!vals.length) return;
-    if(vals.length<3){
-      // Too few to subdivide — one zone for the whole side
-      const min=sign<0?-999:FLAT_THRESHOLD;
-      const max=sign<0?-FLAT_THRESHOLD:999;
-      const mid=(vals.reduce((a,v)=>a+v,0)/vals.length);
-      zones.push({
-        lbl:sign<0?'DOWN':'UP',
-        range:sign<0?`${vals[0].toFixed(1)} to −${FLAT_THRESHOLD}`:`+${FLAT_THRESHOLD} to ${vals[vals.length-1].toFixed(1)}`,
-        minSigned:min, maxSigned:max,
-        midpoint:mid, shots:[], n:0, avgX:null, correction:null
-      });
-      return;
-    }
-    // Subdivide into up to 3 sub-zones using tertile cut points
-    // Use actual data percentiles so each zone has ~equal shot counts
-    const cut1=vals[Math.floor(vals.length/3)];
-    const cut2=vals[Math.floor(vals.length*2/3)];
-
-    if(sign<0){
-      // Downhill: vals sorted most-negative first (e.g. [-8,-7,-6,-4,-3,-2])
-      // zone A: most extreme downhill (vals[0] to cut1)
-      // zone B: moderate downhill (cut1 to cut2)
-      // zone C: mild downhill (cut2 to -FLAT_THRESHOLD)
-      zones.push({lbl:'DN-STEEP',range:`${vals[0].toFixed(1)} to ${cut1.toFixed(1)}`,minSigned:-999,maxSigned:cut1,midpoint:(vals[0]+cut1)/2,shots:[],n:0,avgX:null,correction:null});
-      zones.push({lbl:'DN-MOD',range:`${cut1.toFixed(1)} to ${cut2.toFixed(1)}`,minSigned:cut1,maxSigned:cut2,midpoint:(cut1+cut2)/2,shots:[],n:0,avgX:null,correction:null});
-      zones.push({lbl:'DN-MILD',range:`${cut2.toFixed(1)} to −${FLAT_THRESHOLD}`,minSigned:cut2,maxSigned:-FLAT_THRESHOLD,midpoint:(cut2+-FLAT_THRESHOLD)/2,shots:[],n:0,avgX:null,correction:null});
-    } else {
-      // Uphill: vals sorted smallest first (e.g. [2,3,4,6,7,8])
-      zones.push({lbl:'UP-MILD',range:`+${FLAT_THRESHOLD} to +${cut1.toFixed(1)}`,minSigned:FLAT_THRESHOLD,maxSigned:cut1,midpoint:(FLAT_THRESHOLD+cut1)/2,shots:[],n:0,avgX:null,correction:null});
-      zones.push({lbl:'UP-MOD',range:`+${cut1.toFixed(1)} to +${cut2.toFixed(1)}`,minSigned:cut1,maxSigned:cut2,midpoint:(cut1+cut2)/2,shots:[],n:0,avgX:null,correction:null});
-      zones.push({lbl:'UP-STEEP',range:`+${cut2.toFixed(1)} to +${vals[vals.length-1].toFixed(1)}`,minSigned:cut2,maxSigned:999,midpoint:(cut2+vals[vals.length-1])/2,shots:[],n:0,avgX:null,correction:null});
-    }
-  }
-
-  buildSideZones(down,-1);
-
-  // Flat zone always sits in the middle
-  zones.push({
-    lbl:'FLAT',range:`−${FLAT_THRESHOLD} to +${FLAT_THRESHOLD}`,
-    minSigned:-FLAT_THRESHOLD,maxSigned:FLAT_THRESHOLD,
-    midpoint:0,shots:[],n:0,avgX:null,correction:null
-  });
-
-  buildSideZones(up,1);
-
-  // Sort zones by minSigned so they read low→high
-  zones.sort((a,b)=>a.minSigned-b.minSigned);
-  return zones;
-}
-
-// ── STEP 3: assign shots to zones — blank X treated as 0
-function buildElevLatProfile(){
-  // All elevation shots — blank X means no lateral error observed (= 0)
-  const shots=getShots().filter(s=>(s.elev||0)>0);
-  if(!shots.length) return null;
-
-  const samples=shots.map(s=>signedElev(s));
-  const zones=buildDataDrivenZones(samples);
-
-  const sorted=shots.slice().sort((a,b)=>a.ts-b.ts);
-  sorted.forEach((s,i)=>{
-    const se=signedElev(s);
-    const zone=zones.find(z=>se>z.minSigned&&se<=z.maxSigned);
-    if(!zone) return;
-    const w=recencyWeight(i,sorted.length);
-    // Use Ypure as the signal — blank Ypure treated as 0
-    const yp=s.yPure||s.y||0;
-    zone.shots.push({ePull:yp,w,se});
-  });
-
-  zones.forEach(z=>{
-    if(!z.shots.length){z.avgYpure=null;z.n=0;return}
-    z.avgYpure=weightedAvg(z.shots);
-    z.n=z.shots.length;
-    // Keep correction field for compatibility — but now means Y correction
-    // avgYpure > 0 = overshooting, < 0 = undershooting
-    z.correction=z.avgYpure;
-  });
-
-  // Regression across zone midpoints using avgYpure
-  const dataPoints=zones.filter(z=>z.n>0).map(z=>({x:z.midpoint,y:z.avgYpure,w:z.n}));
-  let regression=null;
-  if(dataPoints.length>=2) regression=buildElevRegression(dataPoints);
-
-  return{zones,regression};
-}
-
-function buildElevRegression(points){
-  let sw=0,swx=0,swy=0,swxx=0,swxy=0;
-  points.forEach(({x,y,w})=>{sw+=w;swx+=w*x;swy+=w*y;swxx+=w*x*x;swxy+=w*x*y});
-  const denom=sw*swxx-swx*swx;
-  if(Math.abs(denom)<1e-10) return null;
-  const a=(sw*swxy-swx*swy)/denom;
-  const b=(swy-a*swx)/sw;
-  return{a,b,predict:(x)=>a*x+b};
-}
-
-// ── STEP 4: find which zone a given signed elev falls into
-function findZone(zones,signedElevVal){
-  return zones.find(z=>signedElevVal>z.minSigned&&signedElevVal<=z.maxSigned)||null;
-}
-
-// ── STEP 5: advisory for the PLAY tab — now Y-distance focused
-function getElevLatAdvisory(elevAbs,isElevUp){
-  if(elevAbs<=0) return null;
-  const profile=buildElevLatProfile();
-  if(!profile) return null;
-
-  const se=isElevUp?elevAbs:-elevAbs;
-  const zone=findZone(profile.zones,se);
-  if(!zone) return null;
-
-  if(zone.n>=1){
-    const conf=zone.n>=5?{pct:80,lbl:'HIGH'}:zone.n>=3?{pct:50,lbl:'MEDIUM'}:{pct:20,lbl:'LOW'};
-    return{avgYpure:zone.avgYpure,zone,
-      type:zone.n>=3?'ZONE DATA':'FEW SHOTS',n:zone.n,conf,profile,forecast:false};
-  }
-
-  if(profile.regression){
-    const predicted=profile.regression.predict(se);
-    const totalN=profile.zones.reduce((a,z)=>a+z.n,0);
-    return{avgYpure:predicted,zone,
-      type:'EXTRAPOLATED',n:totalN,conf:{pct:15,lbl:'VERY LOW — EXTRAPOLATED'},profile,forecast:true};
-  }
-
-  return null;
-}
+const APP_VERSION='2.1';
+const APP_CHANGES=[
+  'v2.1 — Compact UI (club+wind+elev+direction in one card). ① and ② side-by-side. Elevation X-factor engine baked into ① (downhill 0.08 seed, uphill 0.00, learns per club from X miss). ② shows spread. Calc cache (recalcs only on new shots).',
+  'v2.0 — Blank X treated as 0. Elev lateral profile uses all elev shots. Constant correction uses full pool.',
+  'v1.9 — Elevation lateral zones fully data-driven from shot distribution',
+  'v1.8 — Elevation-lateral tuner: learns X miss per elev zone',
+  'v1.7 — Minimized ML panel, filters, piecewise elev tuner, wind bracket summary',
+  'v1.6 — Linear regression forecast for unknown wind ranges',
+  'v1.5 — WIND MATCH / ANGLE MATCH fallback tiers',
+  'v1.4 — Recency weighting',
+];
 
 function mlRecommend(clubIdx,wind,angle){
+  return getCached(`ml_${clubIdx}_${wind}_${angle}`,()=>_mlRecommend(clubIdx,wind,angle));
+}
+function _mlRecommend(clubIdx,wind,angle){
   const shots=getShots().filter(s=>s.clubIdx===clubIdx);
   if(!shots.length) return null;
   const sorted=shots.slice().sort((a,b)=>a.ts-b.ts);
-  const withPull=sorted
-    .map((s,i)=>({...s,ePull:getEffectivePull(s),w:recencyWeight(i,sorted.length)}))
-    .filter(s=>s.ePull!==null);
+  const withPull=sorted.map((s,i)=>({...s,ePull:getEffectivePull(s),w:recencyWeight(i,sorted.length)})).filter(s=>s.ePull!==null);
   if(!withPull.length) return null;
   const snap=a=>Math.round(a/22.5)*22.5;
   const thisAngle=snap(angle);
   const angleDiff=(a,b)=>{const d=Math.abs(snap(a)-b);return Math.min(d,360-d)};
   const exact=withPull.filter(s=>Math.abs(s.wind-wind)<=0.2&&angleDiff(s.windAngle,thisAngle)<=22.5);
-  if(exact.length) return{value:weightedAvg(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT',forecast:false};
+  if(exact.length) return{value:weightedAvg(exact),spread:weightedSpread(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT',forecast:false};
   const near=withPull.filter(s=>Math.abs(s.wind-wind)<=1&&angleDiff(s.windAngle,thisAngle)<=22.5);
-  if(near.length) return{value:weightedAvg(near),count:weightedCount(near),raw:near.length,type:'NEAREST',forecast:false};
+  if(near.length) return{value:weightedAvg(near),spread:weightedSpread(near),count:weightedCount(near),raw:near.length,type:'NEAREST',forecast:false};
   const sameAngle=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
   if(sameAngle.length>=2){
     const reg=weightedRegression(sameAngle,wind);
     if(reg!==null){
       const inRange=wind>=reg.minWind-0.5&&wind<=reg.maxWind+0.5;
-      return{value:reg.value,count:sameAngle.length,raw:sameAngle.length,type:inRange?'REGRESSION':'FORECAST',forecast:!inRange,r2:reg.r2};
+      return{value:reg.value,spread:weightedSpread(sameAngle),count:sameAngle.length,raw:sameAngle.length,type:inRange?'REGRESSION':'FORECAST',forecast:!inRange,r2:reg.r2};
     }
   }
   if(withPull.length>=2){
     const reg=weightedRegression(withPull,wind);
-    if(reg!==null) return{value:reg.value,count:withPull.length,raw:withPull.length,type:'FORECAST',forecast:true,r2:reg.r2};
+    if(reg!==null) return{value:reg.value,spread:weightedSpread(withPull),count:withPull.length,raw:withPull.length,type:'FORECAST',forecast:true,r2:reg.r2};
   }
   const windOnly=withPull.filter(s=>Math.abs(s.wind-wind)<=1.5);
-  if(windOnly.length) return{value:weightedAvg(windOnly),count:weightedCount(windOnly),raw:windOnly.length,type:'WIND MATCH',forecast:false};
+  if(windOnly.length) return{value:weightedAvg(windOnly),spread:weightedSpread(windOnly),count:weightedCount(windOnly),raw:windOnly.length,type:'WIND MATCH',forecast:false};
   const angleOnly=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
-  if(angleOnly.length) return{value:weightedAvg(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH',forecast:false};
-  return{value:weightedAvg(withPull),count:weightedCount(withPull),raw:withPull.length,type:'CLUB AVG',forecast:false};
+  if(angleOnly.length) return{value:weightedAvg(angleOnly),spread:weightedSpread(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH',forecast:false};
+  return{value:weightedAvg(withPull),spread:weightedSpread(withPull),count:weightedCount(withPull),raw:withPull.length,type:'CLUB AVG',forecast:false};
 }
 
 function weightedRegression(shots,targetWind){
@@ -939,51 +765,45 @@ function weightedRegression(shots,targetWind){
   shots.forEach(s=>{const x=s.wind,y=s.ePull,w=s.w||1;sw+=w;swx+=w*x;swy+=w*y;swxx+=w*x*x;swxy+=w*x*y});
   const denom=sw*swxx-swx*swx;
   if(Math.abs(denom)<1e-10) return null;
-  const a=(sw*swxy-swx*swy)/denom;
-  const b=(swy-a*swx)/sw;
+  const a=(sw*swxy-swx*swy)/denom,b=(swy-a*swx)/sw;
   const value=parseFloat((a*targetWind+b).toFixed(4));
-  const meanY=swy/sw;
-  let ssTot=0,ssRes=0;
+  const meanY=swy/sw;let ssTot=0,ssRes=0;
   shots.forEach(s=>{ssTot+=s.w*(s.ePull-meanY)**2;ssRes+=s.w*(s.ePull-(a*s.wind+b))**2});
   const r2=ssTot>0?Math.max(0,1-ssRes/ssTot):0;
-  const minWind=Math.min(...shots.map(s=>s.wind));
-  const maxWind=Math.max(...shots.map(s=>s.wind));
-  return{value,r2,minWind,maxWind,a,b};
+  return{value,r2,minWind:Math.min(...shots.map(s=>s.wind)),maxWind:Math.max(...shots.map(s=>s.wind)),a,b};
 }
 
 function confLevel(count,type,raw,r2){
   const n=raw||count,r=r2||0;
   if(type==='EXACT'&&n>=5)      return{pct:100,cls:'conf-high',lbl:'HIGH'};
-  if(type==='EXACT'&&n>=3)      return{pct:65,cls:'conf-med',lbl:'MEDIUM'};
-  if(type==='EXACT')            return{pct:30,cls:'conf-low',lbl:'LOW'};
-  if(type==='NEAREST'&&n>=5)    return{pct:55,cls:'conf-med',lbl:'MEDIUM'};
-  if(type==='NEAREST')          return{pct:25,cls:'conf-low',lbl:'LOW'};
-  if(type==='REGRESSION'&&r>=0.8&&n>=4) return{pct:50,cls:'conf-med',lbl:'MEDIUM — REGRESSION'};
-  if(type==='REGRESSION'&&n>=3) return{pct:30,cls:'conf-low',lbl:'LOW — REGRESSION'};
-  if(type==='REGRESSION')       return{pct:18,cls:'conf-low',lbl:'LOW — REGRESSION'};
-  if(type==='FORECAST'&&r>=0.8) return{pct:20,cls:'conf-low',lbl:'LOW — FORECASTED'};
-  if(type==='FORECAST')         return{pct:10,cls:'conf-low',lbl:'VERY LOW — FORECASTED'};
-  if(type==='WIND MATCH'&&n>=3) return{pct:15,cls:'conf-low',lbl:'LOW — WIND ONLY'};
-  if(type==='WIND MATCH')       return{pct:10,cls:'conf-low',lbl:'VERY LOW — WIND ONLY'};
-  if(type==='ANGLE MATCH'&&n>=3)return{pct:10,cls:'conf-low',lbl:'LOW — ANGLE ONLY'};
-  if(type==='ANGLE MATCH')      return{pct:6,cls:'conf-low',lbl:'VERY LOW — ANGLE ONLY'};
-  return{pct:4,cls:'conf-low',lbl:'VERY LOW — CLUB AVG ONLY'};
+  if(type==='EXACT'&&n>=3)      return{pct:65,cls:'conf-med', lbl:'MED'};
+  if(type==='EXACT')            return{pct:30,cls:'conf-low', lbl:'LOW'};
+  if(type==='NEAREST'&&n>=5)    return{pct:55,cls:'conf-med', lbl:'MED'};
+  if(type==='NEAREST')          return{pct:25,cls:'conf-low', lbl:'LOW'};
+  if(type==='REGRESSION'&&r>=0.8&&n>=4)return{pct:50,cls:'conf-med',lbl:'MED·REG'};
+  if(type==='REGRESSION'&&n>=3) return{pct:30,cls:'conf-low',lbl:'LOW·REG'};
+  if(type==='REGRESSION')       return{pct:18,cls:'conf-low',lbl:'LOW·REG'};
+  if(type==='FORECAST'&&r>=0.8) return{pct:20,cls:'conf-low',lbl:'LOW·FCST'};
+  if(type==='FORECAST')         return{pct:10,cls:'conf-low',lbl:'V.LOW·FCST'};
+  if(type==='WIND MATCH'&&n>=3) return{pct:15,cls:'conf-low',lbl:'LOW·WIND'};
+  if(type==='WIND MATCH')       return{pct:10,cls:'conf-low',lbl:'V.LOW·WIND'};
+  if(type==='ANGLE MATCH'&&n>=3)return{pct:10,cls:'conf-low',lbl:'LOW·ANG'};
+  if(type==='ANGLE MATCH')      return{pct:6, cls:'conf-low',lbl:'V.LOW·ANG'};
+  return{pct:4,cls:'conf-low',lbl:'V.LOW'};
 }
 
 // ═══ CONSTANT CORRECTION ══════════════════════════════
 function checkConstantCorrection(clubIdx){
-  // All shots — blank X treated as 0 (no lateral error observed)
   const shots=getShots().filter(s=>s.clubIdx===clubIdx);
   if(shots.length<3) return null;
   const avgX=shots.reduce((a,s)=>a+(s.x||0),0)/shots.length;
   if(Math.abs(avgX)<0.3) return null;
   const currentConst=consts[clubIdx];
-  const correctionFactor=1-(avgX*0.1);
-  const suggested=parseFloat((currentConst*correctionFactor).toFixed(2));
+  const suggested=parseFloat((currentConst*(1-avgX*0.1)).toFixed(2));
   return{avgX,current:currentConst,suggested,shots:shots.length};
 }
 
-// ═══ PIECEWISE Y ELEVATION TUNER ══════════════════════
+// ═══ Y ELEVATION TUNER (DATA tab) ═════════════════════
 function buildElevTuner(){
   const shots=getShots().filter(s=>(s.elev||0)>0&&(s.yPure||s.y||0)!==0);
   if(shots.length<3) return null;
@@ -993,68 +813,90 @@ function buildElevTuner(){
     {lbl:'STEEP',range:'>5 yds',min:5.5,max:999,shots:[]}
   ];
   shots.forEach(s=>{
-    const elev=s.elev||0;
-    const yErr=s.yPure||s.y||0;
-    const zone=zones.find(z=>elev>z.min&&elev<=z.max);
-    if(zone) zone.shots.push({elev,yErr,elevUp:s.elevUp,ts:s.ts});
+    const zone=zones.find(z=>(s.elev||0)>z.min&&(s.elev||0)<=z.max);
+    if(zone) zone.shots.push({elev:s.elev,yErr:s.yPure||s.y||0,ts:s.ts});
   });
   zones.forEach(z=>{
     const sorted=z.shots.slice().sort((a,b)=>a.ts-b.ts);
     const w=sorted.map((s,i)=>({...s,w:recencyWeight(i,sorted.length),ePull:s.yErr}));
-    z.avgErr=w.length?weightedAvg(w):null;
-    z.n=w.length;
-    z.wArr=w;
+    z.avgErr=w.length?weightedAvg(w):null;z.n=w.length;
   });
-  const flatErr=zones[0].avgErr||0;
-  const steepErr=zones[2].avgErr||0;
-  const rampDiff=Math.abs(steepErr)-Math.abs(flatErr);
-  const hasRamp=rampDiff>0.2&&zones[2].n>=2;
-  return{zones,hasRamp,rampDiff};
+  const rampDiff=Math.abs(zones[2].avgErr||0)-Math.abs(zones[0].avgErr||0);
+  return{zones,hasRamp:rampDiff>0.2&&zones[2].n>=2,rampDiff};
 }
 
-// ═══ WIND BRACKET SUMMARY ═════════════════════════════
+// ═══ WIND BRACKETS ════════════════════════════════════
 function buildWindBrackets(){
-  const shots=getShots();
-  if(!shots.length) return null;
-  const wBrackets=[
-    {lbl:'CALM',range:'0–5',min:0,max:5,shots:[]},
-    {lbl:'LIGHT',range:'6–10',min:5,max:10,shots:[]},
-    {lbl:'MOD',range:'11–15',min:10,max:15,shots:[]},
-    {lbl:'STRONG',range:'16–20',min:15,max:20,shots:[]},
-    {lbl:'HEAVY',range:'>20',min:20,max:999,shots:[]}
-  ];
-  const aBrackets=[
-    {lbl:'TAILWIND',angles:[0],shots:[]},
-    {lbl:'TAIL-X',angles:[45,315],shots:[]},
-    {lbl:'CROSS',angles:[90,270],shots:[]},
-    {lbl:'HEAD-X',angles:[135,225],shots:[]},
-    {lbl:'HEADWIND',angles:[180],shots:[]}
-  ];
-  shots.forEach(s=>{
-    const ePull=getEffectivePull(s);
-    if(ePull===null) return;
-    const sorted=shots.slice().sort((a,b)=>a.ts-b.ts);
-    const idx=sorted.findIndex(x=>x.ts===s.ts);
-    const w=recencyWeight(idx,sorted.length);
+  const shots=getShots();if(!shots.length) return null;
+  const wB=[{lbl:'CALM',range:'0–5',min:0,max:5,shots:[]},{lbl:'LIGHT',range:'6–10',min:5,max:10,shots:[]},{lbl:'MOD',range:'11–15',min:10,max:15,shots:[]},{lbl:'STRONG',range:'16–20',min:15,max:20,shots:[]},{lbl:'HEAVY',range:'>20',min:20,max:999,shots:[]}];
+  const aB=[{lbl:'TAILWIND',angles:[0],shots:[]},{lbl:'TAIL-X',angles:[45,315],shots:[]},{lbl:'CROSS',angles:[90,270],shots:[]},{lbl:'HEAD-X',angles:[135,225],shots:[]},{lbl:'HEADWIND',angles:[180],shots:[]}];
+  const sorted=shots.slice().sort((a,b)=>a.ts-b.ts);
+  sorted.forEach((s,i)=>{
+    const ePull=getEffectivePull(s);if(ePull===null) return;
+    const w=recencyWeight(i,sorted.length);
     const entry={ePull,ring2:s.ring2,w,wind:s.wind,angle:s.windAngle,ts:s.ts};
-    const wb=wBrackets.find(b=>s.wind>b.min&&s.wind<=b.max);
-    if(wb) wb.shots.push(entry);
+    const wb=wB.find(b=>s.wind>b.min&&s.wind<=b.max);if(wb) wb.shots.push(entry);
     const snap=Math.round(s.windAngle/45)*45%360;
-    const ab=aBrackets.find(b=>b.angles.includes(snap));
-    if(ab) ab.shots.push(entry);
+    const ab=aB.find(b=>b.angles.includes(snap));if(ab) ab.shots.push(entry);
   });
-  const processGroup=arr=>{
+  const proc=arr=>{
     if(!arr.length) return null;
-    const sorted=arr.slice().sort((a,b)=>a.ts-b.ts);
-    const w=sorted.map((s,i)=>({...s,w:recencyWeight(i,sorted.length)}));
+    const w=arr.slice().sort((a,b)=>a.ts-b.ts).map((s,i)=>({...s,w:recencyWeight(i,arr.length)}));
     const avgEPull=weightedAvg(w);
     const avgUsed=w.reduce((a,s)=>a+s.ring2*s.w,0)/w.reduce((a,s)=>a+s.w,0);
-    const err=avgUsed-avgEPull;
-    return{avgEPull,avgUsed,err,n:arr.length};
+    return{avgEPull,avgUsed,err:avgUsed-avgEPull,n:arr.length};
   };
-  wBrackets.forEach(b=>{b.stats=processGroup(b.shots)});
-  aBrackets.forEach(b=>{b.stats=processGroup(b.shots)});
-  return{wBrackets,aBrackets};
+  wB.forEach(b=>{b.stats=proc(b.shots)});aB.forEach(b=>{b.stats=proc(b.shots)});
+  return{wBrackets:wB,aBrackets:aB};
+}
+
+// ═══ ELEVATION PROFILE (Y-distance, DATA tab) ════════
+function signedElev(s){return(s.elevUp?1:-1)*(s.elev||0)}
+function buildDataDrivenZones(samples){
+  const FT=1;
+  const down=samples.filter(v=>v<-FT).sort((a,b)=>a-b);
+  const up=samples.filter(v=>v>FT).sort((a,b)=>a-b);
+  const zones=[];
+  function side(vals,sign){
+    if(!vals.length) return;
+    if(vals.length<3){
+      zones.push({lbl:sign<0?'DOWN':'UP',range:sign<0?`${vals[0].toFixed(1)} to −${FT}`:`+${FT} to ${vals[vals.length-1].toFixed(1)}`,minSigned:sign<0?-999:FT,maxSigned:sign<0?-FT:999,midpoint:vals.reduce((a,v)=>a+v,0)/vals.length,shots:[],n:0});
+      return;
+    }
+    const c1=vals[Math.floor(vals.length/3)],c2=vals[Math.floor(vals.length*2/3)];
+    if(sign<0){
+      zones.push({lbl:'DN-STEEP',range:`${vals[0].toFixed(1)} to ${c1.toFixed(1)}`,minSigned:-999,maxSigned:c1,midpoint:(vals[0]+c1)/2,shots:[],n:0});
+      zones.push({lbl:'DN-MOD',range:`${c1.toFixed(1)} to ${c2.toFixed(1)}`,minSigned:c1,maxSigned:c2,midpoint:(c1+c2)/2,shots:[],n:0});
+      zones.push({lbl:'DN-MILD',range:`${c2.toFixed(1)} to −${FT}`,minSigned:c2,maxSigned:-FT,midpoint:(c2-FT)/2,shots:[],n:0});
+    } else {
+      zones.push({lbl:'UP-MILD',range:`+${FT} to +${c1.toFixed(1)}`,minSigned:FT,maxSigned:c1,midpoint:(FT+c1)/2,shots:[],n:0});
+      zones.push({lbl:'UP-MOD',range:`+${c1.toFixed(1)} to +${c2.toFixed(1)}`,minSigned:c1,maxSigned:c2,midpoint:(c1+c2)/2,shots:[],n:0});
+      zones.push({lbl:'UP-STEEP',range:`+${c2.toFixed(1)} to +${vals[vals.length-1].toFixed(1)}`,minSigned:c2,maxSigned:999,midpoint:(c2+vals[vals.length-1])/2,shots:[],n:0});
+    }
+  }
+  side(down,-1);
+  zones.push({lbl:'FLAT',range:`−${FT} to +${FT}`,minSigned:-FT,maxSigned:FT,midpoint:0,shots:[],n:0});
+  side(up,1);
+  return zones.sort((a,b)=>a.minSigned-b.minSigned);
+}
+function buildElevLatProfile(){
+  const shots=getShots().filter(s=>(s.elev||0)>0);if(!shots.length) return null;
+  const zones=buildDataDrivenZones(shots.map(s=>signedElev(s)));
+  shots.slice().sort((a,b)=>a.ts-b.ts).forEach((s,i)=>{
+    const zone=zones.find(z=>signedElev(s)>z.minSigned&&signedElev(s)<=z.maxSigned);
+    if(!zone) return;
+    zone.shots.push({ePull:s.yPure||s.y||0,w:recencyWeight(i,shots.length),se:signedElev(s)});
+  });
+  zones.forEach(z=>{z.avgYpure=z.shots.length?weightedAvg(z.shots):null;z.n=z.shots.length});
+  const pts=zones.filter(z=>z.n>0).map(z=>({x:z.midpoint,y:z.avgYpure,w:z.n}));
+  let regression=null;
+  if(pts.length>=2){
+    let sw=0,swx=0,swy=0,swxx=0,swxy=0;
+    pts.forEach(({x,y,w})=>{sw+=w;swx+=w*x;swy+=w*y;swxx+=w*x*x;swxy+=w*x*y});
+    const d=sw*swxx-swx*swx;
+    if(Math.abs(d)>1e-10){const a=(sw*swxy-swx*swy)/d,b=(swy-a*swx)/sw;regression={a,b,predict:x=>a*x+b};}
+  }
+  return{zones,regression};
 }
 
 // ═══ MAIN CALC ════════════════════════════════════════
@@ -1062,22 +904,55 @@ function calc(){
   const wind=parseFloat(document.getElementById('wind').value)||0;
   const elevAbs=parseFloat(document.getElementById('elev').value)||0;
   const cc=consts[selClub];
-  const windUnits=cc*wind;
-  const baseRings=windUnits/2;
+  const baseRings=cc*wind/2;
 
-  document.getElementById('aim-rings').textContent=fmt(baseRings);
-  document.getElementById('log-ring1').value=fmt(baseRings);
+  const aimEl=document.getElementById('aim-rings');
+  const aimSub=document.getElementById('aim-sub-1');
+  const adjDetail=document.getElementById('elev-adj-detail');
 
-  // ── ELEVATION LATERAL ADVISORY ──────────────────────
-  const elevAdv=document.getElementById('elev-lat-advisory');
   if(elevAbs>0){
-    elevAdv.classList.remove('hidden');
-    renderElevLatAdvisory(elevAbs,elevUp);
+    const isDown=!elevUp;
+    const fi=getElevXFactor(selClub,isDown);
+    const adjAmt=parseFloat((elevAbs*fi.factor).toFixed(3));
+    const adjRings=parseFloat((baseRings+adjAmt).toFixed(3));
+
+    aimEl.textContent=fmt(adjRings);
+    aimEl.className='aim-val-adj';
+    aimSub.textContent='';
+
+    const dirLbl=isDown?'▼ DOWNHILL':'▲ UPHILL';
+    const adjColor=adjAmt>=0?'#ffb74d':'#80cbc4';
+    const factorColor=fi.isDefault?'#3d7060':'#80cbc4';
+
+    adjDetail.classList.remove('hidden');
+    adjDetail.innerHTML=`
+      <div style="text-align:center"><span class="elev-adj-badge">${dirLbl} ELEV ADJ</span></div>
+      <div class="elev-adj-rows">
+        <div class="elev-adj-row">
+          <span class="elev-adj-lbl">wind base</span>
+          <span class="elev-adj-val" style="color:#5dfc8a">${fmt(baseRings)}</span>
+        </div>
+        <div class="elev-adj-row">
+          <span class="elev-adj-lbl">${elevAbs}yd × ${fi.factor.toFixed(3)}</span>
+          <span class="elev-adj-val" style="color:${adjColor}">${adjAmt>=0?'+':''}${fmt(adjAmt)}</span>
+        </div>
+        <div class="elev-adj-row" style="border-top:1px solid #1a3020;padding-top:3px;margin-top:2px">
+          <span style="font-weight:700;font-size:9px;color:#fff">TOTAL ①</span>
+          <span style="font-weight:700;color:#5dfc8a">${fmt(adjRings)}</span>
+        </div>
+      </div>
+      <div class="factor-note" style="color:${factorColor}">${fi.conf}</div>`;
+
+    document.getElementById('log-ring1').value=fmt(adjRings);
   } else {
-    elevAdv.classList.add('hidden');
+    aimEl.textContent=fmt(baseRings);
+    aimEl.className='aim-val-lg';
+    aimSub.textContent='lateral rings';
+    adjDetail.classList.add('hidden');
+    document.getElementById('log-ring1').value=fmt(baseRings);
   }
 
-  // ── ML RECOMMENDATION ───────────────────────────────
+  // ② ML Recommendation
   const rec=mlRecommend(selClub,wind,windAngle);
   const mlEl=document.getElementById('ml-content');
   const badge=document.getElementById('ml-badge');
@@ -1086,32 +961,25 @@ function calc(){
   if(rec){
     badge.textContent=rec.type;
     const conf=confLevel(rec.count,rec.type,rec.raw,rec.r2);
+    const spreadHtml=rec.spread!=null&&rec.spread>0.001
+      ?`<div class="spread-row">±${rec.spread.toFixed(2)} spread</div>`:'';
     mlEl.innerHTML=`
-      <div class="ml-rec-row">
-        <div class="ml-block">
-          <div class="ml-lbl">PULL VALUE</div>
-          <div class="ml-val">${fmtS(rec.value)}</div>
-        </div>
-        <div class="ml-divider"></div>
-        <div class="ml-block">
-          <div class="ml-lbl">BASED ON</div>
-          <div class="ml-val" style="font-size:22px">${rec.raw}</div>
-          <div style="font-size:9px;color:${rec.forecast?'#ffb74d':'#3d5c42'};margin-top:2px">${rec.type}${rec.forecast?' 📈':''}</div>
-        </div>
-      </div>`;
+      <div class="rec-val">${fmtS(rec.value)}</div>
+      ${spreadHtml}
+      <div class="rec-meta">${rec.type}${rec.forecast?' 📈':''} · ${rec.raw}x</div>`;
     confWrap.classList.remove('hidden');
     document.getElementById('forecast-warn').classList.toggle('hidden',!rec.forecast);
     document.getElementById('conf-label').textContent=conf.lbl;
     const fill=document.getElementById('conf-bar-fill');
-    fill.style.width=conf.pct+'%';
-    fill.className='conf-bar-fill '+conf.cls;
+    fill.style.width=conf.pct+'%';fill.className='conf-bar-fill '+conf.cls;
   } else {
     badge.textContent='';
-    mlEl.innerHTML='<div class="ml-empty">Log shots to build recommendations</div>';
+    mlEl.innerHTML='<div class="ml-empty-sm">Log shots to build</div>';
     confWrap.classList.add('hidden');
     document.getElementById('forecast-warn').classList.add('hidden');
   }
 
+  // Constant correction
   const corr=checkConstantCorrection(selClub);
   const corrBox=document.getElementById('correction-box');
   if(corr){
@@ -1120,160 +988,13 @@ function calc(){
       <div class="correction-row"><span class="correction-lbl">Club</span><span class="correction-val">${CLUBS[selClub].n}</span></div>
       <div class="correction-row"><span class="correction-lbl">Avg X miss</span><span class="correction-val">${fmtS(corr.avgX)} rings (${corr.shots} shots)</span></div>
       <div class="correction-row"><span class="correction-lbl">Current constant</span><span class="correction-val">${fmt(corr.current)}</span></div>
-      <div class="correction-row"><span class="correction-lbl">Suggested constant</span><span class="correction-val">${fmt(corr.suggested)}</span></div>
+      <div class="correction-row"><span class="correction-lbl">Suggested</span><span class="correction-val">${fmt(corr.suggested)}</span></div>
       <button class="correction-btn" onclick="applyCorrection(${selClub},${corr.suggested})">APPLY ${fmt(corr.suggested)}</button>`;
-  } else {
-    corrBox.classList.add('hidden');
-  }
+  } else corrBox.classList.add('hidden');
 }
 
 function applyCorrection(clubIdx,val){
-  consts[clubIdx]=val;
-  localStorage.setItem('gsc_c'+clubIdx,val);
-  renderClubs();
-  calc();
-}
-
-// ═══ ELEVATION LATERAL ADVISORY RENDERER ══════════════
-function renderElevLatAdvisory(elevAbs,isElevUp){
-  const content=document.getElementById('elev-lat-content');
-  const badge=document.getElementById('elev-lat-badge');
-  const confWrap=document.getElementById('elev-lat-conf');
-  const confLabel=document.getElementById('elev-lat-conf-label');
-  const confBar=document.getElementById('elev-lat-bar-fill');
-  const strip=document.getElementById('elev-zone-strip');
-
-  // Build Y-distance profile from all elevation shots (X ignored — treated as fine)
-  const profile=buildElevLatProfile();
-  const se=isElevUp?elevAbs:-elevAbs;
-
-  // Zone strip — show all data-driven zones, highlight active one
-  if(strip){
-    if(!profile){
-      strip.innerHTML=`<div style="font-size:9px;color:#3d5c42;text-align:center;grid-column:1/-1;padding:6px">zones appear after first elevation shots logged</div>`;
-    } else {
-      strip.innerHTML=profile.zones.map(z=>{
-        const isActive=findZone(profile.zones,se)===z;
-        const hasData=z.n>0;
-        // Show avg Ypure per zone (the real signal)
-        const yVal=hasData?fmtS(z.avgYpure):'—';
-        const yColor=!hasData?'#3d5c42':Math.abs(z.avgYpure)<0.15?'#5dfc8a':z.avgYpure>0?'#ef9a9a':'#80cbc4';
-        return`<div class="elev-zone-pip ${isActive?'active-zone':''}">
-          <div class="elev-zone-pip-lbl">${z.lbl}</div>
-          <div class="elev-zone-pip-val" style="color:${yColor}">${yVal}</div>
-          ${hasData?`<div style="font-size:7px;color:#3d5c42">${z.n}x</div>`:'<div style="font-size:7px;color:#3d5c42">—</div>'}
-        </div>`;
-      }).join('');
-    }
-  }
-
-  if(!profile){
-    badge.textContent='LEARNING';
-    content.innerHTML='<div class="elev-lat-empty">Log elevation shots to build Y-distance profile</div>';
-    confWrap.classList.add('hidden');
-    return;
-  }
-
-  const activeZone=findZone(profile.zones,se);
-  if(!activeZone){
-    badge.textContent='NO DATA';
-    content.innerHTML='<div class="elev-lat-empty">No zone matched for this elevation</div>';
-    confWrap.classList.add('hidden');
-    return;
-  }
-
-  const dirLabel=isElevUp?'UPHILL':'DOWNHILL';
-  const hasZoneData=activeZone.n>0;
-
-  let advisedY=null;
-  let type='LEARNING';
-  let forecast=false;
-  let nUsed=0;
-
-  if(hasZoneData){
-    advisedY=activeZone.avgYpure;
-    type=activeZone.n>=3?'ZONE DATA':'FEW SHOTS';
-    nUsed=activeZone.n;
-  } else if(profile.regression){
-    advisedY=profile.regression.predict(se);
-    type='EXTRAPOLATED';
-    forecast=true;
-    nUsed=profile.zones.reduce((a,z)=>a+z.n,0);
-  }
-
-  badge.textContent=type;
-
-  if(advisedY===null){
-    content.innerHTML='<div class="elev-lat-empty">No data yet for this zone — log shots to learn</div>';
-    confWrap.classList.add('hidden');
-    return;
-  }
-
-  // Interpret: avgYpure > 0 = overshooting (aimed too far), < 0 = undershooting (aimed too short)
-  const absY=Math.abs(advisedY);
-  const yMeaning=absY<0.1
-    ? 'distance is accurate at this elevation'
-    : advisedY>0
-      ? `overshooting by ~${absY.toFixed(2)} rings — aim slightly shorter`
-      : `undershooting by ~${absY.toFixed(2)} rings — aim slightly further`;
-
-  const yColor=absY<0.1?'#5dfc8a':advisedY>0?'#ef9a9a':'#80cbc4';
-
-  const conf=nUsed>=5?{pct:80,lbl:'HIGH'}:nUsed>=3?{pct:50,lbl:'MEDIUM'}:nUsed>=1?{pct:20,lbl:'LOW'}:{pct:10,lbl:'VERY LOW'};
-
-  content.innerHTML=`
-    <div class="elev-lat-row">
-      <div class="elev-lat-block">
-        <div class="elev-lat-lbl">AVG Y ERROR</div>
-        <div class="elev-lat-val" style="color:${yColor}">${fmtS(advisedY)}</div>
-        <div style="font-size:9px;color:#3d7070;margin-top:2px">${advisedY>0?'overshooting':'undershooting'}</div>
-      </div>
-      <div class="elev-lat-div"></div>
-      <div class="elev-lat-block">
-        <div class="elev-lat-lbl">ZONE</div>
-        <div class="elev-lat-val" style="font-size:16px;padding-top:4px">${activeZone.lbl}</div>
-        <div style="font-size:9px;color:#3d7070;margin-top:2px">${activeZone.range} yds · ${nUsed} shot${nUsed!==1?'s':''}</div>
-      </div>
-    </div>
-    <div class="elev-lat-hint">
-      📐 <b>${dirLabel} ${elevAbs} yds</b>: ${yMeaning}.
-      ${forecast?'<br>⚠️ No shots in this zone yet — extrapolated from nearby zones.':''}
-    </div>`;
-
-  confWrap.classList.remove('hidden');
-  confLabel.textContent=conf.lbl;
-  confBar.style.width=conf.pct+'%';
-  confBar.style.background=conf.pct>=60?'#5dfc8a':conf.pct>=30?'#ffb74d':'#80cbc4';
-}
-
-
-function renderElevLatDataView(){
-  const wrap=document.getElementById('elev-lat-data-content');
-  const profile=buildElevLatProfile();
-  if(!profile){wrap.innerHTML='<div class="empty">Log elevation shots to build Y-distance profile</div>';return}
-  const anyData=profile.zones.some(z=>z.n>0);
-  if(!anyData){wrap.innerHTML='<div class="empty">No elevation shots logged yet</div>';return}
-  const totalShots=profile.zones.reduce((a,z)=>a+z.n,0);
-  const maxY=Math.max(...profile.zones.filter(z=>z.n>0).map(z=>Math.abs(z.avgYpure||0)),0.01);
-  const nZones=profile.zones.length;
-  const gridCols=nZones<=3?nZones:nZones<=5?nZones:3;
-  const zoneCards=profile.zones.map(z=>{
-    if(!z.n) return`<div class="elev-lat-zone-card"><div class="elev-lat-zone-name">${z.lbl}</div><div class="elev-lat-zone-avg" style="color:#3d5c42;font-size:11px">—</div><div class="elev-lat-zone-n" style="font-size:8px">${z.range}</div><div class="elev-lat-zone-bar"><div class="elev-lat-zone-fill" style="width:0%"></div></div></div>`;
-    const yp=z.avgYpure||0;
-    const barPct=Math.min(100,Math.abs(yp)/maxY*100);
-    const col=Math.abs(yp)<0.1?'#5dfc8a':yp>0?'#ef9a9a':'#80cbc4';
-    const meaning=Math.abs(yp)<0.1?'on target':yp>0?'overshooting':'undershooting';
-    return`<div class="elev-lat-zone-card active-learning"><div class="elev-lat-zone-name">${z.lbl}</div><div class="elev-lat-zone-avg" style="color:${col}">${fmtS(yp)}</div><div class="elev-lat-zone-n">${z.n}x · ${meaning}</div><div class="elev-lat-zone-n" style="font-size:7px;color:#3d5c42">${z.range}</div><div class="elev-lat-zone-bar"><div class="elev-lat-zone-fill" style="width:${barPct}%;background:${col}"></div></div></div>`;
-  }).join('');
-  const zonesBuiltFrom=`<div style="font-size:9px;color:#3d7070;background:#0a1522;border:1px solid #1a3a5c;border-radius:6px;padding:6px 8px;margin-bottom:8px">📊 <b>${nZones} zones</b> from <b>${totalShots}</b> elevation shots · blank Y = 0 · zones auto-update each shot${totalShots<6?'<br>⚠️ Log more shots to refine zone boundaries.':''}</div>`;
-  let regHtml='';
-  if(profile.regression){
-    const slope=profile.regression.a;
-    const slopeDir=Math.abs(slope)<0.02?'Y error consistent across elevations':slope>0?'overshooting increases at steeper elevations':'undershooting increases at steeper elevations';
-    regHtml=`<div style="background:#0d1e2a;border:1px solid #1a3a5c;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10px;color:#80cbc4">📈 <b>TREND:</b> ${slopeDir}. Slope=${slope.toFixed(3)} rings/yd.${Math.abs(slope)>0.05?'<br><span style="color:#ffb74d">⚠️ Strong Y ramp — adjust distance aim at steep elevations.</span>':''}</div>`;
-  }
-  const legendHtml=`<div style="font-size:9px;color:#3d5c42;margin-top:6px;text-align:center"><span style="color:#ef9a9a">■</span> overshooting &nbsp;<span style="color:#80cbc4">■</span> undershooting &nbsp;<span style="color:#5dfc8a">■</span> on target<br><span style="display:block;margin-top:3px">avg Ypure per zone · + = aimed too far · − = aimed too short</span></div>`;
-  wrap.innerHTML=`${zonesBuiltFrom}<div class="elev-lat-zone-grid" style="grid-template-columns:repeat(${gridCols},1fr)">${zoneCards}</div>${regHtml}${legendHtml}`;
+  consts[clubIdx]=val;localStorage.setItem('gsc_c'+clubIdx,val);renderClubs();calc();
 }
 
 // ═══ LOG ══════════════════════════════════════════════
@@ -1283,11 +1004,9 @@ function updateYBreakdown(){
   const bd=document.getElementById('y-breakdown');
   if(x===0&&y===0){bd.classList.add('hidden');return}
   const yFromX=parseFloat((x*0.1).toFixed(2));
-  const yPure=parseFloat((y-yFromX).toFixed(2));
   document.getElementById('y-from-x').textContent=fmtS(yFromX);
-  document.getElementById('y-pure').textContent=fmtS(yPure);
-  bd.classList.remove('hidden');
-  updateCorrectedHint();
+  document.getElementById('y-pure').textContent=fmtS(parseFloat((y-yFromX).toFixed(2)));
+  bd.classList.remove('hidden');updateCorrectedHint();
 }
 function updateCorrectedHint(){
   if(logResult!=='Miss') return;
@@ -1296,10 +1015,8 @@ function updateCorrectedHint(){
   const ch=document.getElementById('corrected-hint');
   if(y!==0){
     ch.style.display='block';
-    const windCos=Math.cos(windAngle*Math.PI/180);
-    const corrected=parseFloat((r2+y*windCos).toFixed(2));
-    const pct=Math.round(Math.abs(windCos)*100);
-    ch.textContent=`🧠 Corrected pull = ${fmtS(corrected)} (${pct}% Y correction at ${windAngle}°)`;
+    const wc=Math.cos(windAngle*Math.PI/180);
+    ch.textContent=`🧠 Corrected pull = ${fmtS(parseFloat((r2+y*wc).toFixed(2)))} (${Math.round(Math.abs(wc)*100)}% Y corr at ${windAngle}°)`;
   } else ch.style.display='none';
 }
 function setResult(r){
@@ -1310,7 +1027,6 @@ function setResult(r){
   if(r==='Miss') updateCorrectedHint();
   else document.getElementById('corrected-hint').style.display='none';
 }
-
 async function saveShot(){
   if(!logResult){alert('Please select IN or MISS.');return}
   const wind=parseFloat(document.getElementById('wind').value)||0;
@@ -1321,20 +1037,18 @@ async function saveShot(){
   const r2=parseFloat(document.getElementById('log-ring2').value)||0;
   const dist=parseFloat(document.getElementById('log-dist').value)||0;
   const yFromX=parseFloat((x*0.1).toFixed(4));
-  const yPure=parseFloat((y-yFromX).toFixed(4));
   const shot={
-    ts:Date.now(),
-    club:CLUBS[selClub].a,clubIdx:selClub,
+    ts:Date.now(),club:CLUBS[selClub].a,clubIdx:selClub,
     wind,windAngle,elev:elevAbs,elevUp,dist,
     ring1:r1,ring2:r2,aimCalc:consts[selClub]*wind/2,
-    x,y,yFromX,yPure,result:logResult
+    x,y,yFromX,yPure:parseFloat((y-yFromX).toFixed(4)),result:logResult
   };
   const shots=getShots();shots.push(shot);saveShots(shots);
+  invalidateCache();
   await pushToFirebase(shots);
   calc();
   logResult='';
-  document.getElementById('rb-in').className='result-btn inactive';
-  document.getElementById('rb-miss').className='result-btn inactive';
+  ['rb-in','rb-miss'].forEach(id=>document.getElementById(id).className='result-btn inactive');
   document.getElementById('result-hint').textContent='';
   ['log-ring2','log-dist','log-x','log-y'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('y-breakdown').classList.add('hidden');
@@ -1349,21 +1063,14 @@ function renderData(){
   const shots=getShots();
   document.getElementById('st-shots').textContent=shots.length;
   document.getElementById('st-in').textContent=shots.filter(s=>s.result==='In').length;
-
   const byClub={};
-  shots.forEach(s=>{
-    const k=s.clubIdx+'|'+s.club;
-    if(!byClub[k]) byClub[k]=[];
-    byClub[k].push(s);
-  });
-
+  shots.forEach(s=>{const k=s.clubIdx+'|'+s.club;if(!byClub[k])byClub[k]=[];byClub[k].push(s)});
   const ratesEl=document.getElementById('club-rates');
   if(!Object.keys(byClub).length){
     ratesEl.innerHTML='<div class="empty" style="grid-column:1/-1">No data yet</div>';
   } else {
     ratesEl.innerHTML=Object.entries(byClub).map(([,arr])=>{
-      const n=arr.length,ins=arr.filter(s=>s.result==='In').length;
-      const pct=Math.round(ins/n*100);
+      const n=arr.length,ins=arr.filter(s=>s.result==='In').length,pct=Math.round(ins/n*100);
       const col=pct>=70?'#5dfc8a':pct>=40?'#ffb74d':'#ef9a9a';
       return`<div class="club-rate-card">
         <div class="club-rate-name">${arr[0].club}</div>
@@ -1373,12 +1080,11 @@ function renderData(){
       </div>`;
     }).join('');
   }
-
   renderMlSummary(byClub);
+  renderElevXFactorDataView();
   renderElevLatDataView();
   renderWindBrackets();
   renderTable(shots);
-
   const vb=document.getElementById('version-block');
   if(vb) vb.innerHTML=`<div style="background:#132015;border-radius:8px;padding:8px">
     ${APP_CHANGES.map((ch,i)=>`<div style="font-size:${i===0?'11':'10'}px;color:${i===0?'#5dfc8a':'#3d5c42'};padding:2px 0;font-weight:${i===0?'700':'400'}">${ch}</div>`).join('')}
@@ -1387,7 +1093,6 @@ function renderData(){
 
 function renderMlSummary(byClub){
   const grid=document.getElementById('ml-summary-grid');
-  const detail=document.getElementById('ml-detail-panel');
   grid.innerHTML='';
   CLUBS.forEach((c,i)=>{
     const arr=byClub[i+'|'+c.a]||[];
@@ -1404,146 +1109,124 @@ function renderMlSummary(byClub){
 
 function toggleMlDetail(clubIdx,byClub){
   const detail=document.getElementById('ml-detail-panel');
-  if(openMlClub===clubIdx){
-    openMlClub=-1;
-    detail.innerHTML='';
-    return;
-  }
+  if(openMlClub===clubIdx){openMlClub=-1;detail.innerHTML='';return}
   openMlClub=clubIdx;
   const c=CLUBS[clubIdx];
   const arr=(byClub[clubIdx+'|'+c.a])||[];
-  if(!arr.length){detail.innerHTML='<div class="ml-detail open"><div class="ml-empty">No shots for '+c.n+' yet</div></div>';return}
-
+  if(!arr.length){detail.innerHTML=`<div class="ml-detail open"><div class="ml-empty-sm">No shots for ${c.n} yet</div></div>`;return}
   const sorted=arr.slice().sort((a,b)=>a.ts-b.ts);
   const withPull=sorted.map((s,i)=>({...s,ePull:getEffectivePull(s),w:recencyWeight(i,sorted.length)})).filter(s=>s.ePull!==null);
   const avgPull=weightedAvg(withPull)||0;
   const inShots=arr.filter(s=>s.result==='In');
-  const wInShots=inShots.slice().sort((a,b)=>a.ts-b.ts).map((s,i)=>({...s,ePull:s.ring2,w:recencyWeight(i,inShots.length)}));
-  const avgInPull=wInShots.length?weightedAvg(wInShots):null;
-
-  const wg={};
-  withPull.forEach(s=>{const k=s.wind.toFixed(1);if(!wg[k])wg[k]=[];wg[k].push(s)});
-  const windRows=Object.entries(wg).sort((a,b)=>parseFloat(a[0])-parseFloat(b[0]))
-    .map(([w,gs])=>`<div class="insight-row"><span class="isl">Wind ${w} · ${gs.length}x</span><span class="isv">${fmtS(weightedAvg(gs)||0)}</span></div>`).join('');
-
-  const ag={};
-  withPull.forEach(s=>{const k=angleLbl(s.windAngle);if(!ag[k])ag[k]=[];ag[k].push(s)});
+  const wIn=inShots.slice().sort((a,b)=>a.ts-b.ts).map((s,i)=>({...s,ePull:s.ring2,w:recencyWeight(i,inShots.length)}));
+  const avgInPull=wIn.length?weightedAvg(wIn):null;
+  const wg={};withPull.forEach(s=>{const k=s.wind.toFixed(1);if(!wg[k])wg[k]=[];wg[k].push(s)});
+  const windRows=Object.entries(wg).sort((a,b)=>parseFloat(a[0])-parseFloat(b[0])).map(([w,gs])=>`<div class="insight-row"><span class="isl">Wind ${w} · ${gs.length}x</span><span class="isv">${fmtS(weightedAvg(gs)||0)}</span></div>`).join('');
+  const ag={};withPull.forEach(s=>{const k=angleLbl(s.windAngle);if(!ag[k])ag[k]=[];ag[k].push(s)});
   const angleRows=Object.entries(ag).map(([lbl,gs])=>`<div class="insight-row"><span class="isl">${lbl}</span><span class="isv">${fmtS(weightedAvg(gs)||0)}</span></div>`).join('');
-
   detail.innerHTML=`<div class="ml-detail open">
     <div class="club-insight-name">${c.n} — ${arr.length} shots</div>
-    <div class="insight-row"><span class="isl">Overall ② avg (effective)</span><span class="isv">${fmtS(avgPull)}</span></div>
+    <div class="insight-row"><span class="isl">Overall ② avg</span><span class="isv">${fmtS(avgPull)}</span></div>
     ${avgInPull!==null?`<div class="insight-row"><span class="isl">IN shots ② avg</span><span class="isv">${fmtS(avgInPull)}</span></div>`:''}
-    ${windRows?`<div class="divider"></div><div style="font-size:8px;color:#3d5c42;letter-spacing:.5px;margin-bottom:3px">BY WIND:</div>${windRows}`:''}
-    ${angleRows?`<div class="divider"></div><div style="font-size:8px;color:#3d5c42;letter-spacing:.5px;margin-bottom:3px">BY ANGLE:</div>${angleRows}`:''}
+    ${windRows?`<div class="divider"></div><div style="font-size:8px;color:#3d5c42;margin-bottom:3px">BY WIND:</div>${windRows}`:''}
+    ${angleRows?`<div class="divider"></div><div style="font-size:8px;color:#3d5c42;margin-bottom:3px">BY ANGLE:</div>${angleRows}`:''}
     <div style="margin-top:8px;text-align:center"><span style="font-size:9px;color:#3d5c42;cursor:pointer" onclick="toggleMlDetail(${clubIdx},{})">▲ collapse</span></div>
   </div>`;
+}
+
+// ═══ ELEVATION X-FACTOR DATA VIEW ═════════════════════
+function renderElevXFactorDataView(){
+  const wrap=document.getElementById('elev-xfactor-content');
+  const elevShots=getShots().filter(s=>(s.elev||0)>1);
+  if(!elevShots.length){wrap.innerHTML='<div class="empty">Log elevation shots to learn factors</div>';return}
+
+  const clubsWithData=CLUBS.map((c,i)=>{
+    const dn=getElevXFactorInfo(i,true);
+    const up=getElevXFactorInfo(i,false);
+    return{c,i,dn,up,hasAny:dn.n>0||up.n>0};
+  }).filter(x=>x.hasAny);
+
+  if(!clubsWithData.length){wrap.innerHTML='<div class="empty">No elevation shots per club yet</div>';return}
+
+  wrap.innerHTML=clubsWithData.map(({c,dn,up})=>`
+    <div style="background:#0a1522;border:1px solid #1a3a5c;border-radius:10px;padding:10px;margin-bottom:6px">
+      <div style="font-size:9px;font-weight:700;color:#80cbc4;letter-spacing:.5px;margin-bottom:7px">${c.a} — ${c.n}</div>
+      <div class="row2">
+        <div style="text-align:center;background:#2a1a00;border:1px solid #7b4f00;border-radius:8px;padding:7px">
+          <div style="font-size:8px;color:#ffb74d;font-weight:700;margin-bottom:2px">▼ DOWNHILL</div>
+          <div style="font-size:24px;font-weight:700;color:${dn.n>0?'#f0e968':'#3d5c42'}">${dn.factor.toFixed(3)}</div>
+          <div style="font-size:8px;color:#8d6e63;margin-top:2px">${dn.conf}</div>
+        </div>
+        <div style="text-align:center;background:#0d2e10;border:1px solid #2e7d32;border-radius:8px;padding:7px">
+          <div style="font-size:8px;color:#5dfc8a;font-weight:700;margin-bottom:2px">▲ UPHILL</div>
+          <div style="font-size:24px;font-weight:700;color:${up.n>0?'#f0e968':'#3d5c42'}">${up.factor.toFixed(3)}</div>
+          <div style="font-size:8px;color:#3d7060;margin-top:2px">${up.conf}</div>
+        </div>
+      </div>
+    </div>`).join('')+
+    `<div style="font-size:9px;color:#3d5c42;background:#0a1a0c;border-radius:7px;padding:7px;margin-top:2px">
+      📐 ① adj = base rings + elev yd × factor &nbsp;·&nbsp; seeds: ▼ 0.080, ▲ 0.000 &nbsp;·&nbsp; learns from X miss per shot &nbsp;·&nbsp; full trust at 8 shots
+    </div>`;
+}
+
+// ═══ ELEVATION Y-DISTANCE DATA VIEW ═══════════════════
+function renderElevLatDataView(){
+  const wrap=document.getElementById('elev-lat-data-content');
+  const profile=buildElevLatProfile();
+  if(!profile){wrap.innerHTML='<div class="empty">Log elevation shots to build profile</div>';return}
+  const anyData=profile.zones.some(z=>z.n>0);
+  if(!anyData){wrap.innerHTML='<div class="empty">No elevation shots logged yet</div>';return}
+  const total=profile.zones.reduce((a,z)=>a+z.n,0);
+  const maxY=Math.max(...profile.zones.filter(z=>z.n>0).map(z=>Math.abs(z.avgYpure||0)),0.01);
+  const nc=profile.zones.length;
+  const cards=profile.zones.map(z=>{
+    if(!z.n) return`<div class="elev-lat-zone-card"><div class="elev-lat-zone-name">${z.lbl}</div><div class="elev-lat-zone-avg" style="color:#3d5c42;font-size:11px">—</div><div class="elev-lat-zone-n" style="font-size:7px">${z.range}</div><div class="elev-lat-zone-bar"></div></div>`;
+    const yp=z.avgYpure||0,col=Math.abs(yp)<0.1?'#5dfc8a':yp>0?'#ef9a9a':'#80cbc4';
+    return`<div class="elev-lat-zone-card active-learning"><div class="elev-lat-zone-name">${z.lbl}</div><div class="elev-lat-zone-avg" style="color:${col}">${fmtS(yp)}</div><div class="elev-lat-zone-n">${z.n}x · ${Math.abs(yp)<0.1?'✓':yp>0?'long':'short'}</div><div class="elev-lat-zone-n" style="font-size:7px">${z.range}</div><div class="elev-lat-zone-bar"><div class="elev-lat-zone-fill" style="width:${Math.min(100,Math.abs(yp)/maxY*100)}%;background:${col}"></div></div></div>`;
+  }).join('');
+  wrap.innerHTML=`<div style="font-size:9px;color:#3d7070;background:#0a1522;border:1px solid #1a3a5c;border-radius:6px;padding:6px 8px;margin-bottom:8px">${nc} zones · ${total} shots${total<6?' · ⚠️ log more to refine':''}</div>
+  <div class="elev-lat-zone-grid" style="grid-template-columns:repeat(${nc<=5?nc:3},1fr)">${cards}</div>
+  ${profile.regression?`<div style="background:#0d1e2a;border:1px solid #1a3a5c;border-radius:7px;padding:7px 10px;margin-top:8px;font-size:10px;color:#80cbc4">📈 Slope: ${profile.regression.a.toFixed(3)} rings/yd${Math.abs(profile.regression.a)>0.05?' · <span style="color:#ffb74d">strong ramp</span>':''}</div>`:''}
+  <div style="font-size:9px;color:#3d5c42;margin-top:6px;text-align:center"><span style="color:#ef9a9a">■</span> long &nbsp;<span style="color:#80cbc4">■</span> short &nbsp;<span style="color:#5dfc8a">■</span> on target</div>`;
 }
 
 function renderWindBrackets(){
   const data=buildWindBrackets();
   const wrap=document.getElementById('wind-bracket-content');
   if(!data){wrap.innerHTML='<div class="empty">No data yet</div>';return}
-
-  const errColor=err=>{
-    if(Math.abs(err)<0.1) return'ok';
-    return err>0?'over':'under';
-  };
-  const errLabel=(err,n)=>{
-    if(!n) return'<span style="color:#3d5c42">—</span>';
-    const cls=errColor(err);
-    return`<span class="bracket-val ${cls}">${fmtS(err)}</span><span class="bracket-n">(${n}x)</span>`;
-  };
-
-  const wRows=data.wBrackets.filter(b=>b.stats&&b.stats.n>0).map(b=>`
-    <div class="bracket-row">
-      <span class="bracket-lbl">${b.lbl} ${b.range} mph</span>
-      ${errLabel(b.stats.err,b.stats.n)}
-    </div>`).join('');
-
-  const aRows=data.aBrackets.filter(b=>b.stats&&b.stats.n>0).map(b=>`
-    <div class="bracket-row">
-      <span class="bracket-lbl">${b.lbl}</span>
-      ${errLabel(b.stats.err,b.stats.n)}
-    </div>`).join('');
-
-  wrap.innerHTML=`
-    <div class="bracket-grid">
-      <div class="bracket-card">
-        <div class="bracket-title">BY WIND SPEED</div>
-        <div class="bracket-rows">${wRows||'<div style="font-size:10px;color:#3d5c42">No data</div>'}</div>
-      </div>
-      <div class="bracket-card">
-        <div class="bracket-title">BY WIND TYPE</div>
-        <div class="bracket-rows">${aRows||'<div style="font-size:10px;color:#3d5c42">No data</div>'}</div>
-      </div>
-    </div>
-    <div style="font-size:9px;color:#3d5c42;margin-top:6px;text-align:center">
-      <span style="color:#5dfc8a">■</span> on target &nbsp;
-      <span style="color:#ef9a9a">■</span> over-pulling &nbsp;
-      <span style="color:#80cbc4">■</span> under-pulling
-    </div>`;
-
+  const errColor=e=>Math.abs(e)<0.1?'ok':e>0?'over':'under';
+  const errLabel=(e,n)=>n?`<span class="bracket-val ${errColor(e)}">${fmtS(e)}</span><span class="bracket-n">(${n}x)</span>`:'<span style="color:#3d5c42">—</span>';
+  const wRows=data.wBrackets.filter(b=>b.stats&&b.stats.n>0).map(b=>`<div class="bracket-row"><span class="bracket-lbl">${b.lbl} ${b.range}</span>${errLabel(b.stats.err,b.stats.n)}</div>`).join('');
+  const aRows=data.aBrackets.filter(b=>b.stats&&b.stats.n>0).map(b=>`<div class="bracket-row"><span class="bracket-lbl">${b.lbl}</span>${errLabel(b.stats.err,b.stats.n)}</div>`).join('');
+  wrap.innerHTML=`<div class="bracket-grid">
+    <div class="bracket-card"><div class="bracket-title">BY WIND SPEED</div>${wRows||'<div style="font-size:10px;color:#3d5c42">No data</div>'}</div>
+    <div class="bracket-card"><div class="bracket-title">BY WIND TYPE</div>${aRows||'<div style="font-size:10px;color:#3d5c42">No data</div>'}</div>
+  </div>
+  <div style="font-size:9px;color:#3d5c42;margin-top:6px;text-align:center"><span style="color:#5dfc8a">■</span> ok &nbsp;<span style="color:#ef9a9a">■</span> over-pulling &nbsp;<span style="color:#80cbc4">■</span> under-pulling</div>`;
   renderElevTuner();
 }
 
 function renderElevTuner(){
   const wrap=document.getElementById('elev-tuner-wrap');
   const data=buildElevTuner();
-
   if(!data){
-    wrap.innerHTML=`<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a3020">
-      <div class="section-title" style="margin-bottom:4px">📐 Y-DISTANCE ELEVATION TUNER</div>
-      <div class="elev-tune-none">Log 3+ elevation shots (with Y miss) to calibrate</div>
-    </div>`;
+    wrap.innerHTML=`<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a3020"><div class="section-title" style="margin-bottom:4px">📐 Y-DISTANCE ELEVATION TUNER</div><div class="elev-tune-none">Log 3+ elevation shots with Y miss to calibrate</div></div>`;
     return;
   }
-
   const {zones,hasRamp}=data;
-  const zoneHtml=zones.map(z=>{
-    if(!z.n) return`<div class="elev-zone">
-      <div class="elev-zone-lbl">${z.lbl}</div>
-      <div class="elev-zone-val" style="color:#3d5c42">—</div>
-      <div class="elev-zone-sub">${z.range}</div>
-      <div class="elev-zone-n">no data</div>
-    </div>`;
+  const zH=zones.map(z=>{
+    if(!z.n) return`<div class="elev-zone"><div class="elev-zone-lbl">${z.lbl}</div><div class="elev-zone-val" style="color:#3d5c42">—</div><div class="elev-zone-sub">${z.range}</div><div class="elev-zone-n">no data</div></div>`;
     const col=Math.abs(z.avgErr)<0.2?'#5dfc8a':Math.abs(z.avgErr)<0.5?'#ffb74d':'#ef9a9a';
-    const sign=z.avgErr>0?'aim less':'aim more';
-    return`<div class="elev-zone">
-      <div class="elev-zone-lbl">${z.lbl}</div>
-      <div class="elev-zone-val" style="color:${col}">${fmtS(z.avgErr)}</div>
-      <div class="elev-zone-sub">${z.range}</div>
-      <div class="elev-zone-n">${z.n}x · ${sign}</div>
-    </div>`;
+    return`<div class="elev-zone"><div class="elev-zone-lbl">${z.lbl}</div><div class="elev-zone-val" style="color:${col}">${fmtS(z.avgErr)}</div><div class="elev-zone-sub">${z.range}</div><div class="elev-zone-n">${z.n}x · ${z.avgErr>0?'aim less':'aim more'}</div></div>`;
   });
-
-  const sepDiv='<div class="elev-zone-sep"></div>';
-  let hintHtml='';
-  if(hasRamp){
-    const steepErr=zones[2].avgErr||0;
-    const midErr=zones[1].avgErr||steepErr*0.5;
-    const action=steepErr>0
-      ? 'reduce aim by ~'+Math.abs(steepErr).toFixed(1)+' ring'
-      : 'add ~'+Math.abs(steepErr).toFixed(1)+' ring aim';
-    const midAction=Math.abs(midErr)>0.1
-      ? ' Mid-slope: '+(midErr>0?'reduce':'add')+' ~'+Math.abs(midErr).toFixed(1)+' ring.'
-      : '';
-    hintHtml='<div class="elev-tune-hint">📐 <b>RAMP DETECTED</b> — at >5 yds Y error is '+fmtS(steepErr)+'. <b>'+action+'</b>.'+midAction+'</div>';
-  } else if(zones.some(z=>z.n>0)){
-    hintHtml='<div class="elev-tune-hint" style="color:#5dfc8a;background:#0a1e0d;border-color:#1a4520">✅ Y errors consistent across zones — no ramp.</div>';
-  }
-
+  const sep='<div class="elev-zone-sep"></div>';
+  let hint=hasRamp?`<div class="elev-tune-hint">📐 RAMP: steep err ${fmtS(zones[2].avgErr||0)} — ${(zones[2].avgErr||0)>0?'reduce':'add'} ~${Math.abs(zones[2].avgErr||0).toFixed(1)} ring aim at >5 yds</div>`:zones.some(z=>z.n>0)?`<div class="elev-tune-hint" style="color:#5dfc8a;background:#0a1e0d;border-color:#1a4520">✅ Y errors consistent — no ramp</div>`:'';
   wrap.innerHTML=`<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a3020">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <div class="section-title" style="margin:0">📏 Y-DISTANCE ELEVATION TUNER</div>
       <div style="font-size:9px;color:#3d5c42">avg Y error</div>
     </div>
-    <div class="elev-tuner-card">
-      <div class="elev-zone-grid">
-        ${zoneHtml[0]}${sepDiv}${zoneHtml[1]}${sepDiv}${zoneHtml[2]}
-      </div>
-      ${hintHtml}
-    </div>
+    <div class="elev-tuner-card"><div class="elev-zone-grid">${zH[0]}${sep}${zH[1]}${sep}${zH[2]}</div>${hint}</div>
   </div>`;
 }
 
@@ -1551,7 +1234,6 @@ function renderElevTuner(){
 function renderTable(shots){
   const wrap=document.getElementById('shot-table-wrap');
   if(!shots.length){wrap.innerHTML='<div class="empty">No shots logged yet</div>';return}
-
   const f=tableFilters;
   let filtered=shots.filter(s=>{
     if(f.club&&!s.club.toLowerCase().includes(f.club.toLowerCase())) return false;
@@ -1560,85 +1242,31 @@ function renderTable(shots){
     if(f.res&&s.result.toLowerCase()!==f.res.toLowerCase()) return false;
     return true;
   });
-
-  const {col,dir}=tableSort;
-  const mult=dir==='asc'?1:-1;
-  filtered=[...filtered].sort((a,b)=>{
-    const va=a[col],vb=b[col];
-    if(typeof va==='number') return(va-vb)*mult;
-    return String(va).localeCompare(String(vb))*mult;
-  });
-
-  const thSort=(label,colKey)=>{
-    const active=tableSort.col===colKey;
-    const cls=active?(tableSort.dir==='asc'?'sort-asc':'sort-desc'):'';
-    return`<th class="sortable ${cls}" onclick="sortTable('${colKey}')">${label}<span class="sort-arrow"></span></th>`;
-  };
-
+  const {col,dir}=tableSort;const mult=dir==='asc'?1:-1;
+  filtered=[...filtered].sort((a,b)=>{const va=a[col],vb=b[col];return typeof va==='number'?(va-vb)*mult:String(va).localeCompare(String(vb))*mult});
+  const thS=(lbl,ck)=>{const ac=tableSort.col===ck;return`<th class="sortable ${ac?(tableSort.dir==='asc'?'sort-asc':'sort-desc'):''}" onclick="sortTable('${ck}')">${lbl}<span class="sort-arrow"></span></th>`};
   const rows=filtered.map(s=>{
-    const realIdx=shots.findIndex(x=>x.ts===s.ts);
+    const ri=shots.findIndex(x=>x.ts===s.ts);
     const d=new Date(s.ts);
     const ds=`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-    return`<tr>
-      <td>${ds}</td><td>${s.club}</td><td>${s.wind}</td><td>${s.windAngle}°</td>
-      <td>${s.elevUp?'+':'−'}${s.elev}</td>
-      <td>${fmt(s.ring1)}</td><td>${fmt(s.ring2)}</td>
-      <td>${fmtS(s.x)}</td><td>${fmtS(s.yPure||0)}</td>
-      <td class="${s.result==='In'?'td-in':'td-miss'}">${s.result==='In'?'⛳':'❌'}</td>
-      <td><div class="inline-actions">
-        <button class="btn-sm btn-sm-edit" onclick="openEdit(${realIdx})">✏️</button>
-        <button class="btn-sm btn-sm-red"  onclick="deleteShot(${realIdx})">✕</button>
-      </div></td>
-    </tr>`;
+    return`<tr><td>${ds}</td><td>${s.club}</td><td>${s.wind}</td><td>${s.windAngle}°</td><td>${s.elevUp?'+':'−'}${s.elev}</td><td>${fmt(s.ring1)}</td><td>${fmt(s.ring2)}</td><td>${fmtS(s.x)}</td><td>${fmtS(s.yPure||0)}</td><td class="${s.result==='In'?'td-in':'td-miss'}">${s.result==='In'?'⛳':'❌'}</td><td><div class="inline-actions"><button class="btn-sm btn-sm-edit" onclick="openEdit(${ri})">✏️</button><button class="btn-sm btn-sm-red" onclick="deleteShot(${ri})">✕</button></div></td></tr>`;
   }).join('');
-
-  const fClub=tableFilters.club||'';
-  const fWind=tableFilters.wind||'';
-  const fAng=tableFilters.ang||'';
-  const fRes=tableFilters.res||'';
-
-  wrap.innerHTML=`
-    <div style="font-size:9px;color:#3d5c42;margin-bottom:4px">
-      Showing ${filtered.length} of ${shots.length} shots · tap header to sort
-    </div>
-    <div class="table-wrap"><table class="data-table">
-      <thead>
-        <tr>
-          ${thSort('TIME','ts')}${thSort('CLUB','club')}${thSort('WIND','wind')}
-          ${thSort('ANG','windAngle')}${thSort('ELEV','elev')}
-          ${thSort('①','ring1')}${thSort('②','ring2')}
-          ${thSort('X','x')}${thSort('Y','yPure')}
-          ${thSort('RES','result')}<th></th>
-        </tr>
-        <tr class="filter-row">
-          <td></td>
-          <td><input type="text" placeholder="all" value="${fClub}" oninput="setFilter('club',this.value)"></td>
-          <td><input type="number" placeholder="≈" step="1" value="${fWind}" oninput="setFilter('wind',this.value)"></td>
-          <td><input type="number" placeholder="≈" step="45" value="${fAng}" oninput="setFilter('ang',this.value)"></td>
-          <td></td><td></td><td></td><td></td><td></td>
-          <td><select onchange="setFilter('res',this.value)">
-            <option value="" ${fRes===''?'selected':''}>all</option>
-            <option value="In" ${fRes==='In'?'selected':''}>In</option>
-            <option value="Miss" ${fRes==='Miss'?'selected':''}>Miss</option>
-          </select></td>
-          <td></td>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table></div>`;
+  const fC=tableFilters.club||'',fW=tableFilters.wind||'',fA=tableFilters.ang||'',fR=tableFilters.res||'';
+  wrap.innerHTML=`<div style="font-size:9px;color:#3d5c42;margin-bottom:4px">Showing ${filtered.length} of ${shots.length} · tap header to sort</div>
+  <div class="table-wrap"><table class="data-table"><thead>
+    <tr>${thS('TIME','ts')}${thS('CLUB','club')}${thS('WIND','wind')}${thS('ANG','windAngle')}${thS('ELEV','elev')}${thS('①','ring1')}${thS('②','ring2')}${thS('X','x')}${thS('Y','yPure')}${thS('RES','result')}<th></th></tr>
+    <tr class="filter-row"><td></td>
+      <td><input type="text" placeholder="all" value="${fC}" oninput="setFilter('club',this.value)"></td>
+      <td><input type="number" placeholder="≈" step="1" value="${fW}" oninput="setFilter('wind',this.value)"></td>
+      <td><input type="number" placeholder="≈" step="45" value="${fA}" oninput="setFilter('ang',this.value)"></td>
+      <td></td><td></td><td></td><td></td><td></td>
+      <td><select onchange="setFilter('res',this.value)"><option value="" ${fR===''?'selected':''}>all</option><option value="In" ${fR==='In'?'selected':''}>In</option><option value="Miss" ${fR==='Miss'?'selected':''}>Miss</option></select></td>
+      <td></td>
+    </tr>
+  </thead><tbody>${rows}</tbody></table></div>`;
 }
-
-function setFilter(key,val){
-  if(!val||val.trim()==='') delete tableFilters[key];
-  else tableFilters[key]=val.trim();
-  renderTable(getShots());
-}
-
-function sortTable(col){
-  if(tableSort.col===col) tableSort.dir=tableSort.dir==='asc'?'desc':'asc';
-  else{tableSort.col=col;tableSort.dir='desc'}
-  renderTable(getShots());
-}
+function setFilter(key,val){if(!val||val.trim()==='') delete tableFilters[key];else tableFilters[key]=val.trim();renderTable(getShots())}
+function sortTable(col){if(tableSort.col===col) tableSort.dir=tableSort.dir==='asc'?'desc':'asc';else{tableSort.col=col;tableSort.dir='desc'}renderTable(getShots())}
 
 // ═══ EDIT / DELETE ════════════════════════════════════
 let editResultVal='';
@@ -1682,28 +1310,21 @@ async function saveEdit(){
   s.yFromX=parseFloat((s.x*0.1).toFixed(4));
   s.yPure=parseFloat((s.y-s.yFromX).toFixed(4));
   if(editResultVal) s.result=editResultVal;
-  shots[editIdx]=s;saveShots(shots);
+  shots[editIdx]=s;saveShots(shots);invalidateCache();
   await pushToFirebase(shots);
   calc();closeEdit();renderData();
 }
 async function deleteShot(idx){
   if(!confirm('Delete this shot?')) return;
-  const shots=getShots();shots.splice(idx,1);saveShots(shots);
-  await pushToFirebase(shots);
-  calc();renderData();
+  const shots=getShots();shots.splice(idx,1);saveShots(shots);invalidateCache();
+  await pushToFirebase(shots);calc();renderData();
 }
 
 // ═══ CSV EXPORT / IMPORT ══════════════════════════════
 function exportCSV(){
-  const shots=getShots();
-  if(!shots.length){alert('No shots to export.');return}
+  const shots=getShots();if(!shots.length){alert('No shots to export.');return}
   const hdr=['Time','Club','ClubIdx','Wind','WindAngle','ElevYds','ElevDir','Dist','Ring1_WindPulled','Ring2_AdditionalPulled','AimCalc','X_miss','Y_miss','Y_from_X','Y_pure','Result'];
-  const rows=shots.map(s=>[
-    new Date(s.ts).toISOString(),s.club,s.clubIdx||0,s.wind,s.windAngle,
-    s.elev,s.elevUp?'UP':'DOWN',s.dist||0,
-    s.ring1,s.ring2,(s.aimCalc||0).toFixed(3),
-    s.x,s.y||0,(s.yFromX||0).toFixed(3),(s.yPure||0).toFixed(3),s.result
-  ].join(','));
+  const rows=shots.map(s=>[new Date(s.ts).toISOString(),s.club,s.clubIdx||0,s.wind,s.windAngle,s.elev,s.elevUp?'UP':'DOWN',s.dist||0,s.ring1,s.ring2,(s.aimCalc||0).toFixed(3),s.x,s.y||0,(s.yFromX||0).toFixed(3),(s.yPure||0).toFixed(3),s.result].join(','));
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([[hdr.join(','),...rows].join('\n')],{type:'text/csv'}));
   a.download='GSC_ShotLog_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
@@ -1714,33 +1335,19 @@ function importCSV(input){
   reader.onload=async function(e){
     try{
       const lines=e.target.result.trim().split('\n');
-      const hdr=lines[0].split(',');
-      const gi=k=>hdr.indexOf(k);
+      const hdr=lines[0].split(',');const gi=k=>hdr.indexOf(k);
       const existing=getShots();const existTs=new Set(existing.map(s=>s.ts));
       let added=0;
       lines.slice(1).forEach(line=>{
         if(!line.trim()) return;
-        const c=line.split(',');
-        const ts=new Date(c[gi('Time')]).getTime();
+        const c=line.split(',');const ts=new Date(c[gi('Time')]).getTime();
         if(existTs.has(ts)) return;
-        existing.push({
-          ts,club:c[gi('Club')]||'',clubIdx:parseInt(c[gi('ClubIdx')])||0,
-          wind:parseFloat(c[gi('Wind')])||0,windAngle:parseFloat(c[gi('WindAngle')])||0,
-          elev:parseFloat(c[gi('ElevYds')])||0,elevUp:(c[gi('ElevDir')]||'UP').trim()==='UP',
-          dist:parseFloat(c[gi('Dist')])||0,
-          ring1:parseFloat(c[gi('Ring1_WindPulled')])||0,
-          ring2:parseFloat(c[gi('Ring2_AdditionalPulled')])||0,
-          aimCalc:parseFloat(c[gi('AimCalc')])||0,
-          x:parseFloat(c[gi('X_miss')])||0,y:parseFloat(c[gi('Y_miss')])||0,
-          yFromX:parseFloat(c[gi('Y_from_X')])||0,yPure:parseFloat(c[gi('Y_pure')])||0,
-          result:(c[gi('Result')]||'').trim()
-        });
+        existing.push({ts,club:c[gi('Club')]||'',clubIdx:parseInt(c[gi('ClubIdx')])||0,wind:parseFloat(c[gi('Wind')])||0,windAngle:parseFloat(c[gi('WindAngle')])||0,elev:parseFloat(c[gi('ElevYds')])||0,elevUp:(c[gi('ElevDir')]||'UP').trim()==='UP',dist:parseFloat(c[gi('Dist')])||0,ring1:parseFloat(c[gi('Ring1_WindPulled')])||0,ring2:parseFloat(c[gi('Ring2_AdditionalPulled')])||0,aimCalc:parseFloat(c[gi('AimCalc')])||0,x:parseFloat(c[gi('X_miss')])||0,y:parseFloat(c[gi('Y_miss')])||0,yFromX:parseFloat(c[gi('Y_from_X')])||0,yPure:parseFloat(c[gi('Y_pure')])||0,result:(c[gi('Result')]||'').trim()});
         added++;
       });
-      saveShots(existing);await pushToFirebase(existing);
+      saveShots(existing);invalidateCache();await pushToFirebase(existing);
       const st=document.getElementById('import-status');
-      st.style.display='block';
-      st.textContent=`✅ Imported ${added} new shot${added!==1?'s':''} (${existing.length} total)`;
+      st.style.display='block';st.textContent=`✅ Imported ${added} new shot${added!==1?'s':''} (${existing.length} total)`;
       setTimeout(()=>st.style.display='none',4000);
       renderData();calc();
     }catch(err){alert('Import failed: '+err.message)}
@@ -1750,14 +1357,14 @@ function importCSV(input){
 }
 function clearData(){
   if(!confirm('Clear ALL shot data? Cannot be undone.')) return;
-  saveShots([]);pushToFirebase([]);renderData();calc();
+  saveShots([]);invalidateCache();pushToFirebase([]);renderData();calc();
 }
 
 // ═══ INIT ═════════════════════════════════════════════
 renderClubs();
 drawCompass(0);
 calc();
-pullFromFirebase().then(()=>{calc()});
+pullFromFirebase().then(()=>{invalidateCache();calc()});
 </script>
 </body>
 </html>
