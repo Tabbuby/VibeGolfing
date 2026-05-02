@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>GSC Wind Calc v1.9</title>
+<title>GSC Wind Calc v1.8</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07130a;color:#fff;min-height:100vh;font-size:15px;padding-bottom:40px}
@@ -290,13 +290,13 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
       <div class="aim-sub">rings offset along wind direction</div>
     </div>
 
-    <!-- ELEVATION LATERAL ADVISORY — shown when elev > 0 -->
+    <!-- ELEVATION Y-DISTANCE ADVISORY — shown when elev > 0 -->
     <div class="elev-lat-advisory hidden" id="elev-lat-advisory">
       <div class="elev-lat-title">
-        📐 ELEVATION LATERAL ADJUSTMENT
+        📐 ELEVATION DISTANCE NOTE
         <span class="elev-lat-badge" id="elev-lat-badge">LEARNING</span>
       </div>
-      <div id="elev-lat-content"><div class="elev-lat-empty">Log shots with elevation to build lateral profile</div></div>
+      <div id="elev-lat-content"><div class="elev-lat-empty">Log elevation shots to build Y-distance profile</div></div>
       <div class="elev-lat-conf hidden" id="elev-lat-conf">
         <div class="elev-lat-conf-row">
           <span>CONFIDENCE</span>
@@ -306,7 +306,6 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
           <div class="elev-lat-bar-fill" id="elev-lat-bar-fill" style="width:0%"></div>
         </div>
       </div>
-      <!-- Zone strip: shows all 5 zones with their learned avg lateral adj -->
       <div class="elev-zone-strip" id="elev-zone-strip"></div>
     </div>
 
@@ -436,14 +435,14 @@ input[type=number]:focus{border-color:#4caf50;box-shadow:0 0 0 2px #4caf5022}
     <div id="ml-detail-panel"></div>
   </div>
 
-  <!-- ELEVATION LATERAL PROFILE — DATA VIEW -->
+  <!-- ELEVATION Y-DISTANCE PROFILE — DATA VIEW -->
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <div class="section-title" style="margin:0">📐 ELEVATION LATERAL PROFILE</div>
-      <div style="font-size:9px;color:#3d5c42">X miss vs elevation</div>
+      <div class="section-title" style="margin:0">📐 ELEVATION Y-DISTANCE PROFILE</div>
+      <div style="font-size:9px;color:#3d5c42">avg Y error per elevation zone</div>
     </div>
-    <div style="font-size:9px;color:#3d5c42;margin-bottom:8px">avg X miss per zone · + = over-aimed · − = under-aimed · sign tells you if elevation pushed you off</div>
-    <div id="elev-lat-data-content"><div class="empty">Log elevation shots (with X miss) to build profile</div></div>
+    <div style="font-size:9px;color:#3d5c42;margin-bottom:8px">avg Ypure per zone · + = overshot · − = undershot · sign tells you if elevation pushed you off</div>
+    <div id="elev-lat-data-content"><div class="empty">Log elevation shots (with elevation shots to build profile</div></div>
   </div>
 
   <!-- WIND BRACKET SUMMARY -->
@@ -699,15 +698,18 @@ function renderClubs(){
 
 // ═══ ML ENGINE ════════════════════════════════════════
 function getEffectivePull(s){
+  // IN: ring2 worked, use directly
   if(s.result==='In') return s.ring2;
+  // MISS: blank/zero Y treated as 0 — user confirmed X base is reliable,
+  // no Y logged means distance was acceptable, treat pull as-used
   const yErr=s.yPure||s.y||0;
-  if(yErr===0) return null;
   const windCos=Math.cos((s.windAngle||0)*Math.PI/180);
   return parseFloat((s.ring2+yErr*windCos).toFixed(4));
 }
 
-const APP_VERSION='1.9';
+const APP_VERSION='2.0';
 const APP_CHANGES=[
+  'v2.0 — Blank X treated as 0 everywhere (no X filter). Elev lateral profile now uses all elev shots. Constant correction uses full shot pool.',
   'v1.9 — Elevation lateral zones now fully data-driven: boundaries learned from your shot distribution',
   'v1.8 — Learned elevation-lateral tuner: learns X miss per elev zone, adjusts ① ring suggestion',
   'v1.7 — Minimized ML panel, Shot log filters, Piecewise elev tuner, Wind bracket summary',
@@ -742,10 +744,10 @@ function signedElev(s){
   return (s.elevUp?1:-1)*(s.elev||0);
 }
 
-// ── STEP 1: collect all signed elev values from shots with X logged
+// ── STEP 1: collect all signed elev values — no X filter, blank X = 0
 function getElevSamples(){
   return getShots()
-    .filter(s=>(s.elev||0)>0&&(s.x||0)!==0)
+    .filter(s=>(s.elev||0)>0)
     .map(s=>signedElev(s));
 }
 
@@ -819,9 +821,10 @@ function buildDataDrivenZones(samples){
   return zones;
 }
 
-// ── STEP 3: assign shots to zones and compute weighted avg X per zone
+// ── STEP 3: assign shots to zones — blank X treated as 0
 function buildElevLatProfile(){
-  const shots=getShots().filter(s=>(s.elev||0)>0&&(s.x||0)!==0);
+  // All elevation shots — blank X means no lateral error observed (= 0)
+  const shots=getShots().filter(s=>(s.elev||0)>0);
   if(!shots.length) return null;
 
   const samples=shots.map(s=>signedElev(s));
@@ -833,21 +836,22 @@ function buildElevLatProfile(){
     const zone=zones.find(z=>se>z.minSigned&&se<=z.maxSigned);
     if(!zone) return;
     const w=recencyWeight(i,sorted.length);
-    zone.shots.push({ePull:s.x,w,se});
+    // Use Ypure as the signal — blank Ypure treated as 0
+    const yp=s.yPure||s.y||0;
+    zone.shots.push({ePull:yp,w,se});
   });
 
   zones.forEach(z=>{
-    if(!z.shots.length){z.avgX=null;z.n=0;return}
-    z.avgX=weightedAvg(z.shots);
+    if(!z.shots.length){z.avgYpure=null;z.n=0;return}
+    z.avgYpure=weightedAvg(z.shots);
     z.n=z.shots.length;
-    // correction = -avgX:
-    //   if avg X was -0.5 (under-aimed) → correction +0.5 → aim MORE ✓
-    //   if avg X was +0.3 (over-aimed)  → correction -0.3 → aim LESS ✓
-    z.correction=parseFloat((-z.avgX).toFixed(3));
+    // Keep correction field for compatibility — but now means Y correction
+    // avgYpure > 0 = overshooting, < 0 = undershooting
+    z.correction=z.avgYpure;
   });
 
-  // Regression across zone midpoints for extrapolation into zones with no shots yet
-  const dataPoints=zones.filter(z=>z.n>0).map(z=>({x:z.midpoint,y:z.avgX,w:z.n}));
+  // Regression across zone midpoints using avgYpure
+  const dataPoints=zones.filter(z=>z.n>0).map(z=>({x:z.midpoint,y:z.avgYpure,w:z.n}));
   let regression=null;
   if(dataPoints.length>=2) regression=buildElevRegression(dataPoints);
 
@@ -869,7 +873,7 @@ function findZone(zones,signedElevVal){
   return zones.find(z=>signedElevVal>z.minSigned&&signedElevVal<=z.maxSigned)||null;
 }
 
-// ── STEP 5: advisory for the PLAY tab
+// ── STEP 5: advisory for the PLAY tab — now Y-distance focused
 function getElevLatAdvisory(elevAbs,isElevUp){
   if(elevAbs<=0) return null;
   const profile=buildElevLatProfile();
@@ -881,16 +885,14 @@ function getElevLatAdvisory(elevAbs,isElevUp){
 
   if(zone.n>=1){
     const conf=zone.n>=5?{pct:80,lbl:'HIGH'}:zone.n>=3?{pct:50,lbl:'MEDIUM'}:{pct:20,lbl:'LOW'};
-    return{correction:zone.correction,avgX:zone.avgX,zone,
+    return{avgYpure:zone.avgYpure,zone,
       type:zone.n>=3?'ZONE DATA':'FEW SHOTS',n:zone.n,conf,profile,forecast:false};
   }
 
-  // No shots in this zone yet — extrapolate via regression
   if(profile.regression){
-    const predictedAvgX=profile.regression.predict(se);
-    const correction=parseFloat((-predictedAvgX).toFixed(3));
+    const predicted=profile.regression.predict(se);
     const totalN=profile.zones.reduce((a,z)=>a+z.n,0);
-    return{correction,avgX:predictedAvgX,zone,
+    return{avgYpure:predicted,zone,
       type:'EXTRAPOLATED',n:totalN,conf:{pct:15,lbl:'VERY LOW — EXTRAPOLATED'},profile,forecast:true};
   }
 
@@ -970,7 +972,8 @@ function confLevel(count,type,raw,r2){
 
 // ═══ CONSTANT CORRECTION ══════════════════════════════
 function checkConstantCorrection(clubIdx){
-  const shots=getShots().filter(s=>s.clubIdx===clubIdx&&(s.x||0)!==0);
+  // All shots — blank X treated as 0 (no lateral error observed)
+  const shots=getShots().filter(s=>s.clubIdx===clubIdx);
   if(shots.length<3) return null;
   const avgX=shots.reduce((a,s)=>a+(s.x||0),0)/shots.length;
   if(Math.abs(avgX)<0.3) return null;
@@ -1133,7 +1136,6 @@ function applyCorrection(clubIdx,val){
 
 // ═══ ELEVATION LATERAL ADVISORY RENDERER ══════════════
 function renderElevLatAdvisory(elevAbs,isElevUp){
-  const adv=getElevLatAdvisory(elevAbs,isElevUp);
   const content=document.getElementById('elev-lat-content');
   const badge=document.getElementById('elev-lat-badge');
   const confWrap=document.getElementById('elev-lat-conf');
@@ -1141,164 +1143,137 @@ function renderElevLatAdvisory(elevAbs,isElevUp){
   const confBar=document.getElementById('elev-lat-bar-fill');
   const strip=document.getElementById('elev-zone-strip');
 
-  // Zone strip — always built from current data-driven zones
-  const profile=adv?adv.profile:buildElevLatProfile();
+  // Build Y-distance profile from all elevation shots (X ignored — treated as fine)
+  const profile=buildElevLatProfile();
   const se=isElevUp?elevAbs:-elevAbs;
 
+  // Zone strip — show all data-driven zones, highlight active one
   if(strip){
     if(!profile){
-      // No data yet — show placeholder strip
-      strip.innerHTML=`<div style="font-size:9px;color:#3d5c42;text-align:center;grid-column:1/-1;padding:6px">
-        zones appear after first elevation shots are logged
-      </div>`;
+      strip.innerHTML=`<div style="font-size:9px;color:#3d5c42;text-align:center;grid-column:1/-1;padding:6px">zones appear after first elevation shots logged</div>`;
     } else {
       strip.innerHTML=profile.zones.map(z=>{
         const isActive=findZone(profile.zones,se)===z;
         const hasData=z.n>0;
-        const corrVal=hasData?fmtS(z.correction):'—';
-        const corrColor=!hasData?'#3d5c42':Math.abs(z.correction)<0.1?'#5dfc8a':z.correction>0?'#80cbc4':'#ef9a9a';
+        // Show avg Ypure per zone (the real signal)
+        const yVal=hasData?fmtS(z.avgYpure):'—';
+        const yColor=!hasData?'#3d5c42':Math.abs(z.avgYpure)<0.15?'#5dfc8a':z.avgYpure>0?'#ef9a9a':'#80cbc4';
         return`<div class="elev-zone-pip ${isActive?'active-zone':''}">
           <div class="elev-zone-pip-lbl">${z.lbl}</div>
-          <div class="elev-zone-pip-val" style="color:${corrColor}">${corrVal}</div>
+          <div class="elev-zone-pip-val" style="color:${yColor}">${yVal}</div>
           ${hasData?`<div style="font-size:7px;color:#3d5c42">${z.n}x</div>`:'<div style="font-size:7px;color:#3d5c42">—</div>'}
         </div>`;
       }).join('');
     }
   }
 
-  if(!adv){
+  if(!profile){
     badge.textContent='LEARNING';
-    content.innerHTML='<div class="elev-lat-empty">Log shots with elevation + X miss to learn lateral profile</div>';
+    content.innerHTML='<div class="elev-lat-empty">Log elevation shots to build Y-distance profile</div>';
     confWrap.classList.add('hidden');
     return;
   }
 
-  badge.textContent=adv.forecast?'EXTRAPOLATED':adv.type;
+  const activeZone=findZone(profile.zones,se);
+  if(!activeZone){
+    badge.textContent='NO DATA';
+    content.innerHTML='<div class="elev-lat-empty">No zone matched for this elevation</div>';
+    confWrap.classList.add('hidden');
+    return;
+  }
 
   const dirLabel=isElevUp?'UPHILL':'DOWNHILL';
-  const corrSign=adv.correction>=0?'+':'';
-  const corrAbs=Math.abs(adv.correction);
-  const corrMeaning=corrAbs<0.05
-    ? 'no adjustment needed'
-    : adv.correction>0
-      ? `aim ${corrAbs.toFixed(2)} rings MORE in wind direction`
-      : `aim ${corrAbs.toFixed(2)} rings LESS in wind direction`;
+  const hasZoneData=activeZone.n>0;
 
-  const wind=parseFloat(document.getElementById('wind').value)||0;
-  const baseRings=consts[selClub]*wind/2;
-  const adjustedRings=parseFloat((baseRings+adv.correction).toFixed(2));
+  let advisedY=null;
+  let type='LEARNING';
+  let forecast=false;
+  let nUsed=0;
 
-  // Show the zone range so the user knows which data slice is being used
-  const zoneRangeNote=`zone <b>${adv.zone.lbl}</b> (${adv.zone.range} yds)`;
+  if(hasZoneData){
+    advisedY=activeZone.avgYpure;
+    type=activeZone.n>=3?'ZONE DATA':'FEW SHOTS';
+    nUsed=activeZone.n;
+  } else if(profile.regression){
+    advisedY=profile.regression.predict(se);
+    type='EXTRAPOLATED';
+    forecast=true;
+    nUsed=profile.zones.reduce((a,z)=>a+z.n,0);
+  }
+
+  badge.textContent=type;
+
+  if(advisedY===null){
+    content.innerHTML='<div class="elev-lat-empty">No data yet for this zone — log shots to learn</div>';
+    confWrap.classList.add('hidden');
+    return;
+  }
+
+  // Interpret: avgYpure > 0 = overshooting (aimed too far), < 0 = undershooting (aimed too short)
+  const absY=Math.abs(advisedY);
+  const yMeaning=absY<0.1
+    ? 'distance is accurate at this elevation'
+    : advisedY>0
+      ? `overshooting by ~${absY.toFixed(2)} rings — aim slightly shorter`
+      : `undershooting by ~${absY.toFixed(2)} rings — aim slightly further`;
+
+  const yColor=absY<0.1?'#5dfc8a':advisedY>0?'#ef9a9a':'#80cbc4';
+
+  const conf=nUsed>=5?{pct:80,lbl:'HIGH'}:nUsed>=3?{pct:50,lbl:'MEDIUM'}:nUsed>=1?{pct:20,lbl:'LOW'}:{pct:10,lbl:'VERY LOW'};
 
   content.innerHTML=`
     <div class="elev-lat-row">
       <div class="elev-lat-block">
-        <div class="elev-lat-lbl">① ADJUSTED RINGS</div>
-        <div class="elev-lat-val" style="font-size:${Math.abs(adjustedRings)>=10?'24px':'30px'}">${fmtS(adjustedRings)}</div>
-        <div style="font-size:9px;color:#3d7070;margin-top:2px">was ${fmt(baseRings)} → ${corrSign}${corrAbs.toFixed(2)}</div>
+        <div class="elev-lat-lbl">AVG Y ERROR</div>
+        <div class="elev-lat-val" style="color:${yColor}">${fmtS(advisedY)}</div>
+        <div style="font-size:9px;color:#3d7070;margin-top:2px">${advisedY>0?'overshooting':'undershooting'}</div>
       </div>
       <div class="elev-lat-div"></div>
       <div class="elev-lat-block">
-        <div class="elev-lat-lbl">ELEV CORRECTION</div>
-        <div class="elev-lat-val">${corrSign}${corrAbs.toFixed(2)}</div>
-        <div style="font-size:9px;color:${adv.correction>=0?'#80cbc4':'#ef9a9a'};margin-top:2px">${adv.correction>=0?'aim MORE ▶':'aim LESS ◀'}</div>
+        <div class="elev-lat-lbl">ZONE</div>
+        <div class="elev-lat-val" style="font-size:16px;padding-top:4px">${activeZone.lbl}</div>
+        <div style="font-size:9px;color:#3d7070;margin-top:2px">${activeZone.range} yds · ${nUsed} shot${nUsed!==1?'s':''}</div>
       </div>
     </div>
     <div class="elev-lat-hint">
-      📐 <b>${dirLabel} ${elevAbs} yds</b> → ${zoneRangeNote}: ${corrMeaning}.
-      Avg X miss was ${fmtS(adv.avgX)} (${adv.n} shot${adv.n!==1?'s':''}).
-      ${adv.forecast?'<br>⚠️ No shots in this zone yet — extrapolated from nearby data.':''}
+      📐 <b>${dirLabel} ${elevAbs} yds</b>: ${yMeaning}.
+      ${forecast?'<br>⚠️ No shots in this zone yet — extrapolated from nearby zones.':''}
     </div>`;
 
   confWrap.classList.remove('hidden');
-  confLabel.textContent=adv.conf.lbl;
-  const pct=adv.conf.pct;
-  const barCol=pct>=60?'#5dfc8a':pct>=30?'#ffb74d':'#80cbc4';
-  confBar.style.width=pct+'%';
-  confBar.style.background=barCol;
+  confLabel.textContent=conf.lbl;
+  confBar.style.width=conf.pct+'%';
+  confBar.style.background=conf.pct>=60?'#5dfc8a':conf.pct>=30?'#ffb74d':'#80cbc4';
 }
 
-// ═══ ELEVATION LATERAL DATA VIEW ══════════════════════
+
 function renderElevLatDataView(){
   const wrap=document.getElementById('elev-lat-data-content');
   const profile=buildElevLatProfile();
-
-  if(!profile){
-    wrap.innerHTML='<div class="empty">Log elevation shots (with X miss) to build profile</div>';
-    return;
-  }
-
+  if(!profile){wrap.innerHTML='<div class="empty">Log elevation shots to build Y-distance profile</div>';return}
   const anyData=profile.zones.some(z=>z.n>0);
-  if(!anyData){
-    wrap.innerHTML='<div class="empty">No elevation shots with X miss logged yet</div>';
-    return;
-  }
-
+  if(!anyData){wrap.innerHTML='<div class="empty">No elevation shots logged yet</div>';return}
   const totalShots=profile.zones.reduce((a,z)=>a+z.n,0);
-  const maxCorr=Math.max(...profile.zones.filter(z=>z.n>0).map(z=>Math.abs(z.correction||0)),0.01);
-
-  // How many zones — flex grid adapts
+  const maxY=Math.max(...profile.zones.filter(z=>z.n>0).map(z=>Math.abs(z.avgYpure||0)),0.01);
   const nZones=profile.zones.length;
   const gridCols=nZones<=3?nZones:nZones<=5?nZones:3;
-
   const zoneCards=profile.zones.map(z=>{
-    if(!z.n){
-      return`<div class="elev-lat-zone-card">
-        <div class="elev-lat-zone-name">${z.lbl}</div>
-        <div class="elev-lat-zone-avg" style="color:#3d5c42;font-size:11px">—</div>
-        <div class="elev-lat-zone-n" style="font-size:8px">${z.range}</div>
-        <div class="elev-lat-zone-bar"><div class="elev-lat-zone-fill" style="width:0%"></div></div>
-      </div>`;
-    }
-    const c=z.correction||0;
-    const barPct=Math.min(100,Math.abs(c)/maxCorr*100);
-    const col=Math.abs(c)<0.1?'#5dfc8a':c>0?'#80cbc4':'#ef9a9a';
-    const meaning=Math.abs(c)<0.05?'on target':c>0?'aim more':'aim less';
-    return`<div class="elev-lat-zone-card active-learning">
-      <div class="elev-lat-zone-name">${z.lbl}</div>
-      <div class="elev-lat-zone-avg" style="color:${col}">${fmtS(c)}</div>
-      <div class="elev-lat-zone-n">${z.n}x · ${meaning}</div>
-      <div class="elev-lat-zone-n" style="font-size:7px;color:#3d5c42">${z.range}</div>
-      <div class="elev-lat-zone-bar"><div class="elev-lat-zone-fill" style="width:${barPct}%;background:${col}"></div></div>
-    </div>`;
+    if(!z.n) return`<div class="elev-lat-zone-card"><div class="elev-lat-zone-name">${z.lbl}</div><div class="elev-lat-zone-avg" style="color:#3d5c42;font-size:11px">—</div><div class="elev-lat-zone-n" style="font-size:8px">${z.range}</div><div class="elev-lat-zone-bar"><div class="elev-lat-zone-fill" style="width:0%"></div></div></div>`;
+    const yp=z.avgYpure||0;
+    const barPct=Math.min(100,Math.abs(yp)/maxY*100);
+    const col=Math.abs(yp)<0.1?'#5dfc8a':yp>0?'#ef9a9a':'#80cbc4';
+    const meaning=Math.abs(yp)<0.1?'on target':yp>0?'overshooting':'undershooting';
+    return`<div class="elev-lat-zone-card active-learning"><div class="elev-lat-zone-name">${z.lbl}</div><div class="elev-lat-zone-avg" style="color:${col}">${fmtS(yp)}</div><div class="elev-lat-zone-n">${z.n}x · ${meaning}</div><div class="elev-lat-zone-n" style="font-size:7px;color:#3d5c42">${z.range}</div><div class="elev-lat-zone-bar"><div class="elev-lat-zone-fill" style="width:${barPct}%;background:${col}"></div></div></div>`;
   }).join('');
-
-  // How zones were built — explain to user
-  const zonesBuiltFrom=`<div style="font-size:9px;color:#3d7070;background:#0a1522;border:1px solid #1a3a5c;border-radius:6px;padding:6px 8px;margin-bottom:8px">
-    📊 <b>${nZones} zones</b> built from <b>${totalShots}</b> elevation shots.
-    Boundaries auto-set from your data — they update every time you log a new shot.
-    ${totalShots<6?'<br>⚠️ Log more shots to refine zone boundaries.':''}
-  </div>`;
-
-  // Trend line from regression
+  const zonesBuiltFrom=`<div style="font-size:9px;color:#3d7070;background:#0a1522;border:1px solid #1a3a5c;border-radius:6px;padding:6px 8px;margin-bottom:8px">📊 <b>${nZones} zones</b> from <b>${totalShots}</b> elevation shots · blank Y = 0 · zones auto-update each shot${totalShots<6?'<br>⚠️ Log more shots to refine zone boundaries.':''}</div>`;
   let regHtml='';
   if(profile.regression){
     const slope=profile.regression.a;
-    const slopeDir=slope>0.02
-      ? 'correction increases with elevation — steeper slopes need more lateral aim'
-      : slope<-0.02
-        ? 'correction decreases with elevation — steeper slopes need less lateral aim'
-        : 'correction is relatively consistent across elevations';
-    regHtml=`<div style="background:#0d1e2a;border:1px solid #1a3a5c;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10px;color:#80cbc4">
-      📈 <b>TREND:</b> ${slopeDir}.<br>
-      Slope = ${slope.toFixed(3)} rings/yd elev.
-      ${Math.abs(slope)>0.05?'<br><span style="color:#ffb74d">⚠️ Strong lateral drift pattern — pay close attention at steep elevations.</span>':''}
-    </div>`;
+    const slopeDir=Math.abs(slope)<0.02?'Y error consistent across elevations':slope>0?'overshooting increases at steeper elevations':'undershooting increases at steeper elevations';
+    regHtml=`<div style="background:#0d1e2a;border:1px solid #1a3a5c;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10px;color:#80cbc4">📈 <b>TREND:</b> ${slopeDir}. Slope=${slope.toFixed(3)} rings/yd.${Math.abs(slope)>0.05?'<br><span style="color:#ffb74d">⚠️ Strong Y ramp — adjust distance aim at steep elevations.</span>':''}</div>`;
   }
-
-  const legendHtml=`<div style="font-size:9px;color:#3d5c42;margin-top:6px;text-align:center">
-    <span style="color:#80cbc4">■</span> aim more &nbsp;
-    <span style="color:#ef9a9a">■</span> aim less &nbsp;
-    <span style="color:#5dfc8a">■</span> on target
-    <br><span style="display:block;margin-top:3px">correction = −(avg X miss) &nbsp;·&nbsp; + = need more aim &nbsp;·&nbsp; − = need less</span>
-  </div>`;
-
-  wrap.innerHTML=`
-    ${zonesBuiltFrom}
-    <div class="elev-lat-zone-grid" style="grid-template-columns:repeat(${gridCols},1fr)">${zoneCards}</div>
-    ${regHtml}
-    ${legendHtml}`;
+  const legendHtml=`<div style="font-size:9px;color:#3d5c42;margin-top:6px;text-align:center"><span style="color:#ef9a9a">■</span> overshooting &nbsp;<span style="color:#80cbc4">■</span> undershooting &nbsp;<span style="color:#5dfc8a">■</span> on target<br><span style="display:block;margin-top:3px">avg Ypure per zone · + = aimed too far · − = aimed too short</span></div>`;
+  wrap.innerHTML=`${zonesBuiltFrom}<div class="elev-lat-zone-grid" style="grid-template-columns:repeat(${gridCols},1fr)">${zoneCards}</div>${regHtml}${legendHtml}`;
 }
 
 // ═══ LOG ══════════════════════════════════════════════
