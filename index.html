@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -735,7 +736,12 @@ function _mlRecommend(clubIdx,wind,angle){
   if(!withPull.length) return null;
   const snap=a=>Math.round(a/22.5)*22.5;
   const thisAngle=snap(angle);
+  // Mirror: 45°↔315°, 90°↔270°, 135°↔225°, 0°↔0°, 180°↔180°
+  // Shots from the mirrored side are equally valid — halves the data needed
+  const mirrorAngle=(360-thisAngle)%360;
   const angleDiff=(a,b)=>{const d=Math.abs(snap(a)-b);return Math.min(d,360-d)};
+  // Match if shot is near thisAngle OR its mirror
+  const nearAngle=(s,tol)=>angleDiff(s.windAngle,thisAngle)<=tol||angleDiff(s.windAngle,mirrorAngle)<=tol;
 
   // cosComp scales angle-blind fallbacks:
   //   0°  tailwind  → cos=1 → full ② pull (wind pushes ball, distance correction needed)
@@ -746,15 +752,15 @@ function _mlRecommend(clubIdx,wind,angle){
   const sinScale=v=>parseFloat((v*cosComp).toFixed(4));
 
   // ── Tier 1: EXACT — angle-aware, no scaling needed
-  const exact=withPull.filter(s=>Math.abs(s.wind-wind)<=0.2&&angleDiff(s.windAngle,thisAngle)<=22.5);
+  const exact=withPull.filter(s=>Math.abs(s.wind-wind)<=0.2&&nearAngle(s,22.5));
   if(exact.length) return{value:weightedAvg(exact),spread:weightedSpread(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT',forecast:false,anglePrior:false};
 
   // ── Tier 2: NEAREST — angle-aware
-  const near=withPull.filter(s=>Math.abs(s.wind-wind)<=1&&angleDiff(s.windAngle,thisAngle)<=22.5);
+  const near=withPull.filter(s=>Math.abs(s.wind-wind)<=1&&nearAngle(s,22.5));
   if(near.length) return{value:weightedAvg(near),spread:weightedSpread(near),count:weightedCount(near),raw:near.length,type:'NEAREST',forecast:false,anglePrior:false};
 
-  // ── Tier 3: REGRESSION on same-angle shots — angle-aware
-  const sameAngle=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
+  // ── Tier 3: REGRESSION on same-angle shots (includes mirror) — angle-aware
+  const sameAngle=withPull.filter(s=>nearAngle(s,45));
   if(sameAngle.length>=2){
     const reg=weightedRegression(sameAngle,wind);
     if(reg!==null){
@@ -763,8 +769,8 @@ function _mlRecommend(clubIdx,wind,angle){
     }
   }
 
-  // ── Tier 4: ANGLE MATCH — angle-aware (no wind match but right direction)
-  const angleOnly=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
+  // ── Tier 4: ANGLE MATCH (includes mirror)
+  const angleOnly=withPull.filter(s=>nearAngle(s,45));
   if(angleOnly.length) return{value:weightedAvg(angleOnly),spread:weightedSpread(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH',forecast:false,anglePrior:false};
 
   // ── Tiers below here are angle-BLIND: apply sinComp scaling as prior ──
