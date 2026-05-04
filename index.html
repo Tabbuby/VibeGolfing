@@ -714,7 +714,7 @@ function getEffectivePull(s){
 
 const APP_VERSION='2.1';
 const APP_CHANGES=[
-  'v2.1 — Compact UI (club+wind+elev+direction in one card). ① and ② side-by-side. Elevation X-factor engine baked into ① (downhill 0.08 seed, uphill 0.00, learns per club from X miss). ② shows spread. Calc cache (recalcs only on new shots).',
+  'v2.1 — Fix: ① now uses |sin(angle)| so tailwind=0 rings, crosswind=full rings. Fix: ② angle-blind fallbacks (FORECAST/WIND MATCH/CLUB AVG) now scaled by sin(angle) prior. Compact UI, ① ② side-by-side, elevation X-factor engine, spread on ②, calc cache.',
   'v2.0 — Blank X treated as 0. Elev lateral profile uses all elev shots. Constant correction uses full pool.',
   'v1.9 — Elevation lateral zones fully data-driven from shot distribution',
   'v1.8 — Elevation-lateral tuner: learns X miss per elev zone',
@@ -736,27 +736,55 @@ function _mlRecommend(clubIdx,wind,angle){
   const snap=a=>Math.round(a/22.5)*22.5;
   const thisAngle=snap(angle);
   const angleDiff=(a,b)=>{const d=Math.abs(snap(a)-b);return Math.min(d,360-d)};
+
+  // cosComp scales angle-blind fallbacks:
+  //   0°  tailwind  → cos=1 → full ② pull (wind pushes ball, distance correction needed)
+  //   90° crosswind → cos=0 → zero ② pull (pure lateral, handled by ①)
+  //   180° headwind → cos=1 → full ② pull (opposite direction, but same magnitude)
+  //   45°           → cos=0.71 → 71% pull
+  const cosComp=Math.abs(Math.cos(angle*Math.PI/180));
+  const sinScale=v=>parseFloat((v*cosComp).toFixed(4));
+
+  // ── Tier 1: EXACT — angle-aware, no scaling needed
   const exact=withPull.filter(s=>Math.abs(s.wind-wind)<=0.2&&angleDiff(s.windAngle,thisAngle)<=22.5);
-  if(exact.length) return{value:weightedAvg(exact),spread:weightedSpread(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT',forecast:false};
+  if(exact.length) return{value:weightedAvg(exact),spread:weightedSpread(exact),count:weightedCount(exact),raw:exact.length,type:'EXACT',forecast:false,anglePrior:false};
+
+  // ── Tier 2: NEAREST — angle-aware
   const near=withPull.filter(s=>Math.abs(s.wind-wind)<=1&&angleDiff(s.windAngle,thisAngle)<=22.5);
-  if(near.length) return{value:weightedAvg(near),spread:weightedSpread(near),count:weightedCount(near),raw:near.length,type:'NEAREST',forecast:false};
+  if(near.length) return{value:weightedAvg(near),spread:weightedSpread(near),count:weightedCount(near),raw:near.length,type:'NEAREST',forecast:false,anglePrior:false};
+
+  // ── Tier 3: REGRESSION on same-angle shots — angle-aware
   const sameAngle=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
   if(sameAngle.length>=2){
     const reg=weightedRegression(sameAngle,wind);
     if(reg!==null){
       const inRange=wind>=reg.minWind-0.5&&wind<=reg.maxWind+0.5;
-      return{value:reg.value,spread:weightedSpread(sameAngle),count:sameAngle.length,raw:sameAngle.length,type:inRange?'REGRESSION':'FORECAST',forecast:!inRange,r2:reg.r2};
+      return{value:reg.value,spread:weightedSpread(sameAngle),count:sameAngle.length,raw:sameAngle.length,type:inRange?'REGRESSION':'FORECAST',forecast:!inRange,r2:reg.r2,anglePrior:false};
     }
   }
+
+  // ── Tier 4: ANGLE MATCH — angle-aware (no wind match but right direction)
+  const angleOnly=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
+  if(angleOnly.length) return{value:weightedAvg(angleOnly),spread:weightedSpread(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH',forecast:false,anglePrior:false};
+
+  // ── Tiers below here are angle-BLIND: apply sinComp scaling as prior ──
+
+  // ── Tier 5: REGRESSION on all shots — scale by cos(angle)
   if(withPull.length>=2){
     const reg=weightedRegression(withPull,wind);
-    if(reg!==null) return{value:reg.value,spread:weightedSpread(withPull),count:withPull.length,raw:withPull.length,type:'FORECAST',forecast:true,r2:reg.r2};
+    if(reg!==null) return{value:sinScale(reg.value),rawValue:reg.value,sinComp:cosComp,spread:weightedSpread(withPull),count:withPull.length,raw:withPull.length,type:'FORECAST',forecast:true,r2:reg.r2,anglePrior:true};
   }
+
+  // ── Tier 6: WIND MATCH — scale by cos(angle)
   const windOnly=withPull.filter(s=>Math.abs(s.wind-wind)<=1.5);
-  if(windOnly.length) return{value:weightedAvg(windOnly),spread:weightedSpread(windOnly),count:weightedCount(windOnly),raw:windOnly.length,type:'WIND MATCH',forecast:false};
-  const angleOnly=withPull.filter(s=>angleDiff(s.windAngle,thisAngle)<=45);
-  if(angleOnly.length) return{value:weightedAvg(angleOnly),spread:weightedSpread(angleOnly),count:weightedCount(angleOnly),raw:angleOnly.length,type:'ANGLE MATCH',forecast:false};
-  return{value:weightedAvg(withPull),spread:weightedSpread(withPull),count:weightedCount(withPull),raw:withPull.length,type:'CLUB AVG',forecast:false};
+  if(windOnly.length){
+    const raw=weightedAvg(windOnly);
+    return{value:sinScale(raw),rawValue:raw,sinComp:cosComp,spread:weightedSpread(windOnly),count:weightedCount(windOnly),raw:windOnly.length,type:'WIND MATCH',forecast:false,anglePrior:true};
+  }
+
+  // ── Tier 7: CLUB AVG — scale by cos(angle)
+  const raw=weightedAvg(withPull);
+  return{value:sinScale(raw),rawValue:raw,sinComp:cosComp,spread:weightedSpread(withPull),count:weightedCount(withPull),raw:withPull.length,type:'CLUB AVG',forecast:false,anglePrior:true};
 }
 
 function weightedRegression(shots,targetWind){
@@ -963,10 +991,13 @@ function calc(){
     const conf=confLevel(rec.count,rec.type,rec.raw,rec.r2);
     const spreadHtml=rec.spread!=null&&rec.spread>0.001
       ?`<div class="spread-row">±${rec.spread.toFixed(2)} spread</div>`:'';
+    const sinNote=rec.anglePrior
+      ?`<div style="font-size:8px;color:#3d7070;margin-top:3px">× ${Math.round(rec.sinComp*100)}% cos(${windAngle}°) prior</div>`:'';
     mlEl.innerHTML=`
       <div class="rec-val">${fmtS(rec.value)}</div>
       ${spreadHtml}
-      <div class="rec-meta">${rec.type}${rec.forecast?' 📈':''} · ${rec.raw}x</div>`;
+      <div class="rec-meta">${rec.type}${rec.forecast?' 📈':''} · ${rec.raw}x</div>
+      ${sinNote}`;
     confWrap.classList.remove('hidden');
     document.getElementById('forecast-warn').classList.toggle('hidden',!rec.forecast);
     document.getElementById('conf-label').textContent=conf.lbl;
